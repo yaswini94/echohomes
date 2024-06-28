@@ -1,5 +1,6 @@
-.registration-form {
+.form {
   min-width: 400px;
+  max-width: 400px;
   margin: 2rem auto;
   padding: 2rem;
   border: 1px solid #ccc;
@@ -18,7 +19,7 @@
 }
 
 .form-label {
-  display: block;
+  display: flex;
   margin-bottom: 8px;
   color: #666;
 }
@@ -58,4 +59,8 @@
   border-radius: 5px;
   margin-top: 10px;
   text-align: center;
+}
+
+.top-margin {
+  margin-top: 16px;
 }

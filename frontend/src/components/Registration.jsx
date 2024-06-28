@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
-import './Registration.css';
+import './Forms.css';
 
 const RegistrationForm = () => {
   const [email, setEmail] = useState('');
@@ -34,20 +34,20 @@ const RegistrationForm = () => {
   };
 
   return (
-    <form onSubmit={handleRegister} className="registration-form">
+    <form onSubmit={handleRegister} className="form">
       <img src="../assets/echohomes.png" alt="Logo"></img>
       <h2 className="form-title">Register</h2>
       <div className="form-field">
         <label htmlFor="name" className="form-label">Name</label>
-        <input type="text" id="name" value={name} onChange={event => setName(event.target.value)} required className="form-input" />
+        <input type="text" id="name" value={name} onChange={event => setName(event.target.value)} required className="form-input" placeholder="James D"/>
       </div>
       <div className="form-field">
         <label htmlFor="email" className="form-label">Email</label>
-        <input type="email" id="email" value={email} onChange={event => setEmail(event.target.value)} required className="form-input" />
+        <input type="email" id="email" value={email} onChange={event => setEmail(event.target.value)} required className="form-input" placeholder="you@example.com"/>
       </div>
       <div className="form-field">
         <label htmlFor="password" className="form-label">Password</label>
-        <input type="password" id="password" value={password} onChange={event => setPassword(event.target.value)} required className="form-input" />
+        <input type="password" id="password" value={password} onChange={event => setPassword(event.target.value)} required className="form-input" placeholder="axrZ12"/>
       </div>
       <div className="form-actions">
         <button type="submit" disabled={loading} className="submit-button">
@@ -55,6 +55,10 @@ const RegistrationForm = () => {
         </button>
       </div>
       {message && <p className="form-message">{message}</p>}
+
+      <div className='top-margin'>
+      <span style={{color: 'black'}}>Already have an account? </span><a href="/login">Login</a>
+      </div>
     </form>
   );
 };
