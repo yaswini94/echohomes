@@ -1,21 +1,21 @@
-import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
 import React from 'react';
 import RegistrationForm from './components/Registration.jsx';
+import LoginForm from './components/Login.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <h1>Echo Homes with Vite + React + NodeJS + PostgreSQL</h1>
-        <div className="App">
-          <header className="App-header">
-            <RegistrationForm />
-          </header>
-        </div>
-      </div>
+      {/* <div className="App"> */}
+        <Router>
+          <Routes>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegistrationForm />} />
+            <Route path="/" exact element={<h1>Welcome Home</h1>} />
+          </Routes>
+        </Router>
+      {/* </div> */}
     </>
   )
 }

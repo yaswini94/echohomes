@@ -15,6 +15,16 @@ app.get('/', (req, res) => {
   res.send('Welcome to Echo homes!');
 });
 
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  // Here, you'd check the credentials against a database or other service
+  if (email === 'yaswini.ranga@gmail.com' && password === 'Pass12') {
+      res.json({ message: 'Login Successful!' });
+  } else {
+      res.status(401).json({ message: 'Invalid credentials' });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
