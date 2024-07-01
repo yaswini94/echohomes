@@ -64,3 +64,10 @@
 .top-margin {
   margin-top: 16px;
 }
+.form-border {
+  max-width: 650px;
+  min-width: 450px;
+  border-radius: 4%;
+  border: 1px solid black;
+  padding: 32px;
+}

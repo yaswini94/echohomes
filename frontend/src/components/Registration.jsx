@@ -2,14 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../supabaseClient';
 import './Forms.css';
+import logo from '../assets/echohomes.png';
+import { Button, Form, Input, Select } from 'antd';
+
+const { Option } = Select;
+const layout = {
+  labelCol: {
+    span: 8,
+  },
+  wrapperCol: {
+    span: 16,
+  },
+};
+const tailLayout = {
+  wrapperCol: {
+    offset: 5,
+    span: 14,
+  },
+};
 
 const RegistrationForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [usertype, setUsertype] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const navigate = useNavigate(); // useNavigate hook
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (message === 'Registration successful! Check your email to verify your account.') {
@@ -19,12 +39,12 @@ const RegistrationForm = () => {
   }, [message, history]);
 
   const handleRegister = async (event) => {
-    event.preventDefault();
+    // event?.preventDefault();
     setLoading(true);
     setMessage('');
 
     const { error } = await supabase.auth.signUp({ email, password }, {
-      data: { name }
+      data: { name, usertype }
     });
 
     error ? setMessage(error.message) :
@@ -33,33 +53,55 @@ const RegistrationForm = () => {
     setLoading(false);
   };
 
-  return (
-    <form onSubmit={handleRegister} className="form">
-      <img src="../assets/echohomes.png" alt="Logo"></img>
-      <h2 className="form-title">Register</h2>
-      <div className="form-field">
-        <label htmlFor="name" className="form-label">Name</label>
-        <input type="text" id="name" value={name} onChange={event => setName(event.target.value)} required className="form-input" placeholder="James D"/>
-      </div>
-      <div className="form-field">
-        <label htmlFor="email" className="form-label">Email</label>
-        <input type="email" id="email" value={email} onChange={event => setEmail(event.target.value)} required className="form-input" placeholder="you@example.com"/>
-      </div>
-      <div className="form-field">
-        <label htmlFor="password" className="form-label">Password</label>
-        <input type="password" id="password" value={password} onChange={event => setPassword(event.target.value)} required className="form-input" placeholder="axrZ12"/>
-      </div>
-      <div className="form-actions">
-        <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Loading...' : 'Register'}
-        </button>
-      </div>
-      {message && <p className="form-message">{message}</p>}
+  const onUserTypeChange = (value) => {
+    switch (value) {
+      case 'builder':
+        form.setFieldsValue({
+          note: 'Hi, Builder!',
+        });
+        setUsertype(value);
+        break;
+      case 'supplier':
+        form.setFieldsValue({
+          note: 'Hi, Supplier!',
+        });
+        break;
+      default:
+    }
+  };
 
+  return (
+    <Form onFinish={handleRegister} form={form} {...layout} className="form-border">
+      <img src={logo} alt="Logo"></img>
+      <h2 className="form-title">Register</h2>
+      <Form.Item label="Name" name="name">
+        <Input placeholder='John D' value={name} onChange={event => setName(event.target.value)} required></Input>
+      </Form.Item>
+      <Form.Item label="Email" name="email">
+        <Input type="email" placeholder='abc@domain.com' value={email} onChange={event => setEmail(event.target.value)} required></Input>
+      </Form.Item>
+      <Form.Item label="User Type" name="usertype">
+        <Select
+          placeholder="Select type of user"
+          onChange={onUserTypeChange}
+          value={usertype}
+          allowClear
+        >
+          <Option value="builder">Builder</Option>
+          <Option value="supplier">Supplier</Option>
+        </Select>
+      </Form.Item>
+      <Form.Item label="Password" name="password">
+        <Input.Password placeholder='a-zA-Z0-9(Minimum 6)' value={password} onChange={event => setPassword(event.target.value)} required></Input.Password>
+      </Form.Item>
+      <Form.Item {...tailLayout}>
+        <Button block type='primary' htmlType='submit'>Register</Button>
+      </Form.Item>
+      {message && <p className="form-message">{message}</p>}
       <div className='top-margin'>
-      <span style={{color: 'black'}}>Already have an account? </span><a href="/login">Login</a>
+        <span style={{color: 'black'}}>Already have an account? </span><a href="/login">Login</a>
       </div>
-    </form>
+    </Form>
   );
 };
 
