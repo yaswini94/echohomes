@@ -65,9 +65,16 @@
   margin-top: 16px;
 }
 .form-border {
-  max-width: 650px;
-  min-width: 450px;
+  /* max-width: 650px; */
+  /* min-width: 450px; */
   border-radius: 4%;
   border: 1px solid black;
   padding: 32px;
+}
+.minwidth {
+  min-width: 400px;
+}
+
+.mainLayout {
+  min-width: 1250px;
 }

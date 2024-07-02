@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-// import process from '../env.js';
 
 // const supabaseUrl = process.REACT_APP_SUPABASE_URL;
 // const supabaseAnonKey = process.REACT_APP_SUPABASE_ANON_KEY;

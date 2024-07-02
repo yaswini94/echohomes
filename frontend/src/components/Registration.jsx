@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import supabase from '../supabaseClient';
+// import supabase from '../supabaseClient';
 import './Forms.css';
 import logo from '../assets/echohomes.png';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, message } from 'antd';
 
 const { Option } = Select;
 const layout = {
@@ -26,31 +26,37 @@ const RegistrationForm = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [usertype, setUsertype] = useState('');
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const navigate = useNavigate(); // useNavigate hook
+  // const navigate = useNavigate(); // useNavigate hook
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    if (message === 'Registration successful! Check your email to verify your account.') {
-      // Redirect to login after the message is set
-      setTimeout(() => navigate('/login'), 3000); // Redirect after 3 seconds
+  // useEffect(() => {
+  //   if (message === 'Registration successful! Check your email to verify your account.') {
+  //     // Redirect to login after the message is set
+  //     setTimeout(() => navigate('/login'), 3000); // Redirect after 3 seconds
+  //   }
+  // }, [message, history]);
+
+  const handleRegister = async (values) => {
+    try {
+      const response = await fetch('http://localhost:3001/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values), // Send the form values directly
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      message.success(`Response: ${result.message}`);
+    } catch (error) {
+      console.error("Error posting data: ", error);
+      message.error('Failed to send data. ' + error.message);
     }
-  }, [message, history]);
-
-  const handleRegister = async (event) => {
-    // event?.preventDefault();
-    setLoading(true);
-    setMessage('');
-
-    const { error } = await supabase.auth.signUp({ email, password }, {
-      data: { name, usertype }
-    });
-
-    error ? setMessage(error.message) :
-      setMessage('Registration successful! Check your email to verify your account.')
-
-    setLoading(false);
   };
 
   const onUserTypeChange = (value) => {
@@ -69,18 +75,21 @@ const RegistrationForm = () => {
       default:
     }
   };
-
+  const onFinishFailed = (errorInfo) => {
+    console.error('Failed:', errorInfo);
+    message.error('Please adjust the form according to the errors.');
+  };
   return (
-    <Form onFinish={handleRegister} form={form} {...layout} className="form-border">
+    <Form onFinish={handleRegister} onFinishFailed={onFinishFailed} form={form} {...layout} className="form-border">
       <img src={logo} alt="Logo"></img>
       <h2 className="form-title">Register</h2>
-      <Form.Item label="Name" name="name">
+      <Form.Item label="Name" name="name" className="minwidth">
         <Input placeholder='John D' value={name} onChange={event => setName(event.target.value)} required></Input>
       </Form.Item>
-      <Form.Item label="Email" name="email">
+      <Form.Item label="Email" name="email" className="minwidth">
         <Input type="email" placeholder='abc@domain.com' value={email} onChange={event => setEmail(event.target.value)} required></Input>
       </Form.Item>
-      <Form.Item label="User Type" name="usertype">
+      <Form.Item label="User Type" name="usertype" className="minwidth">
         <Select
           placeholder="Select type of user"
           onChange={onUserTypeChange}
@@ -91,7 +100,7 @@ const RegistrationForm = () => {
           <Option value="supplier">Supplier</Option>
         </Select>
       </Form.Item>
-      <Form.Item label="Password" name="password">
+      <Form.Item label="Password" name="password" className="minwidth">
         <Input.Password placeholder='a-zA-Z0-9(Minimum 6)' value={password} onChange={event => setPassword(event.target.value)} required></Input.Password>
       </Form.Item>
       <Form.Item {...tailLayout}>
