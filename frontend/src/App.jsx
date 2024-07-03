@@ -1,25 +1,60 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'
-import React from 'react';
-import RegistrationForm from './components/Registration.jsx';
-import LoginForm from './components/Login.jsx';
-import DashboardLayout from './components/DashboardLayout.jsx';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import BuilderLogin from "./components/BuilderLogin";
+import BuilderRegistration from "./components/BuilderRegistration";
+import Dashboard from "./components/Dashboard"; // Your dashboard component
+import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute";
+import { AuthProvider } from "./auth/useAuth";
+import VentureDetail from "./components/VentureDetail";
 
 function App() {
   return (
-    <>
-      {/* <div className="App"> */}
-        <Router>
-          <Routes>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/register" element={<RegistrationForm />} />
-            <Route path="/dashboard" element={<DashboardLayout />} />
-            <Route path="/" exact element={<h1>Welcome Home</h1>} />
-          </Routes>
-        </Router>
-      {/* </div> */}
-    </>
-  )
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <BuilderLogin />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <BuilderRegistration />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/venture/:id"
+            element={
+              <PrivateRoute>
+                <VentureDetail />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
