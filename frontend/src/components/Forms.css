@@ -60,21 +60,37 @@
   margin-top: 10px;
   text-align: center;
 }
-
-.top-margin {
-  margin-top: 16px;
-}
 .form-border {
-  /* max-width: 650px; */
-  /* min-width: 450px; */
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 4%;
   border: 1px solid black;
   padding: 32px;
+  margin: 0 200px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 .minwidth {
   min-width: 400px;
 }
 
 .mainLayout {
-  min-width: 1250px;
+  min-height: 100vh; /* Full viewport height */
+  min-width: 1710px;
+}
+.center-align {
+  text-align: center;
+}
+.forgot-password {
+  text-align: right;
+  margin-bottom: 12px;
+}
+.page-background {
+  background-image: url("../assets/home_bg.jpg"); /* Replace with your image path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh; /* Full viewport height */
+  display: flex;
+  align-items: center; /* This centers the form vertically */
+  padding-left: 50px;
+  min-width: 1920px;
 }

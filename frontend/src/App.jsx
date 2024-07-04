@@ -5,9 +5,10 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import BuilderLogin from "./components/BuilderLogin";
+import Login from "./components/Login";
 import BuilderRegistration from "./components/BuilderRegistration";
 import Dashboard from "./components/Dashboard"; // Your dashboard component
+import DashboardLayout from "./components/DashboardLayout"; // Your dashboard component
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./auth/useAuth";
@@ -22,7 +23,7 @@ function App() {
             path="/login"
             element={
               <PublicRoute>
-                <BuilderLogin />
+                <Login />
               </PublicRoute>
             }
           />
@@ -38,7 +39,7 @@ function App() {
             path="/dashboard"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <DashboardLayout />
               </PrivateRoute>
             }
           />
@@ -50,7 +51,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
     </AuthProvider>

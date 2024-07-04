@@ -1,78 +1,78 @@
-import React, { useState } from 'react';
-// import supabase from '../supabaseClient';
+import React, { useState } from "react";
+import { supabase } from "../supabase";
 import './Forms.css';
 import logo from '../assets/echohomes.png';
 import { Form, Input, Button } from "antd";
 
-const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const layout = {
+  labelCol: {
+    span: 8,
+  },
+  wrapperCol: {
+    span: 16,
+  },
+};
+const tailLayout = {
+  wrapperCol: {
+    offset: 5,
+    span: 14,
+  },
+};
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [form] = Form.useForm();
+  const [message, setMessage] = useState("");
 
-  const layout = {
-    labelCol: {
-      span: 8,
-    },
-    wrapperCol: {
-      span: 16,
-    },
-  };
-  const tailLayout = {
-    wrapperCol: {
-      offset: 5,
-      span: 14,
-    },
-  };
-  
   const handleLogin = async (event) => {
-    // event?.preventDefault();
-    // setLoading(true);
-    // const { user, error } = await supabase.auth.signIn({ email, password });
-    // if (error) setMessage(error.message);
-    // else setMessage('Logged in successfully!');
-    // setLoading(false);
+    // event.preventDefault();
+    setLoading(true);
+    const { error, session } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: {
+        emailRedirectTo: "http://localhost:5173/",
+      },
+    });
 
-
-    try {
-      const response = await fetch('http://localhost:3001/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values), // Send the form values directly
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      message.success(`Response: ${result.message}`);
-    } catch (error) {
-      console.error("Error posting data: ", error);
-      message.error('Failed to send data. ' + error.message);
+    if (error) {
+      setMessage("Login failed: " + error.message);
+      setLoading(false);
+      return;
     }
+
+    setMessage("Login successful!");
+    setLoading(false);
+    // You can redirect or do additional tasks here
   };
 
   return (
-    <Form onFinish={handleLogin} form={form} {...layout} className='form-border'>
-      <img src={logo} alt="Logo"></img>
-      <h2 className="form-title">Login</h2>
-      <Form.Item label="Email" name="email" className="minwidth">
-        <Input placeholder='abc@domain.com' value={email} onChange={(event) => setEmail(event.target.value)} required></Input>
-      </Form.Item>
-      <Form.Item label="Password" name="password" className="minwidth">
-        <Input.Password placeholder='a-zA-Z0-9(Minimum 6)' value={password} onChange={(event) => setPassword(event.target.value)} required></Input.Password>
-      </Form.Item>
-      <Form.Item {...tailLayout}>
-        <Button block type='primary' htmlType='submit'>Login</Button>
-      </Form.Item>
-      {message && <p className="form-message">{message}</p>}
-      <div className='top-margin'>
-        <span style={{color: 'black'}}>Don’t have an account? </span><a href="/register">Register</a>
-      </div>
-    </Form>
-  )
+    <div className="page-background">
+      <Form onFinish={handleLogin} {...layout} className='form-border'>
+        <div className="center-align">
+          <img src={logo} alt="Logo"></img>
+        </div>
+        <h2 className="form-title">Login</h2>
+        <Form.Item label="Email" name="email" className="minwidth">
+          <Input type="email" placeholder="abc@domain.com" value={email} onChange={event => setEmail(event.target.value)} required></Input>
+        </Form.Item>
+        <Form.Item label="Password" name="password" className="minwidth">
+          <Input.Password placeholder="a-zA-Z0-9(Minimum 6)" value={password} onChange={event => setPassword(event.target.value)} required></Input.Password>
+        </Form.Item>
+        <div className="forgot-password">
+          <a href="/register">Forgot Password ?</a>
+        </div>
+        <Form.Item {...tailLayout}>
+          <Button block type="primary" htmlType="submit" disabled={loading}>{loading ? "Logging in..." : "Login"}</Button>
+        </Form.Item>
+        {message && <p className="form-message">{message}</p>}
+        <div className="top-margin center-align">
+          <span style={{color: "black"}}>Don’t have an account? </span><a href="/register">Register</a>
+        </div>
+      </Form>
+    </div>
+  );
 }
-export default LoginForm;
+
+export default Login;
