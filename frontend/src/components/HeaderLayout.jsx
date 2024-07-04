@@ -43,7 +43,7 @@ const HeaderLayout = () => {
           <a target="_blank" rel="noopener noreferrer" href="">
             Notifications
           </a>
-          <Badge count={5} style={{marginLeft: "8px"}}></Badge>
+          {/* <Badge count={5} style={{marginLeft: "8px"}}></Badge> */}
         </>
       ),
       icon: <BellOutlined />

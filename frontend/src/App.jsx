@@ -7,8 +7,7 @@ import {
 } from "react-router-dom";
 import Login from "./components/Login";
 import BuilderRegistration from "./components/BuilderRegistration";
-import Dashboard from "./components/Dashboard"; // Your dashboard component
-import DashboardLayout from "./components/DashboardLayout"; // Your dashboard component
+import DashboardLayout from "./components/DashboardLayout"; 
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./auth/useAuth";

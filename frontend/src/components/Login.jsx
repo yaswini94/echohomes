@@ -61,7 +61,7 @@ const Login = () => {
           <Input.Password placeholder="a-zA-Z0-9(Minimum 6)" value={password} onChange={event => setPassword(event.target.value)} required></Input.Password>
         </Form.Item>
         <div className="forgot-password">
-          <a href="/register">Forgot Password ?</a>
+          <a onClick={() => supabase.auth.resetPasswordForEmail(email)}>Forgot Password ?</a>
         </div>
         <Form.Item {...tailLayout}>
           <Button block type="primary" htmlType="submit" disabled={loading}>{loading ? "Logging in..." : "Login"}</Button>

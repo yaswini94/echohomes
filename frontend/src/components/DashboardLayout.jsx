@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout, Breadcrumb } from 'antd';
 import HeaderLayout from './HeaderLayout';
 import NavigationLayout from './NavigationLayout';
@@ -6,9 +6,58 @@ import NavigationLayout from './NavigationLayout';
 import BuyerDashboard from './BuyerDashboard';
 import SupplierDashboard from './SupplierDashboard';
 import BuilderDashboard from './BuilderDashboard';
+import { useAuth } from "../auth/useAuth";
+import { supabase } from "../supabase";
 
 const DashboardLayout = () => {
-  const userType = "builder"; // This should be dynamically set based on actual user data
+  const [userType, setUserType] = useState("");
+  const { user } = useAuth();
+
+  if (user?.id) determineUserType(user?.id);
+  async function determineUserType(userId) {
+    try {
+      // Check if the user is a builder
+      const isBuilder = await checkIdExists('builders', userId, 'builder_id');
+      if (isBuilder) {
+          setUserType("builder");
+          return;
+      }
+
+      // Check if the user is a supplier
+      const isSupplier = await checkIdExists('suppliers', userId, 'supplier_id');
+      if (isSupplier) {
+          setUserType("supplier");
+          return;
+      }
+
+      // Check if the user is a home buyer
+      const isBuyer = await checkIdExists('home_buyers', userId, 'buyer_id');
+      if (isBuyer) {
+          setUserType("buyer");
+          return;
+      }
+
+      // If none of the above, set a default or handle the user differently
+      console.log("No specific user type found.");
+    } catch (err) {
+      console.error('Error:', err);
+    }
+  }
+
+  async function checkIdExists(tableName, id, key) {
+    const { data, error } = await supabase
+        .from(tableName)
+        .select(key)
+        .eq(key, id)
+        .single();
+
+    if (error) {
+        console.error('Error fetching data:', error);
+        return false;
+    }
+
+    return data ? true : false;
+  }
   const renderDashboards = () => {
     switch(userType) {
       case "buyer":
