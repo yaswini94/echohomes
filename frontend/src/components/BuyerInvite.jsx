@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "../supabase"; // Ensure this import path matches your project structure
+import { supabase } from "../supabase"; 
 
 function BuyerInvite({ builderId }) {
   const [email, setEmail] = useState("");

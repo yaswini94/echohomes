@@ -7,17 +7,19 @@ import { supabase } from "../supabase";
 const { Header } = Layout;
 
 const HeaderLayout = () => {
-  // const [language, setLanguage] = useState('');
+  // const [language, setLanguage] = useState("EN-GB");
 
   // const onLanguageChange = (value) => {
   //   switch (value) {
   //     case 'en-us':
+  //       setLanguage("EN-US");
   //       form.setFieldsValue({
   //         note: 'en-us!',
   //       });
   //       setUsertype(value);
   //       break;
   //     case 'en-gb':
+  //       setLanguage("EN-GB");
   //       form.setFieldsValue({
   //         note: 'en-gb!',
   //       });
@@ -85,6 +87,17 @@ const HeaderLayout = () => {
       <div>
         {/* <Dropdown menu={{languages}}> */}
           <a style={{margin: "0 40px", color: "white"}} onClick={(event) => event.preventDefault()}>EN-GB</a>
+          {/* <Select key="language"
+            style={{color: "white", border: "none"}}
+            // placeholder={{language}}
+            onClick={(event) => event.preventDefault()}
+            onChange={onLanguageChange}
+            value={language}
+            allowClear
+          >
+            <Option value="en-us">EN-US</Option>
+            <Option value="en-gb">EN-GB</Option>
+          </Select> */}
         {/* </Dropdown> */}
         <Dropdown menu={{ items }}>
           <a style={{color: "white"}} onClick={(event) => event.preventDefault()}>

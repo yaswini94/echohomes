@@ -19,7 +19,7 @@ const tailLayout = {
   },
 };
 
-const BuilderRegistration = () => {
+const Registration = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -33,14 +33,14 @@ const BuilderRegistration = () => {
   const handleRegister = async (event) => {
     // event.preventDefault();
     setLoading(true);
-    const { data: builderData, error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    console.log({ builderData });
+    console.log({ signUpData });
 
-    const { user } = builderData;
+    const { user } = signUpData;
 
     if (error) {
       if (userType === 1) {
@@ -88,6 +88,24 @@ const BuilderRegistration = () => {
         return;
       }
       setMessage("Supplier registered successfully!");
+    } else {
+      const { data, insertError } = await supabase.from("home_buyers").insert([
+        {
+          buyer_id: user.id,
+          builder_id: "b765bebe-a10c-4bc5-8156-ece04f78f1ae",
+          name: name,
+          contact_email: email,
+          phone_number: phoneNumber,
+          address: address,
+        },
+      ]);
+
+      if (insertError) {
+        setMessage("Error saving buyer details: " + insertError.message);
+        setLoading(false);
+        return;
+      }
+      setMessage("Buyer registered successfully!");
     }
 
     setLoading(false);
@@ -136,4 +154,4 @@ const BuilderRegistration = () => {
   );
 }
 
-export default BuilderRegistration;
+export default Registration;

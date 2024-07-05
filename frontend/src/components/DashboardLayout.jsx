@@ -19,24 +19,25 @@ const DashboardLayout = () => {
       // Check if the user is a builder
       const isBuilder = await checkIdExists('builders', userId, 'builder_id');
       if (isBuilder) {
-          setUserType("builder");
-          return;
+        setUserType("builder");
+        return;
       }
 
       // Check if the user is a supplier
       const isSupplier = await checkIdExists('suppliers', userId, 'supplier_id');
       if (isSupplier) {
-          setUserType("supplier");
-          return;
+        setUserType("supplier");
+        return;
       }
 
       // Check if the user is a home buyer
       const isBuyer = await checkIdExists('home_buyers', userId, 'buyer_id');
       if (isBuyer) {
-          setUserType("buyer");
-          return;
+        setUserType("buyer");
+        return;
       }
 
+      // setUserType("buyer");
       // If none of the above, set a default or handle the user differently
       console.log("No specific user type found.");
     } catch (err) {
