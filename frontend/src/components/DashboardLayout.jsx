@@ -11,7 +11,12 @@ import { supabase } from "../supabase";
 
 const DashboardLayout = () => {
   const [userType, setUserType] = useState("");
+  const [selectedKey, setSelectedKey] = useState("home");
   const { user } = useAuth();
+
+  const handleMenuClick = (key, label) => {
+    setSelectedKey(key);
+  };
 
   if (user?.id) determineUserType(user?.id);
   async function determineUserType(userId) {
@@ -64,7 +69,7 @@ const DashboardLayout = () => {
       case "buyer":
         return <BuyerDashboard />;
       case "builder":
-        return <BuilderDashboard />;
+        return <BuilderDashboard selectedKey={selectedKey} />;
       case "supplier":
         return <SupplierDashboard />;
       default:
@@ -76,21 +81,13 @@ const DashboardLayout = () => {
     <Layout className="mainLayout">
       <HeaderLayout />
       <Layout>
-        <NavigationLayout userType={userType} />
+        <NavigationLayout userType={userType} onMenuClick={handleMenuClick} />
         <Layout
           style={{
             padding: '0 24px 24px',
+            margin: '24px 0'
           }}
         >
-          <Breadcrumb
-            style={{
-              margin: '16px 0',
-            }}
-          >
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            {/* <Breadcrumb.Item>List</Breadcrumb.Item> */}
-            {/* <Breadcrumb.Item>App</Breadcrumb.Item> */}
-          </Breadcrumb>
           <div>
             {renderDashboards()}
           </div>

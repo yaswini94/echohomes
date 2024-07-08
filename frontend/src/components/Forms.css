@@ -84,7 +84,7 @@
   margin-bottom: 12px;
 }
 .page-background {
-  background-image: url("../assets/home_bg.jpg"); /* Replace with your image path */
+  background-image: url("../assets/home_bg.png"); /* Replace with your image path */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

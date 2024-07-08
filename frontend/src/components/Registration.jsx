@@ -130,7 +130,7 @@ const Registration = () => {
         <Form.Item label="Company Name" name="companyName" className="minwidth">
           <Input type="text" placeholder="Mulberry Homes" value={companyName} onChange={event => setCompanyName(event.target.value)} required></Input>
         </Form.Item>
-        <Form.Item label="Phone Number" name="phoneNumber" className="minwidth">
+        <Form.Item label="Phone Number" name="phoneNumber" className="minwidth" rules={[{ pattern: /^\d{10,11}$/, message: '0-9(10 to 11 digits)' }]}>
           <Input type="tel" placeholder="09999999999" value={phoneNumber} onChange={event => setPhoneNumber(event.target.value)} required></Input>
         </Form.Item>
         <Form.Item label="Address" name="address" className="minwidth">

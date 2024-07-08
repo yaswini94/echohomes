@@ -1,8 +1,10 @@
 import React from 'react';
 import { Layout, theme } from 'antd';
+import VentureManagement from './VentureManagement';
+import SupplierManagement from './SupplierManagement';
 const { Content } = Layout;
 
-const BuilderDashboard = () => {
+const BuilderDashboard = ({ selectedKey }) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -17,7 +19,13 @@ const BuilderDashboard = () => {
         borderRadius: borderRadiusLG,
       }}
     >
-      Builder Content
+      <div>
+        {/* Render different content based on selectedKey */}
+        {selectedKey === 'home' && <p>Home</p>}
+        {selectedKey === 'ventureManagement' && <VentureManagement />}
+        {selectedKey === 'supplierManagement' && <SupplierManagement />}
+        {/* {selectedKey === 'buyerManagement' && <BuyerManagement />} */}
+      </div>
     </Content>
   )
 };

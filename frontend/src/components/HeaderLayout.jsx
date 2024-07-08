@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Menu, Avatar, Select, Badge, Dropdown, Space } from 'antd';
-import { UserOutlined, SettingOutlined, BellOutlined, DownOutlined } from '@ant-design/icons';
+import { UserOutlined, SettingOutlined, BellOutlined, DownOutlined, MessageOutlined } from '@ant-design/icons';
 import titleLogo from '../assets/echohomesTitle.png';
 import exitLogo from '../assets/exit.png';
 import { supabase } from "../supabase";
@@ -85,8 +85,9 @@ const HeaderLayout = () => {
         <img src={titleLogo} alt="Title Logo" style={{ height: '32px' }} />
       </div>
       <div>
+        <MessageOutlined style={{color: "white"}} onClick={(event) => event.preventDefault()} />
         {/* <Dropdown menu={{languages}}> */}
-          <a style={{margin: "0 40px", color: "white"}} onClick={(event) => event.preventDefault()}>EN-GB</a>
+          <a style={{margin: "0 20px", color: "white"}} onClick={(event) => event.preventDefault()}>EN-GB</a>
           {/* <Select key="language"
             style={{color: "white", border: "none"}}
             // placeholder={{language}}
