@@ -18,7 +18,7 @@ const NavigationLayout = ({ userType, onMenuClick }) => {
   } = theme.useToken();
 
   const handleClick = (item) => {
-    console.log(`Clicked on ${item.key} in ${userType}`);
+    // console.log(`Clicked on ${item.key} in ${userType}`);
     onMenuClick(item.key); // Call the passed function with the selected key
   };
 

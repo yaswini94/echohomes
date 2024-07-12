@@ -44,7 +44,6 @@ const Login = () => {
 
     setMessage("Login successful!");
     setLoading(false);
-    // You can redirect or do additional tasks here
   };
 
   return (

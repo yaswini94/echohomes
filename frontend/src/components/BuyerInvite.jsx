@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { supabase } from "../supabase"; 
+import axios from 'axios';
+// import nodemailer from 'nodemailer';
+const serviceRoleKey = import.meta.env.VITE_SERVICE_ROLE_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 
 function BuyerInvite({ builderId }) {
   const [email, setEmail] = useState("");
@@ -8,85 +11,49 @@ function BuyerInvite({ builderId }) {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
   // Function to generate a random password
   const generateRandomPassword = () => {
     return Math.random().toString(36).slice(-8); // Simple random password generator
   };
 
-  // Function to invite a new buyer
-  const inviteBuyer = async () => {
-    setLoading(true);
-
-    const password = generateRandomPassword();
-
-    const { error } = await supabase.auth.signUp(
-      {
-        email: email,
-        password: password,
-      },
-      {
-        redirectTo: "http://localhost:3000/confirm",
-      }
-    );
-
-    if (error) {
-      console.log(error);
-      return;
+  async function inviteBuyer() {
+    console.log({email});
+    const tempPassword = generateRandomPassword();
+    try {
+      const response = await axios.post(
+        `${supabaseUrl}/auth/v1/admin/users`,
+        {
+          email: email,
+          password: tempPassword,
+          email_confirm: true,
+        },
+        {
+          headers: {
+            apikey: serviceRoleKey,
+            Authorization: `Bearer ${serviceRoleKey}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('User invited:', response.data);
+   
+      const resp = await axios.post(
+        'http://localhost:3001/invite',
+        {
+          email: email,
+          password: tempPassword,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('email invite sent:', resp.data);
+    } catch (error) {
+      console.error('Error inviting user:', error.response ? error.response.data : error.message);
     }
-
-    const { data, error: inviteError } =
-      await supabase.auth.api.inviteUserByEmail(email);
-
-    if (inviteError) {
-      console.log(inviteError);
-      return;
-    }
-
-    console.log(data);
-
-    // const { data, error } = await supabase.auth.signUp({
-    //   email,
-    //   password,
-    // });
-
-    // const { user } = data;
-
-    // if (signUpError) {
-    //   setMessage("Error creating buyer account: " + signUpError.message);
-    //   setLoading(false);
-    //   return;
-    // }
-
-    // const { data: insertData, error: insertError } = await supabase
-    //   .from("home_buyers")
-    //   .insert([
-    //     {
-    //       buyer_id: user.id,
-    //       builder_id: builderId,
-    //       name: name,
-    //       contact_email: email,
-    //       phone_number: phone,
-    //       address: address,
-    //     },
-    //   ]);
-
-    // if (insertError) {
-    //   setMessage("Error saving buyer details: " + insertError.message);
-    //   setLoading(false);
-    //   return;
-    // }
-
-    // // Send an email invitation (assuming you have a function set up to handle this)
-    // sendEmailInvitation(email, password);
-    // setMessage("Buyer invited successfully!");
-    // setLoading(false);
-  };
-
-  // Simulated email sending function
-  const sendEmailInvitation = (email, password) => {
-    console.log(`Email sent to ${email} with password ${password}`);
-  };
+  }
 
   return (
     <div>

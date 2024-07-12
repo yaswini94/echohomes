@@ -3,46 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "../supabase";
 import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { v4 as uuidv4 } from 'uuid';
 import deleteIcon from "../assets/delete.png";
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    // render: (text) => <a>{`/venture/${venture.venture_id}`}</a>,
-  },
-  {
-    title: 'Company Name',
-    dataIndex: 'company_name',
-    key: 'company_name',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Contact Email',
-    dataIndex: 'contact_email',
-    key: 'contact_email',
-  },
-  {
-    title: 'Phone Number',
-    dataIndex: 'phone_number',
-    key: 'phone_number',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} /></a>
-      </Space>
-    ),
-  }
-];
 
 function SupplierManagement() {
   const [suppliers, setSuppliers] = useState([]);
@@ -52,8 +13,6 @@ function SupplierManagement() {
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const uuid = uuidv4();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
@@ -69,6 +28,60 @@ function SupplierManagement() {
     setIsModalVisible(false);
   };
 
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      // render: (text) => <a>{`/venture/${venture.venture_id}`}</a>,
+    },
+    {
+      title: 'Company Name',
+      dataIndex: 'company_name',
+      key: 'company_name',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Contact Email',
+      dataIndex: 'contact_email',
+      key: 'contact_email',
+    },
+    {
+      title: 'Phone Number',
+      dataIndex: 'phone_number',
+      key: 'phone_number',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteSupplier(record?.supplier_id)}/></a>
+        </Space>
+      ),
+    }
+  ];
+
+  const deleteSupplier = async (id) => {
+    if(id) {
+      const { data, error } = await supabase
+        .from("suppliers")
+        .delete()
+        .match({ supplier_id: id });
+  
+      if (error) {
+        console.error("Error deleting supplier:", error);
+        return { error };
+      }
+  
+      fetchSuppliers();
+    }
+  }
+  
   // Function to load suppliers from Supabase
   const fetchSuppliers = async () => {
     const { data, error } = await supabase.from("suppliers").select("*");
@@ -84,7 +97,6 @@ function SupplierManagement() {
     setLoading(true);
     const { data, error } = await supabase.from("suppliers").insert([
       {
-        supplier_id: uuid,
         company_name: companyName,
         name: name,
         contact_email: email,

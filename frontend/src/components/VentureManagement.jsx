@@ -1,39 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "../supabase";
 import { useAuth } from "../auth/useAuth";
-import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal } from 'antd';
+import { Row, Col, Button, Avatar, Input, Form, Modal, Card } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import deleteIcon from "../assets/delete.png";
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-    // render: (text) => <a>{`/venture/${venture.venture_id}`}</a>,
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        {/* <a>Invite {record?.name}</a> */}
-        <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} /></a>
-      </Space>
-    ),
-  }
-];
+import editIcon from "../assets/edit.png";
 
 function VentureManagement() {
   const [ventures, setVentures] = useState([]);
@@ -43,6 +15,11 @@ function VentureManagement() {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [initialValues, setInitialValues] = useState({
+    name: '',
+    address: '',
+    description: ''
+  });
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -56,6 +33,22 @@ function VentureManagement() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  const deleteVenture = async (id) => {
+    if(id) {
+      const { data, error } = await supabase
+        .from("ventures")
+        .delete()
+        .match({ venture_id: id });
+  
+      if (error) {
+        console.error("Error deleting venture:", error);
+        return { error };
+      }
+  
+      fetchVentures();
+    }
+  }
 
   // Function to load ventures from Supabase
   const fetchVentures = async () => {
@@ -90,6 +83,13 @@ function VentureManagement() {
     setLoading(false);
   };
 
+  const editVenture = async (venture) => {
+    setName(venture?.name);
+    setAddress(venture?.address);
+    setDescription(venture?.description);
+    showModal();
+  };
+
   // Fetch ventures on component mount
   useEffect(() => {
     fetchVentures();
@@ -121,22 +121,22 @@ function VentureManagement() {
           </Button>,
         ]}
       >
-        <Form>
-          <Form.Item>
+        <Form layout="vertical" initialValues={initialValues}>
+          <Form.Item label="Name" name="name">
             <Input
               placeholder="Venture Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="Address" name="address">
             <Input
               placeholder="Address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="Description" name="description">
             <Input.TextArea
               placeholder="Description"
               value={description}
@@ -147,21 +147,34 @@ function VentureManagement() {
       </Modal>
       
       <div>
-        {/* <h3>Existing Ventures</h3> */}
         {ventures.length === 0 && <p>No ventures exist !</p>}
         {ventures.length > 0 && (
-        <Table onRow={(record, rowIndex) => {return { onClick: (event) => {useNavigate(`/venture/${record.venture_id}`)} }}} columns={columns} dataSource={ventures} />)}
-        {/* <ul>
-          {ventures.map((venture, index) => (
-            <li key={venture.venture_id}>
-              <Link to={`/venture/${venture.venture_id}`}>
-                <strong>{venture.venture_name}</strong> - {venture.location}{" "}
-                <br />
-                <em>{venture.description}</em>
-              </Link>
-            </li>
-          ))}
-        </ul> */}
+          <Row gutter={16}>
+            {ventures.map((venture, index) => (
+              <Col span={8}>
+                <Card title={
+                  <Row justify="space-between" align="middle">
+                    <Col><Link to={`/venture/${venture?.venture_id}`}><strong>{venture?.name}</strong> - {venture?.address}</Link></Col>
+                    <Col>
+                      <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => {
+                        showModal();
+                        setInitialValues({
+                          name: venture?.name || '',  
+                          address: venture?.address || '', 
+                          description: venture?.description || ''
+                        }); 
+                      }}/></a>
+                      {/* <a><Avatar src={editIcon} style={{ height: '18px', width: '18px', paddingRight: '16px' }} onClick={() => editVenture(venture?.venture_id)}/></a> */}
+                      <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteVenture(venture?.venture_id)}/></a>
+                    </Col>
+                  </Row>
+                } style={{border: '1px solid black'}} bordered={false}>
+                  <p>{venture?.description}</p>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
       </div>
     </div>
   );

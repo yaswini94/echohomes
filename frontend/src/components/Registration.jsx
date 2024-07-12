@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { supabase } from "../supabase";
+import axios from 'axios';
 import './Forms.css';
 import logo from '../assets/echohomes.png';
 import { Button, Form, Input, message, Radio } from 'antd';
@@ -29,6 +30,7 @@ const Registration = () => {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const serviceRoleKey = import.meta.env.VITE_SERVICE_ROLE_KEY;
 
   const handleRegister = async (event) => {
     // event.preventDefault();
@@ -37,77 +39,37 @@ const Registration = () => {
       email,
       password,
     });
-
     console.log({ signUpData });
 
     const { user } = signUpData;
-
     if (error) {
-      if (userType === 1) {
-        setMessage("Error registering builder: " + error.message);
-      } else if (userType === 2) {
-        setMessage("Error registering supplier: " + error.message);
-      }
-      setLoading(false);
-      return;
+      console.log(error);
+      return res.status(401).json({ error: error.message });
     }
-    if (userType === 1) {
-      const { data, insertError } = await supabase.from("builders").insert([
-        {
-          builder_id: user.id,
-          company_name: companyName,
-          contact_email: email,
-          phone_number: phoneNumber,
-          address: address,
-          name: name,
-        },
-      ]);
-  
-      if (insertError) {
-        setMessage("Error saving builder details: " + insertError.message);
-        setLoading(false);
-        return;
+    const resp = await axios.post(
+      'http://localhost:3001/register',
+      {
+        userId: user?.id,
+        email: email,
+        userType: userType,
+        companyName: companyName,
+        phoneNumber: phoneNumber,
+        name: name,
+        address: address,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${serviceRoleKey}`,
+          'Content-Type': 'application/json',
+        }
       }
-      setMessage("Builder registered successfully!");
-    } else if (userType === 2) {
-      const { data, insertError } = await supabase.from("suppliers").insert([
-        {
-          supplier_id: user.id,
-          company_name: companyName,
-          name: name,
-          contact_email: email,
-          phone_number: phoneNumber,
-          address: address,
-          registered_date: new Date().toISOString()
-        },
-      ]);
-  
-      if (insertError) {
-        setMessage("Error saving supplier details: " + insertError.message);
-        setLoading(false);
-        return;
-      }
-      setMessage("Supplier registered successfully!");
+    );
+    if (resp.ok) {
+      setMessage(data.message);
     } else {
-      const { data, insertError } = await supabase.from("home_buyers").insert([
-        {
-          buyer_id: user.id,
-          builder_id: "b765bebe-a10c-4bc5-8156-ece04f78f1ae",
-          name: name,
-          contact_email: email,
-          phone_number: phoneNumber,
-          address: address,
-        },
-      ]);
-
-      if (insertError) {
-        setMessage("Error saving buyer details: " + insertError.message);
-        setLoading(false);
-        return;
-      }
-      setMessage("Buyer registered successfully!");
+      setMessage(data.error);
+      throw new Error(data.error);
     }
-
     setLoading(false);
   };
 

@@ -2,6 +2,8 @@ import React from 'react';
 import { Layout, theme } from 'antd';
 import VentureManagement from './VentureManagement';
 import SupplierManagement from './SupplierManagement';
+import BuyerInvite from './BuyerInvite';
+
 const { Content } = Layout;
 
 const BuilderDashboard = ({ selectedKey }) => {
@@ -24,7 +26,7 @@ const BuilderDashboard = ({ selectedKey }) => {
         {selectedKey === 'home' && <p>Home</p>}
         {selectedKey === 'ventureManagement' && <VentureManagement />}
         {selectedKey === 'supplierManagement' && <SupplierManagement />}
-        {/* {selectedKey === 'buyerManagement' && <BuyerManagement />} */}
+        {selectedKey === 'buyerManagement' && <BuyerInvite />}
       </div>
     </Content>
   )
