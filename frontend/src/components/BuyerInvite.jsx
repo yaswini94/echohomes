@@ -17,7 +17,6 @@ function BuyerInvite({ builderId }) {
   };
 
   async function inviteBuyer() {
-    console.log({email});
     const tempPassword = generateRandomPassword();
     try {
       const response = await axios.post(
@@ -35,7 +34,6 @@ function BuyerInvite({ builderId }) {
           },
         }
       );
-      console.log('User invited:', response.data);
    
       const resp = await axios.post(
         'http://localhost:3001/invite',

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { supabase } from "../supabase";
-import './Forms.css';
-import logo from '../assets/echohomes.png';
+import axios from "axios";
 import { Form, Input, Button } from "antd";
+import { useNavigate } from "react-router-dom";
+
+import { supabase } from "../supabase";
+import logo from "../assets/echohomes.png";
+import "./Forms.css";
 
 const layout = {
   labelCol: {
@@ -25,53 +28,76 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+
   const handleLogin = async (event) => {
-    // event.preventDefault();
     setLoading(true);
-    const { error, session } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-      options: {
-        emailRedirectTo: "http://localhost:5173/",
-      },
+    const response = await axios.post("http://localhost:3001/login", {
+      email: email,
+      password: password,
     });
 
-    if (error) {
+    const responseData = response.data;
+
+    const { session } = responseData.data;
+
+    try {
+      const { access_token, refresh_token } = session;
+      setLoading(false);
+      setMessage("Login successful!");
+      await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      });
+      navigate("/dashboard");
+    } catch (error) {
       setMessage("Login failed: " + error.message);
       setLoading(false);
-      return;
     }
-
-    setMessage("Login successful!");
-    setLoading(false);
   };
 
   return (
     <div className="page-background">
-      <Form onFinish={handleLogin} {...layout} className='form-border'>
+      <Form onFinish={handleLogin} {...layout} className="form-border">
         <div className="center-align">
           <img src={logo} alt="Logo"></img>
         </div>
         <h2 className="form-title">Login</h2>
         <Form.Item label="Email" name="email" className="minwidth">
-          <Input type="email" placeholder="abc@domain.com" value={email} onChange={event => setEmail(event.target.value)} required></Input>
+          <Input
+            type="email"
+            placeholder="abc@domain.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          ></Input>
         </Form.Item>
         <Form.Item label="Password" name="password" className="minwidth">
-          <Input.Password placeholder="a-zA-Z0-9(Minimum 6)" value={password} onChange={event => setPassword(event.target.value)} required></Input.Password>
+          <Input.Password
+            placeholder="a-zA-Z0-9(Minimum 6)"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          ></Input.Password>
         </Form.Item>
         <div className="forgot-password">
-          <a onClick={() => supabase.auth.resetPasswordForEmail(email)}>Forgot Password ?</a>
+          <a onClick={() => supabase.auth.resetPasswordForEmail(email)}>
+            Forgot Password ?
+          </a>
         </div>
         <Form.Item {...tailLayout}>
-          <Button block type="primary" htmlType="submit" disabled={loading}>{loading ? "Logging in..." : "Login"}</Button>
+          <Button block type="primary" htmlType="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </Button>
         </Form.Item>
         {message && <p className="form-message">{message}</p>}
         <div className="top-margin center-align">
-          <span style={{color: "black"}}>Don’t have an account? </span><a href="/register">Register</a>
+          <span style={{ color: "black" }}>Don’t have an account? </span>
+          <a href="/register">Register</a>
         </div>
       </Form>
     </div>
   );
-}
+};
 
 export default Login;
