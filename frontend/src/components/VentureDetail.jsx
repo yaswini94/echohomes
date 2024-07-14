@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { supabase } from "../supabase";
 import BuyerInvite from "./BuyerInvite";
+import axiosInstance from "../helpers/axiosInstance";
 
 function VentureDetail() {
   const [venture, setVenture] = useState({});
@@ -12,25 +12,20 @@ function VentureDetail() {
   const fetchVenture = async () => {
     setLoading(true);
 
-    const { data, error } = await supabase
-      .from("ventures")
-      .select("*")
-      .eq("venture_id", id)
-      .single();
-
-    setLoading(false);
-
-    if (error) {
+    try {
+      const response = await axiosInstance.get(`/venture/${id}`);
+      setVenture(response.data);
+      setLoading(false);
+    } catch (error) {
       console.log("Error fetching ventures:", error);
-    } else {
-      setVenture(data);
+      setLoading(false);
     }
   };
 
   // Fetch ventures on component mount
   useEffect(() => {
     fetchVenture();
-  }, []);
+  }, [id]);
 
   if (loading) {
     return <p>Loading</p>;
@@ -42,7 +37,7 @@ function VentureDetail() {
     <div>
       <h2>Venture Page</h2>
       <div>
-        <strong>{venture.venture_name}</strong> - {venture.location} <br />
+        <strong>{venture.name}</strong> - {venture.address} <br />
         <em>{venture.description}</em>
       </div>
 

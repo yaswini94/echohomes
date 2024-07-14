@@ -2,11 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const { createClient } = require("@supabase/supabase-js");
 const sgMail = require("@sendgrid/mail");
+const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-sgMail.setApiKey(process.env.SENDGRIDAPI_KEY);
+app.use(bodyParser.json());
 
 // Optionally, configure CORS for specific origins
 app.use(
@@ -15,7 +18,8 @@ app.use(
   })
 );
 
-require("dotenv").config();
+sgMail.setApiKey(process.env.SENDGRIDAPI_KEY);
+
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
@@ -28,30 +32,26 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing SUPABASE_URL or SUPABASE_KEY environment variable");
 }
 
-app.post("/invite", async (req, res) => {
-  const { email, password } = req.body;
-  const msg = {
-    to: email,
-    from: "yaswini.ranga@gmail.com",
-    subject: "Sending with SendGrid is Fun",
-    text: "and easy to do anywhere, even with Node.js ",
-    html: `<strong>and easy to do anywhere, even with Node.js ${password}</strong>`,
-  };
+// JWT secret key (use a strong secret key in production)
+const jwtSecret = process.env.JWT_SECRET;
 
-  sgMail.send(msg).then(
-    () => {
-      console.log("Email sent");
-    },
-    (error) => {
-      console.error(error);
+// Middleware to verify JWT token
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-      if (error.response) {
-        console.error(error.response.body);
-      }
-    }
-  );
-  res.send("Invite is sent");
-});
+  if (token == null) {
+    return res.sendStatus(401); // Unauthorized
+  }
+
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error) {
+    return res.sendStatus(403); // Forbidden
+  }
+  const { user } = data;
+  req.user = user;
+  next();
+};
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -107,6 +107,75 @@ app.post("/register", async (req, res) => {
       userType === 1 ? "Builder" : "Supplier"
     } registered successfully!`,
   });
+});
+
+app.post("/venture", authenticateToken, async (req, res) => {
+  const { name, address, description } = req.body;
+  const user = req.user;
+
+  const { data, error } = await supabase.from("ventures").insert({
+    builder_id: user.id,
+    name: name,
+    address: address,
+    description: description,
+  });
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.status(201).json(data);
+});
+
+app.get("/ventures", authenticateToken, async (req, res) => {
+  const { data, error } = await supabase.from("ventures").select("*");
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
+app.get("/venture/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  const { data, error } = await supabase
+    .from("ventures")
+    .select("*")
+    .eq("venture_id", id)
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
+app.post("/invite", async (req, res) => {
+  const { email, password } = req.body;
+  const msg = {
+    to: email,
+    from: "yaswini.ranga@gmail.com",
+    subject: "Sending with SendGrid is Fun",
+    text: "and easy to do anywhere, even with Node.js ",
+    html: `<strong>and easy to do anywhere, even with Node.js ${password}</strong>`,
+  };
+
+  sgMail.send(msg).then(
+    () => {
+      console.log("Email sent");
+    },
+    (error) => {
+      console.error(error);
+
+      if (error.response) {
+        console.error(error.response.body);
+      }
+    }
+  );
+  res.send("Invite is sent");
 });
 
 app.get("/", (req, res) => {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axiosInstance from "../helpers/axiosInstance";
 import { supabase } from "../supabase";
 import { useAuth } from "../auth/useAuth";
-import { Row, Col, Button, Avatar, Input, Form, Modal, Card } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Row, Col, Button, Avatar, Input, Form, Modal, Card } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
 
@@ -16,9 +17,9 @@ function VentureManagement() {
   const { user } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [initialValues, setInitialValues] = useState({
-    name: '',
-    address: '',
-    description: ''
+    name: "",
+    address: "",
+    description: "",
   });
 
   const showModal = () => {
@@ -35,52 +36,50 @@ function VentureManagement() {
   };
 
   const deleteVenture = async (id) => {
-    if(id) {
+    if (id) {
       const { data, error } = await supabase
         .from("ventures")
         .delete()
         .match({ venture_id: id });
-  
+
       if (error) {
         console.error("Error deleting venture:", error);
         return { error };
       }
-  
+
       fetchVentures();
     }
-  }
+  };
 
   // Function to load ventures from Supabase
   const fetchVentures = async () => {
-    const { data, error } = await supabase.from("ventures").select("*");
-    if (error) {
+    try {
+      const response = await axiosInstance.get("/ventures");
+      setVentures(response.data);
+    } catch (error) {
       console.log("Error fetching ventures:", error);
-    } else {
-      setVentures(data);
     }
   };
 
   // Function to add a new venture
   const addVenture = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("ventures").insert([
-      {
-        builder_id: user.id,
-        name: name,
-        address: address,
-        description: description,
-      },
-    ]);
-    if (error) {
-      console.log("Error adding venture:", error);
-    } else {
-      fetchVentures();
-      setVentures([...ventures, data]);
+
+    try {
+      const data = await axiosInstance.post("/venture", {
+        name,
+        address,
+        description,
+      });
+
+      setLoading(false);
       setName("");
       setAddress("");
       setDescription("");
+    } catch (error) {
+      console.log("Error adding venture:", error);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const editVenture = async (venture) => {
@@ -116,7 +115,12 @@ function VentureManagement() {
           <Button key="back" onClick={handleCancel}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+          <Button
+            key="submit"
+            type="primary"
+            loading={loading}
+            onClick={handleOk}
+          >
             {loading ? "Adding..." : "Add Venture"}
           </Button>,
         ]}
@@ -145,30 +149,50 @@ function VentureManagement() {
           </Form.Item>
         </Form>
       </Modal>
-      
+
       <div>
         {ventures.length === 0 && <p>No ventures exist !</p>}
         {ventures.length > 0 && (
           <Row gutter={16}>
             {ventures.map((venture, index) => (
               <Col span={8}>
-                <Card title={
-                  <Row justify="space-between" align="middle">
-                    <Col><Link to={`/venture/${venture?.venture_id}`}><strong>{venture?.name}</strong> - {venture?.address}</Link></Col>
-                    <Col>
-                      <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => {
-                        showModal();
-                        setInitialValues({
-                          name: venture?.name || '',  
-                          address: venture?.address || '', 
-                          description: venture?.description || ''
-                        }); 
-                      }}/></a>
-                      {/* <a><Avatar src={editIcon} style={{ height: '18px', width: '18px', paddingRight: '16px' }} onClick={() => editVenture(venture?.venture_id)}/></a> */}
-                      <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteVenture(venture?.venture_id)}/></a>
-                    </Col>
-                  </Row>
-                } style={{border: '1px solid black'}} bordered={false}>
+                <Card
+                  title={
+                    <Row justify="space-between" align="middle">
+                      <Col>
+                        <Link to={`/venture/${venture?.venture_id}`}>
+                          <strong>{venture?.name}</strong> - {venture?.address}
+                        </Link>
+                      </Col>
+                      <Col>
+                        <a>
+                          <Avatar
+                            src={editIcon}
+                            style={{ height: "18px", width: "18px" }}
+                            onClick={() => {
+                              showModal();
+                              setInitialValues({
+                                name: venture?.name || "",
+                                address: venture?.address || "",
+                                description: venture?.description || "",
+                              });
+                            }}
+                          />
+                        </a>
+                        {/* <a><Avatar src={editIcon} style={{ height: '18px', width: '18px', paddingRight: '16px' }} onClick={() => editVenture(venture?.venture_id)}/></a> */}
+                        <a>
+                          <Avatar
+                            src={deleteIcon}
+                            style={{ height: "18px", width: "18px" }}
+                            onClick={() => deleteVenture(venture?.venture_id)}
+                          />
+                        </a>
+                      </Col>
+                    </Row>
+                  }
+                  style={{ border: "1px solid black" }}
+                  bordered={false}
+                >
                   <p>{venture?.description}</p>
                 </Card>
               </Col>

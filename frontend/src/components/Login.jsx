@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
 import logo from "../assets/echohomes.png";
 import "./Forms.css";
+import axiosInstance from "../helpers/axiosInstance";
 
 const layout = {
   labelCol: {
@@ -32,7 +33,7 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     setLoading(true);
-    const response = await axios.post("http://localhost:3001/login", {
+    const response = await axiosInstance.post("/login", {
       email: email,
       password: password,
     });
