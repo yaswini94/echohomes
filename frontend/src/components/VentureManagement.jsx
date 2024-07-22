@@ -66,7 +66,7 @@ function VentureManagement() {
     setLoading(true);
 
     try {
-      const data = await axiosInstance.post("/venture", {
+      const data = await axiosInstance.post("/ventures", {
         name,
         address,
         description,
@@ -160,7 +160,7 @@ function VentureManagement() {
                   title={
                     <Row justify="space-between" align="middle">
                       <Col>
-                        <Link to={`/venture/${venture?.venture_id}`}>
+                        <Link to={`/ventures/${venture?.venture_id}`}>
                           <strong>{venture?.name}</strong> - {venture?.address}
                         </Link>
                       </Col>

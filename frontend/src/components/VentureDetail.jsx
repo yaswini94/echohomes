@@ -13,7 +13,7 @@ function VentureDetail() {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.get(`/venture/${id}`);
+      const response = await axiosInstance.get(`/ventures/${id}`);
       setVenture(response.data);
       setLoading(false);
     } catch (error) {
@@ -30,8 +30,6 @@ function VentureDetail() {
   if (loading) {
     return <p>Loading</p>;
   }
-
-  console.log({ venture });
 
   return (
     <div>

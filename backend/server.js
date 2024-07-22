@@ -109,7 +109,7 @@ app.post("/register", async (req, res) => {
   });
 });
 
-app.post("/venture", authenticateToken, async (req, res) => {
+app.post("/ventures", authenticateToken, async (req, res) => {
   const { name, address, description } = req.body;
   const user = req.user;
 
@@ -137,7 +137,7 @@ app.get("/ventures", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-app.get("/venture/:id", authenticateToken, async (req, res) => {
+app.get("/ventures/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   const { data, error } = await supabase
@@ -153,8 +153,35 @@ app.get("/venture/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-app.post("/invite", async (req, res) => {
-  const { email, password } = req.body;
+app.get("/buyers", authenticateToken, async (req, res) => {
+  const { data, error } = await supabase.from("home_buyers").select("*");
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
+app.get("/buyers/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  const { data, error } = await supabase
+    .from("home_buyers")
+    .select("*")
+    .eq("buyer_id", id)
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
+app.post("/invite", authenticateToken, async (req, res) => {
+  const { email, password, phone_number, address, name, house_type } = req.body;
+  const user = req.user;
   const msg = {
     to: email,
     from: "yaswini.ranga@gmail.com",
@@ -162,6 +189,32 @@ app.post("/invite", async (req, res) => {
     text: "and easy to do anywhere, even with Node.js ",
     html: `<strong>and easy to do anywhere, even with Node.js ${password}</strong>`,
   };
+  console.log({
+    email,
+    password,
+    phone_number,
+    address,
+    name,
+    house_type,
+    user,
+  });
+
+  const { data: createdUser, createdUserError } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  console.log({ createdUser, createdUserError });
+
+  const { data, error } = await supabase.from("home_buyers").insert({
+    buyer_id: createdUser.user.id,
+    builder_id: user.id,
+    name,
+    address,
+    phone_number,
+    house_type,
+    contact_email: email,
+  });
 
   sgMail.send(msg).then(
     () => {
@@ -175,6 +228,7 @@ app.post("/invite", async (req, res) => {
       }
     }
   );
+
   res.send("Invite is sent");
 });
 

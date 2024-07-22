@@ -43,7 +43,7 @@ function App() {
             }
           />
           <Route
-            path="/venture/:id"
+            path="/ventures/:id"
             element={
               <PrivateRoute>
                 <VentureDetail />
