@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Select, Badge, Dropdown, Space, Typography } from 'antd';
-import { UserOutlined, SettingOutlined, BellOutlined, DownOutlined, MessageOutlined } from '@ant-design/icons';
-import titleLogo from '../assets/echohomesTitle.png';
-import exitLogo from '../assets/exit.png';
+import React, { useEffect, useState } from "react";
+import {
+  Layout,
+  Menu,
+  Avatar,
+  Select,
+  Badge,
+  Dropdown,
+  Space,
+  Typography,
+} from "antd";
+import {
+  UserOutlined,
+  SettingOutlined,
+  BellOutlined,
+  DownOutlined,
+  MessageOutlined,
+} from "@ant-design/icons";
+import axiosInstance from "../helpers/axiosInstance";
+import titleLogo from "../assets/echohomesTitle.png";
+import exitLogo from "../assets/exit.png";
 import { supabase } from "../supabase";
 const { Header } = Layout;
 
 const HeaderLayout = () => {
   // const [language, setLanguage] = useState("EN-GB");
+  const [ventures, setVentures] = useState([]);
+  const [selectedVenture, setSelectedVenture] = useState(null);
 
   // const onLanguageChange = (value) => {
   //   switch (value) {
@@ -27,29 +45,46 @@ const HeaderLayout = () => {
   //     default:
   //   }
   // };
-  const venture_items = [
-    {
-      key: "1",
-      label: "venture 1",
-      // trigger: method(),
-    },
-    {
-      key: "2",
-      label: "venture 2",
-    }
-  ];
+
+  useEffect(() => {
+    const fetchVentures = async () => {
+      try {
+        const response = await axiosInstance.get("/ventures");
+        const _ventures = (response?.data || []).map((venture) => {
+          return {
+            value: venture.venture_id,
+            label: venture.name,
+          };
+        });
+        setVentures(_ventures);
+        const _selectedVenture = _ventures[0].value;
+        setSelectedVenture(_selectedVenture);
+        localStorage.setItem("selectedVenture", _selectedVenture);
+      } catch (error) {
+        console.log("Error fetching ventures:", error);
+      }
+    };
+
+    fetchVentures();
+  }, []);
+
+  const onSelectVenture = (value) => {
+    setSelectedVenture(value);
+    localStorage.setItem("selectedVenture", value);
+  };
+
   const user_items = [
     {
-      key: '1',
+      key: "1",
       label: (
         <a target="_blank" rel="noopener noreferrer" href="">
           Settings
         </a>
       ),
-      icon: <SettingOutlined />
+      icon: <SettingOutlined />,
     },
     {
-      key: '2',
+      key: "2",
       label: (
         <>
           <a target="_blank" rel="noopener noreferrer" href="">
@@ -58,22 +93,22 @@ const HeaderLayout = () => {
           {/* <Badge count={5} style={{marginLeft: "8px"}}></Badge> */}
         </>
       ),
-      icon: <BellOutlined />
+      icon: <BellOutlined />,
     },
     {
-      key: '3',
+      key: "3",
       label: (
         <a rel="noopener noreferrer" onClick={() => supabase.auth.signOut()}>
           Signout
         </a>
       ),
-      icon: <Avatar src={exitLogo} style={{ height: '18px', width: '18px' }} />
-    }
+      icon: <Avatar src={exitLogo} style={{ height: "18px", width: "18px" }} />,
+    },
   ];
 
   const languages = [
     {
-      key: '1',
+      key: "1",
       label: (
         <a target="_blank" rel="noopener noreferrer" href="">
           EN-GB
@@ -81,7 +116,7 @@ const HeaderLayout = () => {
       ),
     },
     {
-      key: '2',
+      key: "2",
       label: (
         <a target="_blank" rel="noopener noreferrer" href="">
           EN-US
@@ -89,26 +124,39 @@ const HeaderLayout = () => {
       ),
     },
   ];
+
   return (
-    <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 30px' }}>
-      <div style={{ marginTop: '20px'}}>
-        <img src={titleLogo} alt="Title Logo" style={{ height: '32px' }} />
+    <Header
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "0 30px",
+      }}
+    >
+      <div style={{ marginTop: "20px" }}>
+        <img src={titleLogo} alt="Title Logo" style={{ height: "32px" }} />
       </div>
       <div>
-        <Dropdown menu={{ items: venture_items }}>
-          <a style={{color: 'white', paddingRight: '30px'}} onClick={(event) => event.preventDefault()}>
-            <span> 
-              <Space>
-                Select Venture
-                <DownOutlined />
-              </Space>
-            </span>
-          </a>
-        </Dropdown>
-        <MessageOutlined style={{color: "white"}} onClick={(event) => event.preventDefault()} />
+        {console.log({ selectedVenture })}
+        <Select
+          value={selectedVenture}
+          style={{ width: 120 }}
+          onChange={onSelectVenture}
+          options={ventures}
+        />
+        <MessageOutlined
+          style={{ color: "white" }}
+          onClick={(event) => event.preventDefault()}
+        />
         {/* <Dropdown menu={{languages}}> */}
-          <a style={{margin: "0 20px", color: "white"}} onClick={(event) => event.preventDefault()}>EN-GB</a>
-          {/* <Select key="language"
+        <a
+          style={{ margin: "0 20px", color: "white" }}
+          onClick={(event) => event.preventDefault()}
+        >
+          EN-GB
+        </a>
+        {/* <Select key="language"
             style={{color: "white", border: "none"}}
             // placeholder={{language}}
             onClick={(event) => event.preventDefault()}
@@ -121,10 +169,20 @@ const HeaderLayout = () => {
           </Select> */}
         {/* </Dropdown> */}
         <Dropdown menu={{ items: user_items }}>
-          <a style={{color: "white"}} onClick={(event) => event.preventDefault()}>
-            <span> 
+          <a
+            style={{ color: "white" }}
+            onClick={(event) => event.preventDefault()}
+          >
+            <span>
               <Space>
-                <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00', fontSize: '100%' }} icon={<UserOutlined />} />
+                <Avatar
+                  style={{
+                    backgroundColor: "#fde3cf",
+                    color: "#f56a00",
+                    fontSize: "100%",
+                  }}
+                  icon={<UserOutlined />}
+                />
                 <DownOutlined />
               </Space>
             </span>

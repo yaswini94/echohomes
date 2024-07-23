@@ -56,13 +56,13 @@ const authenticateToken = async (req, res, next) => {
 app.post("/resetlink", async (req, res) => {
   const { email } = req.body;
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: '/register',
+    redirectTo: "/register",
   });
   //   {
   //   email: email,
   // });
   console.log("error here is ", error);
-  if (error) return res.status(401).json({ error: error.message });
+  if (error) return res.status(400).json({ error: error.message });
   res.json({ message: "Reset password email sent successful", data });
 });
 
@@ -73,7 +73,7 @@ app.post("/login", async (req, res) => {
     password: password,
   });
 
-  if (error) return res.status(401).json({ error: error.message });
+  if (error) return res.status(400).json({ error: error.message });
   res.json({ message: "Login successful", data });
 });
 
@@ -86,7 +86,7 @@ app.post("/register", async (req, res) => {
     password,
   });
 
-  if (error) return res.status(401).json({ error: error.message });
+  if (error) return res.status(400).json({ error: error.message });
 
   const { user } = signUpData;
   const userId = user.id;
@@ -109,12 +109,12 @@ app.post("/register", async (req, res) => {
           contact_email: email,
           phone_number: phoneNumber,
           address: address,
-          venture_id: 'f24163fc-d122-416a-a0d3-620ba1fbadcf', // edit later with proper value
+          venture_id: "f24163fc-d122-416a-a0d3-620ba1fbadcf", // edit later with proper value
           registered_date: new Date().toISOString(),
         };
   const { data, insertError } = await supabase.from(table).insert([payload]);
 
-  if (insertError) return res.status(401).json({ error: insertError.message });
+  if (insertError) return res.status(400).json({ error: insertError.message });
 
   res.status(200).json({
     message: `${
@@ -170,9 +170,10 @@ app.post("/addVenture", authenticateToken, async (req, res) => {
 app.post("/updateVenture", authenticateToken, async (req, res) => {
   const { name, address, description, ventureId } = req.body;
 
-  const { data, error } = await supabase.from("ventures")
-  .update({ name, address, description })
-  .eq('venture_id', ventureId);
+  const { data, error } = await supabase
+    .from("ventures")
+    .update({ name, address, description })
+    .eq("venture_id", ventureId);
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -182,6 +183,8 @@ app.post("/updateVenture", authenticateToken, async (req, res) => {
 
 app.get("/ventures", authenticateToken, async (req, res) => {
   const { data, error } = await supabase.from("ventures").select("*");
+
+  console.log({ data, error });
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -217,7 +220,7 @@ app.post("/addSupplier", authenticateToken, async (req, res) => {
     contact_email,
     phone_number,
     address: address,
-    registered_date: new Date().toISOString()
+    registered_date: new Date().toISOString(),
   });
 
   if (error) {
@@ -228,11 +231,19 @@ app.post("/addSupplier", authenticateToken, async (req, res) => {
 });
 
 app.post("/updateSupplier", authenticateToken, async (req, res) => {
-  const { name, contact_email, address, phone_number, company_name, supplier_id } = req.body;
+  const {
+    name,
+    contact_email,
+    address,
+    phone_number,
+    company_name,
+    supplier_id,
+  } = req.body;
 
-  const { data, error } = await supabase.from("suppliers")
-  .update({ name, contact_email, address, phone_number, company_name })
-  .eq('supplier_id', supplier_id);
+  const { data, error } = await supabase
+    .from("suppliers")
+    .update({ name, contact_email, address, phone_number, company_name })
+    .eq("supplier_id", supplier_id);
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -293,7 +304,15 @@ app.get("/buyers/:id", authenticateToken, async (req, res) => {
 });
 
 app.post("/invite", authenticateToken, async (req, res) => {
-  const { email, password, phone_number, address, name, house_type } = req.body;
+  const {
+    email,
+    password,
+    phone_number,
+    address,
+    name,
+    house_type,
+    venture_id,
+  } = req.body;
   const user = req.user;
   const msg = {
     to: email,
@@ -308,7 +327,14 @@ app.post("/invite", authenticateToken, async (req, res) => {
     password,
   });
 
-  if (createdUserError) return res.status(401).json({ error: createdUserError.message });
+  if (createdUserError) {
+    return res.status(400).json({ error: createdUserError.message });
+  }
+
+  console.log({
+    createdUserId: createdUser?.user?.id,
+    builder_id: user.id,
+  });
 
   const { data, error } = await supabase.from("buyers").insert({
     buyer_id: createdUser?.user?.id,
@@ -318,9 +344,14 @@ app.post("/invite", authenticateToken, async (req, res) => {
     phone_number,
     house_type,
     contact_email: email,
-    venture_id: 'f24163fc-d122-416a-a0d3-620ba1fbadcf' // edit later with proper value
+    venture_id,
   });
-  if (error) return res.status(401).json({ error: error.message });
+
+  console.log({ data, error });
+
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }
 
   sgMail.send(msg).then(
     () => {
@@ -339,11 +370,13 @@ app.post("/invite", authenticateToken, async (req, res) => {
 });
 
 app.post("/updateBuyer", authenticateToken, async (req, res) => {
-  const { name, contact_email, address, phone_number, house_type, buyer_id } = req.body;
+  const { name, contact_email, address, phone_number, house_type, buyer_id } =
+    req.body;
 
-  const { data, error } = await supabase.from("buyers")
-  .update({ name, contact_email, address, phone_number, house_type })
-  .eq('buyer_id', buyer_id);
+  const { data, error } = await supabase
+    .from("buyers")
+    .update({ name, contact_email, address, phone_number, house_type })
+    .eq("buyer_id", buyer_id);
 
   if (error) {
     return res.status(500).json({ error: error.message });

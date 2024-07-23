@@ -78,7 +78,7 @@ function BuyerInvite() {
   };
 
   const onHouseTypeChange = (value) => {
-    const selectedItem = items.find(item => item.key === value.key);
+    const selectedItem = items.find((item) => item.key === value.key);
     setHouseType(selectedItem ? selectedItem.label : null);
   };
   const columns = [
@@ -147,6 +147,7 @@ function BuyerInvite() {
 
   async function inviteBuyer() {
     const tempPassword = generateRandomPassword();
+    const ventureId = localStorage.getItem("selectedVenture");
     try {
       const resp = await axiosInstance.post("http://localhost:3001/invite", {
         email,
@@ -155,6 +156,7 @@ function BuyerInvite() {
         address,
         phone_number: phoneNumber,
         house_type: houseType,
+        venture_id: ventureId,
       });
       console.log("email invite sent:", resp.data);
       fetchBuyers();
@@ -176,7 +178,7 @@ function BuyerInvite() {
         address,
         phone_number: phoneNumber,
         house_type: houseType,
-        buyer_id: buyerId
+        buyer_id: buyerId,
       });
       setAddress("");
       setName("");
@@ -293,29 +295,27 @@ function BuyerInvite() {
                 menu={{
                   items,
                   selectable: true,
-                  onClick: onHouseTypeChange
+                  onClick: onHouseTypeChange,
                 }}
               >
-                <Typography.Link style={{
-                  width: '100%',
-                  height: '32px',
-                  padding: '4px 11px',
-                  border: '1px solid #d9d9d9',
-                  borderRadius: '6px',
-                  color: 'rgba(0, 0, 0, 0.85)',
-                  lineHeight: '1.5715',
-                  display: 'flex', 
-                  justifyContent: 'space-between'
+                <Typography.Link
+                  style={{
+                    width: "100%",
+                    height: "32px",
+                    padding: "4px 11px",
+                    border: "1px solid #d9d9d9",
+                    borderRadius: "6px",
+                    color: "rgba(0, 0, 0, 0.85)",
+                    lineHeight: "1.5715",
+                    display: "flex",
+                    justifyContent: "space-between",
                   }}
                 >
                   <div>
                     {houseType ? (
-                      <Space>
-                        {houseType}
-                      </Space>
-                      ) : (<Space>
-                        Select House Type
-                      </Space>
+                      <Space>{houseType}</Space>
+                    ) : (
+                      <Space>Select House Type</Space>
                     )}
                   </div>
                   <div>
@@ -385,29 +385,27 @@ function BuyerInvite() {
                 menu={{
                   items,
                   selectable: true,
-                  onClick: onHouseTypeChange
+                  onClick: onHouseTypeChange,
                 }}
               >
-                <Typography.Link style={{
-                  width: '100%',
-                  height: '32px',
-                  padding: '4px 11px',
-                  border: '1px solid #d9d9d9',
-                  borderRadius: '6px',
-                  color: 'rgba(0, 0, 0, 0.85)',
-                  lineHeight: '1.5715',
-                  display: 'flex', 
-                  justifyContent: 'space-between'
+                <Typography.Link
+                  style={{
+                    width: "100%",
+                    height: "32px",
+                    padding: "4px 11px",
+                    border: "1px solid #d9d9d9",
+                    borderRadius: "6px",
+                    color: "rgba(0, 0, 0, 0.85)",
+                    lineHeight: "1.5715",
+                    display: "flex",
+                    justifyContent: "space-between",
                   }}
                 >
                   <div>
                     {houseType ? (
-                      <Space>
-                        {houseType}
-                      </Space>
-                      ) : (<Space>
-                        Select House Type
-                      </Space>
+                      <Space>{houseType}</Space>
+                    ) : (
+                      <Space>Select House Type</Space>
                     )}
                   </div>
                   <div>
