@@ -94,3 +94,8 @@
   padding-left: 50px;
   min-width: 1920px;
 }
+.disabled-link {
+  color: gray;
+  cursor: not-allowed;
+  text-decoration: none;
+}

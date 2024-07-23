@@ -35,14 +35,13 @@ const DashboardLayout = () => {
         return;
       }
 
-      // Check if the user is a home buyer
-      const isBuyer = await checkIdExists('home_buyers', userId, 'buyer_id');
+      // Check if the user is buyer
+      const isBuyer = await checkIdExists('buyers', userId, 'buyer_id');
       if (isBuyer) {
         setUserType("buyer");
         return;
       }
 
-      // setUserType("buyer");
       // If none of the above, set a default or handle the user differently
       console.log("No specific user type found.");
     } catch (err) {

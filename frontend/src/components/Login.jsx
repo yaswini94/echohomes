@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Form, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
-
 import { supabase } from "../supabase";
 import logo from "../assets/echohomes.png";
 import "./Forms.css";
 import axiosInstance from "../helpers/axiosInstance";
+import axios from "axios";
+const serviceRoleKey = import.meta.env.VITE_SERVICE_ROLE_KEY;
 
 const layout = {
   labelCol: {
@@ -33,16 +33,15 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     setLoading(true);
-    const response = await axiosInstance.post("/login", {
-      email: email,
-      password: password,
-    });
-
-    const responseData = response.data;
-
-    const { session } = responseData.data;
-
     try {
+      const response = await axiosInstance.post("/login", {
+        email: email,
+        password: password,
+      });
+  
+      const responseData = response.data;
+      const { session } = responseData.data;
+  
       const { access_token, refresh_token } = session;
       setLoading(false);
       setMessage("Login successful!");
@@ -53,6 +52,33 @@ const Login = () => {
       navigate("/dashboard");
     } catch (error) {
       setMessage("Login failed: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const resetLink = async (event) => {
+    setLoading(true);
+    try {
+      const response = await axios.post("http://localhost:3001/resetlink", {
+      // const response = await axiosInstance.post("/resetlink", {
+        email: email,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceRoleKey}`,
+        },
+      });
+      // const responseData = response.data;
+
+      // const { session } = responseData.data;
+
+    
+      // const { access_token, refresh_token } = session;
+      setLoading(false);
+      setMessage("Sent mail for reset password!");
+    } catch (error) {
+      setMessage("Reset password failed " + error.message);
       setLoading(false);
     }
   };
@@ -82,9 +108,14 @@ const Login = () => {
           ></Input.Password>
         </Form.Item>
         <div className="forgot-password">
-          <a onClick={() => supabase.auth.resetPasswordForEmail(email)}>
-            Forgot Password ?
-          </a>
+          {email ? (<a onClick={resetLink}>
+              Forgot Password?
+            </a>
+          ) : (
+            <span className="disabled-link">
+              Forgot Password?
+            </span>
+          )}
         </div>
         <Form.Item {...tailLayout}>
           <Button block type="primary" htmlType="submit" disabled={loading}>

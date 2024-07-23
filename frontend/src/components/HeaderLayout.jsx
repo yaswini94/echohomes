@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Select, Badge, Dropdown, Space } from 'antd';
+import { Layout, Menu, Avatar, Select, Badge, Dropdown, Space, Typography } from 'antd';
 import { UserOutlined, SettingOutlined, BellOutlined, DownOutlined, MessageOutlined } from '@ant-design/icons';
 import titleLogo from '../assets/echohomesTitle.png';
 import exitLogo from '../assets/exit.png';
@@ -27,8 +27,18 @@ const HeaderLayout = () => {
   //     default:
   //   }
   // };
-
-  const items = [
+  const venture_items = [
+    {
+      key: "1",
+      label: "venture 1",
+      // trigger: method(),
+    },
+    {
+      key: "2",
+      label: "venture 2",
+    }
+  ];
+  const user_items = [
     {
       key: '1',
       label: (
@@ -85,6 +95,17 @@ const HeaderLayout = () => {
         <img src={titleLogo} alt="Title Logo" style={{ height: '32px' }} />
       </div>
       <div>
+        <>
+        <Dropdown menu={{ venture_items }}>
+          <a style={{color: "white"}} onClick={(event) => event.preventDefault()}>
+            <span> 
+              <Space>
+                House type
+                <DownOutlined />
+              </Space>
+            </span>
+          </a>
+        </Dropdown>
         <MessageOutlined style={{color: "white"}} onClick={(event) => event.preventDefault()} />
         {/* <Dropdown menu={{languages}}> */}
           <a style={{margin: "0 20px", color: "white"}} onClick={(event) => event.preventDefault()}>EN-GB</a>
@@ -100,7 +121,7 @@ const HeaderLayout = () => {
             <Option value="en-gb">EN-GB</Option>
           </Select> */}
         {/* </Dropdown> */}
-        <Dropdown menu={{ items }}>
+        <Dropdown menu={{ user_items }}>
           <a style={{color: "white"}} onClick={(event) => event.preventDefault()}>
             <span> 
               <Space>
@@ -135,6 +156,7 @@ const HeaderLayout = () => {
             Signout
           </Menu.Item>
         </Menu> */}
+        </>
       </div>
     </Header>
   );

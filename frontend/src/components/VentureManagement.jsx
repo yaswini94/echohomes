@@ -14,7 +14,6 @@ function VentureManagement() {
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [initialValues, setInitialValues] = useState({
     name: "",

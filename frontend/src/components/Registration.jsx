@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./Forms.css";
 import logo from "../assets/echohomes.png";
 import { Button, Form, Input, message, Radio } from "antd";

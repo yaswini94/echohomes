@@ -53,6 +53,19 @@ const authenticateToken = async (req, res, next) => {
   next();
 };
 
+app.post("/resetlink", async (req, res) => {
+  const { email } = req.body;
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: '/register',
+  });
+  //   {
+  //   email: email,
+  // });
+  console.log("error here is ", error);
+  if (error) return res.status(401).json({ error: error.message });
+  res.json({ message: "Reset password email sent successful", data });
+});
+
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -109,6 +122,32 @@ app.post("/register", async (req, res) => {
   });
 });
 
+// app.get("/builders", authenticateToken, async (req, res) => {
+//   const { data, error } = await supabase.from("builders").select("*");
+
+//   if (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+
+//   res.json(data);
+// });
+
+app.get("/builders/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  const { data, error } = await supabase
+    .from("builders")
+    .select("*")
+    .eq("builder_id", id)
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
 app.post("/ventures", authenticateToken, async (req, res) => {
   const { name, address, description } = req.body;
   const user = req.user;
@@ -153,8 +192,34 @@ app.get("/ventures/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+app.get("/suppliers", authenticateToken, async (req, res) => {
+  const { data, error } = await supabase.from("suppliers").select("*");
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
+app.get("/suppliers/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  const { data, error } = await supabase
+    .from("suppliers")
+    .select("*")
+    .eq("supplier_id", id)
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
 app.get("/buyers", authenticateToken, async (req, res) => {
-  const { data, error } = await supabase.from("home_buyers").select("*");
+  const { data, error } = await supabase.from("buyers").select("*");
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -167,7 +232,7 @@ app.get("/buyers/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   const { data, error } = await supabase
-    .from("home_buyers")
+    .from("buyers")
     .select("*")
     .eq("buyer_id", id)
     .single();
@@ -184,30 +249,23 @@ app.post("/invite", authenticateToken, async (req, res) => {
   const user = req.user;
   const msg = {
     to: email,
-    from: "yaswini.ranga@gmail.com",
-    subject: "Sending with SendGrid is Fun",
-    text: "and easy to do anywhere, even with Node.js ",
-    html: `<strong>and easy to do anywhere, even with Node.js ${password}</strong>`,
+    from: "official.echohomes@gmail.com",
+    subject: "Invitation to Echohomes as Buyer",
+    text: `Hi ${name}, \n We would like to invite you to join echohomes as buyer. \n Please use below link ${password} to reset password. `,
+    html: `<p>Hi ${name}, \n We would like to invite you to join echohomes as buyer.</p> <p>Please use below link <a>${password}</a> to reset password. </p> <strong>Continue to Login after reset password. Use the link <a>${password}</a></strong>`,
   };
-  console.log({
-    email,
-    password,
-    phone_number,
-    address,
-    name,
-    house_type,
-    user,
-  });
 
   const { data: createdUser, createdUserError } = await supabase.auth.signUp({
     email,
     password,
   });
 
-  console.log({ createdUser, createdUserError });
+  if (createdUserError) return res.status(401).json({ error: createdUserError.message });
 
-  const { data, error } = await supabase.from("home_buyers").insert({
-    buyer_id: createdUser.user.id,
+  console.log({ user, createdUser, createdUserError });
+
+  const { data, error } = await supabase.from("buyers").insert({
+    buyer_id: createdUser?.user?.id,
     builder_id: user.id,
     name,
     address,
@@ -215,6 +273,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
     house_type,
     contact_email: email,
   });
+  if (error) return res.status(401).json({ error: error.message });
 
   sgMail.send(msg).then(
     () => {

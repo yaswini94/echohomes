@@ -17,8 +17,6 @@ import {
 } from "antd";
 import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
-const serviceRoleKey = import.meta.env.VITE_SERVICE_ROLE_KEY;
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 
 function BuyerInvite({ builderId }) {
   const [buyers, setBuyers] = useState([]);
@@ -119,6 +117,7 @@ function BuyerInvite({ builderId }) {
         house_type: houseType,
       });
       console.log("email invite sent:", resp.data);
+      fetchBuyers();
     } catch (error) {
       console.error(
         "Error inviting user:",
@@ -130,7 +129,7 @@ function BuyerInvite({ builderId }) {
   const deleteBuyer = async (id) => {
     if (id) {
       const { data, error } = await supabase
-        .from("home_buyers")
+        .from("buyers")
         .delete()
         .match({ buyer_id: id });
 
