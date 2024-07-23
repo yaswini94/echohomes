@@ -4,6 +4,8 @@ import { supabase } from "../supabase";
 import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import deleteIcon from "../assets/delete.png";
+import editIcon from "../assets/edit.png";
+import axiosInstance from "../helpers/axiosInstance";
 
 function SupplierManagement() {
   const [suppliers, setSuppliers] = useState([]);
@@ -12,10 +14,17 @@ function SupplierManagement() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
+  const [supplierId, setSupplierId] = useState("");
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   const showModal = () => {
+    setName("");
+    setPhoneNumber("");
+    setAddress("");
+    setEmail("");
+    setCompanyName("");
     setIsModalVisible(true);
   };
 
@@ -26,6 +35,18 @@ function SupplierManagement() {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+  const showEditModal = () => {
+    setIsEditModalVisible(true);
+  };
+
+  const handleEditOk = () => {
+    updateSupplier();
+    setIsEditModalVisible(false);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditModalVisible(false);
   };
 
   const columns = [
@@ -60,6 +81,21 @@ function SupplierManagement() {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
+          <a>
+            <Avatar
+              src={editIcon}
+              style={{ height: "18px", width: "18px" }}
+              onClick={() => {
+                setAddress(record?.address);
+                setName(record?.name);
+                setSupplierId(record?.supplier_id);
+                setPhoneNumber(record?.phone_number);
+                setEmail(record?.contact_email);
+                setCompanyName(record?.company_name);
+                showEditModal();
+              }}
+            />
+          </a>
           <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteSupplier(record?.supplier_id)}/></a>
         </Space>
       ),
@@ -95,26 +131,44 @@ function SupplierManagement() {
   // Function to add a new supplier
   const addSupplier = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("suppliers").insert([
-      {
+
+    try {
+      const data = await axiosInstance.post("/addSupplier", {
         company_name: companyName,
         name: name,
         contact_email: email,
         phone_number: phoneNumber,
         address: address,
-        registered_date: new Date().toISOString()
-      },
-    ]);
-    if (error) {
-      console.log("Error adding supplier:", error);
-    } else {
+      });
       fetchSuppliers();
-      setSuppliers([...suppliers, data]);
+    } catch (error) {
+      console.log("Error adding supplier:", error);
+    }
+    setLoading(false);
+  };
+
+  // Function to update  supplier
+  const updateSupplier = async () => {
+    setLoading(true);
+
+    try {
+      const data = await axiosInstance.post("/updateSupplier", {
+        company_name: companyName,
+        name: name,
+        contact_email: email,
+        phone_number: phoneNumber,
+        address: address,
+        supplier_id: supplierId
+      });
+      fetchSuppliers();
       setName("");
       setPhoneNumber("");
       setAddress("");
       setEmail("");
       setCompanyName("");
+      setSupplierId("");
+    } catch (error) {
+      console.log("Error adding supplier:", error);
     }
     setLoading(false);
   };
@@ -149,6 +203,58 @@ function SupplierManagement() {
             </Button>,
             <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
               {loading ? "Adding..." : "Add Supplier"}
+            </Button>,
+          ]}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Name">
+              <Input
+                placeholder="Name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Company Name">
+              <Input
+                placeholder="Company Name"
+                value={companyName}
+                onChange={e => setCompanyName(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Phone Number">
+              <Input
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChange={e => setPhoneNumber(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Contact Email">
+              <Input
+                placeholder="Contact Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Address">
+              <Input
+                placeholder="Address"
+                value={address}
+                onChange={e => setAddress(e.target.value)}
+              />
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="Edit Supplier"
+          open={isEditModalVisible}
+          onOk={handleEditOk}
+          onCancel={handleEditCancel}
+          footer={[
+            <Button key="back" onClick={handleEditCancel}>
+              Cancel
+            </Button>,
+            <Button key="submit" type="primary" loading={loading} onClick={handleEditOk}>
+              {loading ? "Updating..." : "Edit Supplier"}
             </Button>,
           ]}
         >

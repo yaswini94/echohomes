@@ -109,6 +109,7 @@ app.post("/register", async (req, res) => {
           contact_email: email,
           phone_number: phoneNumber,
           address: address,
+          venture_id: 'f24163fc-d122-416a-a0d3-620ba1fbadcf', // edit later with proper value
           registered_date: new Date().toISOString(),
         };
   const { data, insertError } = await supabase.from(table).insert([payload]);
@@ -148,7 +149,7 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-app.post("/ventures", authenticateToken, async (req, res) => {
+app.post("/addVenture", authenticateToken, async (req, res) => {
   const { name, address, description } = req.body;
   const user = req.user;
 
@@ -164,6 +165,19 @@ app.post("/ventures", authenticateToken, async (req, res) => {
   }
 
   res.status(201).json(data);
+});
+
+app.post("/updateVenture", authenticateToken, async (req, res) => {
+  const { name, address, description, ventureId } = req.body;
+
+  const { data, error } = await supabase.from("ventures")
+  .update({ name, address, description })
+  .eq('venture_id', ventureId);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json("Update successfull");
 });
 
 app.get("/ventures", authenticateToken, async (req, res) => {
@@ -190,6 +204,40 @@ app.get("/ventures/:id", authenticateToken, async (req, res) => {
   }
 
   res.json(data);
+});
+
+app.post("/addSupplier", authenticateToken, async (req, res) => {
+  const { name, contact_email, address, phone_number, company_name } = req.body;
+  // const user = req.user;
+
+  const { data, error } = await supabase.from("suppliers").insert({
+    venture_id: "f24163fc-d122-416a-a0d3-620ba1fbadcf",
+    company_name,
+    name,
+    contact_email,
+    phone_number,
+    address: address,
+    registered_date: new Date().toISOString()
+  });
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.status(201).json("Add Supplier Successfull");
+});
+
+app.post("/updateSupplier", authenticateToken, async (req, res) => {
+  const { name, contact_email, address, phone_number, company_name, supplier_id } = req.body;
+
+  const { data, error } = await supabase.from("suppliers")
+  .update({ name, contact_email, address, phone_number, company_name })
+  .eq('supplier_id', supplier_id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json("Update successfull");
 });
 
 app.get("/suppliers", authenticateToken, async (req, res) => {
@@ -252,7 +300,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
     from: "official.echohomes@gmail.com",
     subject: "Invitation to Echohomes as Buyer",
     text: `Hi ${name}, \n We would like to invite you to join echohomes as buyer. \n Please use below link ${password} to reset password. `,
-    html: `<p>Hi ${name}, \n We would like to invite you to join echohomes as buyer.</p> <p>Please use below link <a>${password}</a> to reset password. </p> <strong>Continue to Login after reset password. Use the link <a>${password}</a></strong>`,
+    html: `<p>Hi ${name}, \n We would like to invite you to join echohomes as buyer.</p> <p>Please use below password <a>${password}</a> to reset password. </p> <strong>Continue to Login after reset password. Use the link <a>${password}</a></strong>`,
   };
 
   const { data: createdUser, createdUserError } = await supabase.auth.signUp({
@@ -262,8 +310,6 @@ app.post("/invite", authenticateToken, async (req, res) => {
 
   if (createdUserError) return res.status(401).json({ error: createdUserError.message });
 
-  console.log({ user, createdUser, createdUserError });
-
   const { data, error } = await supabase.from("buyers").insert({
     buyer_id: createdUser?.user?.id,
     builder_id: user.id,
@@ -272,6 +318,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
     phone_number,
     house_type,
     contact_email: email,
+    venture_id: 'f24163fc-d122-416a-a0d3-620ba1fbadcf' // edit later with proper value
   });
   if (error) return res.status(401).json({ error: error.message });
 
@@ -291,6 +338,18 @@ app.post("/invite", authenticateToken, async (req, res) => {
   res.send("Invite is sent");
 });
 
+app.post("/updateBuyer", authenticateToken, async (req, res) => {
+  const { name, contact_email, address, phone_number, house_type, buyer_id } = req.body;
+
+  const { data, error } = await supabase.from("buyers")
+  .update({ name, contact_email, address, phone_number, house_type })
+  .eq('buyer_id', buyer_id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json("Update successfull");
+});
 app.get("/", (req, res) => {
   res.send("Welcome to Echo homes!");
 });

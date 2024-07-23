@@ -17,17 +17,20 @@ import {
 } from "antd";
 import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
+import editIcon from "../assets/edit.png";
 
-function BuyerInvite({ builderId }) {
+function BuyerInvite() {
   const [buyers, setBuyers] = useState([]);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [houseType, setHouseType] = useState("");
+  const [buyerId, setBuyerId] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const items = [
     {
       key: "1",
@@ -44,6 +47,12 @@ function BuyerInvite({ builderId }) {
     },
   ];
   const showModal = () => {
+    setAddress("");
+    setName("");
+    setPhoneNumber("");
+    setEmail("");
+    setHouseType("");
+    setBuyerId("");
     setIsModalVisible(true);
   };
 
@@ -55,7 +64,23 @@ function BuyerInvite({ builderId }) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const showEditModal = () => {
+    setIsEditModalVisible(true);
+  };
 
+  const handleEditOk = () => {
+    editBuyer();
+    setIsEditModalVisible(false);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditModalVisible(false);
+  };
+
+  const onHouseTypeChange = (value) => {
+    const selectedItem = items.find(item => item.key === value.key);
+    setHouseType(selectedItem ? selectedItem.label : null);
+  };
   const columns = [
     {
       title: "Name",
@@ -88,6 +113,21 @@ function BuyerInvite({ builderId }) {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
+          <a>
+            <Avatar
+              src={editIcon}
+              style={{ height: "18px", width: "18px" }}
+              onClick={() => {
+                setAddress(record?.address);
+                setName(record?.name);
+                setBuyerId(record?.buyer_id);
+                setPhoneNumber(record?.phone_number);
+                setEmail(record?.contact_email);
+                setHouseType(record?.house_type);
+                showEditModal();
+              }}
+            />
+          </a>
           <a>
             <Avatar
               src={deleteIcon}
@@ -126,6 +166,30 @@ function BuyerInvite({ builderId }) {
     }
   }
 
+  const editBuyer = async () => {
+    setLoading(true);
+
+    try {
+      const data = await axiosInstance.post("/updateBuyer", {
+        contact_email: email,
+        name,
+        address,
+        phone_number: phoneNumber,
+        house_type: houseType,
+        buyer_id: buyerId
+      });
+      setAddress("");
+      setName("");
+      setPhoneNumber("");
+      setEmail("");
+      setHouseType("");
+      setBuyerId("");
+      fetchBuyers();
+    } catch (error) {
+      console.log("Error updating buyer:", error);
+    }
+    setLoading(false);
+  };
   const deleteBuyer = async (id) => {
     if (id) {
       const { data, error } = await supabase
@@ -223,21 +287,122 @@ function BuyerInvite({ builderId }) {
                 menu={{
                   items,
                   selectable: true,
-                  // defaultSelectedKeys: [''],
+                  onClick: onHouseTypeChange
                 }}
               >
-                <Typography.Link>
-                  <Space>
-                    House type
+                <Typography.Link style={{
+                  width: '100%',
+                  height: '32px',
+                  padding: '4px 11px',
+                  border: '1px solid #d9d9d9',
+                  borderRadius: '6px',
+                  color: 'rgba(0, 0, 0, 0.85)',
+                  lineHeight: '1.5715',
+                  display: 'flex', 
+                  justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    {houseType ? (
+                      <Space>
+                        {houseType}
+                      </Space>
+                      ) : (<Space>
+                        Select House Type
+                      </Space>
+                    )}
+                  </div>
+                  <div>
                     <DownOutlined />
-                  </Space>
+                  </div>
                 </Typography.Link>
               </Dropdown>
-              {/* <Input
-                placeholder="House type"
-                value={houseType}
-                onChange={e => setHouseType(e.target.value)}
-              /> */}
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="Edit Buyer"
+          open={isEditModalVisible}
+          onOk={handleEditOk}
+          onCancel={handleEditCancel}
+          footer={[
+            <Button key="back" onClick={handleEditCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleEditOk}
+            >
+              {loading ? "Updating..." : "Edit Buyer"}
+            </Button>,
+          ]}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Name">
+              <Input
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Phone Number">
+              <Input
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Contact Email">
+              <Input
+                placeholder="Contact Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Address">
+              <Input
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="House Type">
+              <Dropdown
+                menu={{
+                  items,
+                  selectable: true,
+                  onClick: onHouseTypeChange
+                }}
+              >
+                <Typography.Link style={{
+                  width: '100%',
+                  height: '32px',
+                  padding: '4px 11px',
+                  border: '1px solid #d9d9d9',
+                  borderRadius: '6px',
+                  color: 'rgba(0, 0, 0, 0.85)',
+                  lineHeight: '1.5715',
+                  display: 'flex', 
+                  justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    {houseType ? (
+                      <Space>
+                        {houseType}
+                      </Space>
+                      ) : (<Space>
+                        Select House Type
+                      </Space>
+                    )}
+                  </div>
+                  <div>
+                    <DownOutlined />
+                  </div>
+                </Typography.Link>
+              </Dropdown>
             </Form.Item>
           </Form>
         </Modal>

@@ -1,0 +1,73 @@
+{
+  "hash": "abd08570",
+  "configHash": "0f5b9bcb",
+  "lockfileHash": "e3706a11",
+  "browserHash": "e84e8912",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/.pnpm/react@18.3.1/node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "ea00e6cd",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "1f6b30d9",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/.pnpm/react-router-dom@6.24.1_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "8cba4ec8",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/.pnpm/axios@1.7.2/node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "449212b2",
+      "needsInterop": false
+    },
+    "antd": {
+      "src": "../../node_modules/.pnpm/antd@5.19.1_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/antd/es/index.js",
+      "file": "antd.js",
+      "fileHash": "7b43f6d1",
+      "needsInterop": false
+    },
+    "@supabase/supabase-js": {
+      "src": "../../node_modules/.pnpm/@supabase+supabase-js@2.44.3/node_modules/@supabase/supabase-js/dist/module/index.js",
+      "file": "@supabase_supabase-js.js",
+      "fileHash": "e61290c1",
+      "needsInterop": false
+    },
+    "@ant-design/icons": {
+      "src": "../../node_modules/.pnpm/@ant-design+icons@5.3.7_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@ant-design/icons/es/index.js",
+      "file": "@ant-design_icons.js",
+      "fileHash": "7a4938d4",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "browser-RSDTQGC2": {
+      "file": "browser-RSDTQGC2.js"
+    },
+    "chunk-LWUFSJPS": {
+      "file": "chunk-LWUFSJPS.js"
+    },
+    "chunk-6NGTQ3Z6": {
+      "file": "chunk-6NGTQ3Z6.js"
+    },
+    "chunk-GX3VV2FZ": {
+      "file": "chunk-GX3VV2FZ.js"
+    },
+    "browser-KXSHW4JH": {
+      "file": "browser-KXSHW4JH.js"
+    },
+    "chunk-ZGUEDJZW": {
+      "file": "chunk-ZGUEDJZW.js"
+    },
+    "chunk-V4OQ3NZ2": {
+      "file": "chunk-V4OQ3NZ2.js"
+    }
+  }
+}

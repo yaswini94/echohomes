@@ -95,12 +95,11 @@ const HeaderLayout = () => {
         <img src={titleLogo} alt="Title Logo" style={{ height: '32px' }} />
       </div>
       <div>
-        <>
-        <Dropdown menu={{ venture_items }}>
-          <a style={{color: "white"}} onClick={(event) => event.preventDefault()}>
+        <Dropdown menu={{ items: venture_items }}>
+          <a style={{color: 'white', paddingRight: '30px'}} onClick={(event) => event.preventDefault()}>
             <span> 
               <Space>
-                House type
+                Select Venture
                 <DownOutlined />
               </Space>
             </span>
@@ -121,7 +120,7 @@ const HeaderLayout = () => {
             <Option value="en-gb">EN-GB</Option>
           </Select> */}
         {/* </Dropdown> */}
-        <Dropdown menu={{ user_items }}>
+        <Dropdown menu={{ items: user_items }}>
           <a style={{color: "white"}} onClick={(event) => event.preventDefault()}>
             <span> 
               <Space>
@@ -156,7 +155,6 @@ const HeaderLayout = () => {
             Signout
           </Menu.Item>
         </Menu> */}
-        </>
       </div>
     </Header>
   );

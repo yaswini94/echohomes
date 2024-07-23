@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosInstance from "../helpers/axiosInstance";
 import { supabase } from "../supabase";
-import { useAuth } from "../auth/useAuth";
 import { Row, Col, Button, Avatar, Input, Form, Modal, Card } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
@@ -13,12 +12,15 @@ function VentureManagement() {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
+  const [ventureId, setVentureId] = useState("");
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [initialValues, setInitialValues] = useState({
     name: "",
     address: "",
     description: "",
+    ventureId: ""
   });
 
   const showModal = () => {
@@ -29,9 +31,29 @@ function VentureManagement() {
     addVenture();
     setIsModalVisible(false);
   };
-
   const handleCancel = () => {
+    setName("");
+    setAddress("");
+    setDescription("");
+    setVentureId("");
     setIsModalVisible(false);
+  };
+
+  const showEditModal = () => {
+    setIsEditModalVisible(true);
+  };
+
+  const handleEditOk = () => {
+    editVenture();
+    setIsEditModalVisible(false);
+  };
+
+  const handleEditCancel = () => {
+    setName("");
+    setAddress("");
+    setDescription("");
+    setVentureId("");
+    setIsEditModalVisible(false);
   };
 
   const deleteVenture = async (id) => {
@@ -65,27 +87,41 @@ function VentureManagement() {
     setLoading(true);
 
     try {
-      const data = await axiosInstance.post("/ventures", {
+      const data = await axiosInstance.post("/addVenture", {
         name,
         address,
         description,
       });
+      // setName("");
+      // setAddress("");
+      // setDescription("");
+      fetchVentures();
+    } catch (error) {
+      console.log("Error adding venture:", error);
+    }
+    setLoading(false);
+  };
 
-      setLoading(false);
+  const editVenture = async () => {
+    setLoading(true);
+
+    try {
+      const data = await axiosInstance.post("/UpdateVenture", {
+        name,
+        address,
+        description,
+        ventureId
+      });
+
       setName("");
       setAddress("");
       setDescription("");
+      setVentureId("");
+      fetchVentures();
     } catch (error) {
-      console.log("Error adding venture:", error);
-      setLoading(false);
+      console.log("Error updaing venture:", error);
     }
-  };
-
-  const editVenture = async (venture) => {
-    setName(venture?.name);
-    setAddress(venture?.address);
-    setDescription(venture?.description);
-    showModal();
+    setLoading(false);
   };
 
   // Fetch ventures on component mount
@@ -148,7 +184,49 @@ function VentureManagement() {
           </Form.Item>
         </Form>
       </Modal>
-
+      <Modal
+        title="Edit Venture"
+        open={isEditModalVisible}
+        onOk={handleEditOk}
+        onCancel={handleEditCancel}
+        footer={[
+          <Button key="back" onClick={handleEditCancel}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={loading}
+            onClick={handleEditOk}
+          >
+            {loading ? "Updating..." : "Edit Venture"}
+          </Button>,
+        ]}
+      >
+        <Form layout="vertical" initialValues={initialValues}>
+          <Form.Item label="Name" name="name">
+            <Input
+              placeholder="Venture Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Address" name="address">
+            <Input
+              placeholder="Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Description" name="description">
+            <Input.TextArea
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
       <div>
         {ventures.length === 0 && <p>No ventures exist !</p>}
         {ventures.length > 0 && (
@@ -169,11 +247,16 @@ function VentureManagement() {
                             src={editIcon}
                             style={{ height: "18px", width: "18px" }}
                             onClick={() => {
-                              showModal();
+                              showEditModal();
+                              setAddress(venture?.address);
+                              setName(venture?.name);
+                              setDescription(venture?.description);
+                              setVentureId(venture?.venture_id);
                               setInitialValues({
                                 name: venture?.name || "",
                                 address: venture?.address || "",
                                 description: venture?.description || "",
+                                ventureId: venture?.venture_id || ""
                               });
                             }}
                           />
