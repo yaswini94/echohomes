@@ -256,30 +256,36 @@ function BuyerInvite() {
           <Form layout="vertical">
             <Form.Item label="Name">
               <Input
-                placeholder="Name"
+                placeholder="John T"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="Phone Number">
               <Input
-                placeholder="Phone Number"
+                type="tel"
+                placeholder="09999999999"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="Contact Email">
               <Input
-                placeholder="Contact Email"
+                type="email"
+                placeholder="abc@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="Address">
               <Input
-                placeholder="Address"
+                placeholder="Jarrom st, Leicester"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="House Type">
@@ -342,30 +348,36 @@ function BuyerInvite() {
           <Form layout="vertical">
             <Form.Item label="Name">
               <Input
-                placeholder="Name"
+                placeholder="John T"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="Phone Number">
               <Input
-                placeholder="Phone Number"
+                type="tel"
+                placeholder="09999999999"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="Contact Email">
               <Input
-                placeholder="Contact Email"
+                type="email"
+                placeholder="abc@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="Address">
               <Input
-                placeholder="Address"
+                placeholder="Jarrom st, Leicester"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
+                required
               />
             </Form.Item>
             <Form.Item label="House Type">

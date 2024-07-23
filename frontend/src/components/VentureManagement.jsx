@@ -24,6 +24,10 @@ function VentureManagement() {
   });
 
   const showModal = () => {
+    setName("");
+    setAddress("");
+    setDescription("");
+    setVentureId("");
     setIsModalVisible(true);
   };
 
@@ -166,6 +170,7 @@ function VentureManagement() {
               placeholder="Venture Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </Form.Item>
           <Form.Item label="Address" name="address">
@@ -173,6 +178,7 @@ function VentureManagement() {
               placeholder="Address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+              required
             />
           </Form.Item>
           <Form.Item label="Description" name="description">
@@ -180,6 +186,7 @@ function VentureManagement() {
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              required
             />
           </Form.Item>
         </Form>
@@ -209,6 +216,7 @@ function VentureManagement() {
               placeholder="Venture Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
             />
           </Form.Item>
           <Form.Item label="Address" name="address">
@@ -216,6 +224,7 @@ function VentureManagement() {
               placeholder="Address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
+              required
             />
           </Form.Item>
           <Form.Item label="Description" name="description">
@@ -223,6 +232,7 @@ function VentureManagement() {
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              required
             />
           </Form.Item>
         </Form>
@@ -242,7 +252,7 @@ function VentureManagement() {
                         </Link>
                       </Col>
                       <Col>
-                        <a>
+                        <a style={{marginRight: "6px"}}>
                           <Avatar
                             src={editIcon}
                             style={{ height: "18px", width: "18px" }}
