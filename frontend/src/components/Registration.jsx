@@ -48,9 +48,8 @@ const Registration = () => {
         address: address,
       });
 
-      setMessage("Registration successful!");
       setLoading(false);
-      navigate("/login");
+      navigate("/dashboard");
     } catch (error) {
       setMessage("Registration failed: " + error.message);
       setLoading(false);

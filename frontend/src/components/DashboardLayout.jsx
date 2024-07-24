@@ -78,7 +78,7 @@ const DashboardLayout = () => {
   
   return (
     <Layout className="mainLayout">
-      <HeaderLayout />
+      <HeaderLayout userType={userType}/>
       <Layout>
         <NavigationLayout userType={userType} onMenuClick={handleMenuClick} />
         <Layout

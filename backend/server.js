@@ -109,7 +109,6 @@ app.post("/register", async (req, res) => {
           contact_email: email,
           phone_number: phoneNumber,
           address: address,
-          venture_id: "f24163fc-d122-416a-a0d3-620ba1fbadcf", // edit later with proper value
           registered_date: new Date().toISOString(),
         };
   const { data, insertError } = await supabase.from(table).insert([payload]);
@@ -122,16 +121,6 @@ app.post("/register", async (req, res) => {
     } registered successfully!`,
   });
 });
-
-// app.get("/builders", authenticateToken, async (req, res) => {
-//   const { data, error } = await supabase.from("builders").select("*");
-
-//   if (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-
-//   res.json(data);
-// });
 
 app.get("/builders/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
@@ -150,14 +139,15 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
 });
 
 app.post("/addVenture", authenticateToken, async (req, res) => {
-  const { name, address, description } = req.body;
+  const { name, address, description, properties } = req.body;
   const user = req.user;
 
   const { data, error } = await supabase.from("ventures").insert({
     builder_id: user.id,
-    name: name,
-    address: address,
-    description: description,
+    name,
+    address,
+    description,
+    properties
   });
 
   if (error) {
@@ -168,11 +158,11 @@ app.post("/addVenture", authenticateToken, async (req, res) => {
 });
 
 app.post("/updateVenture", authenticateToken, async (req, res) => {
-  const { name, address, description, ventureId } = req.body;
+  const { name, address, description, ventureId, properties } = req.body;
 
   const { data, error } = await supabase
     .from("ventures")
-    .update({ name, address, description })
+    .update({ name, address, description, properties })
     .eq("venture_id", ventureId);
 
   if (error) {
@@ -210,11 +200,11 @@ app.get("/ventures/:id", authenticateToken, async (req, res) => {
 });
 
 app.post("/addSupplier", authenticateToken, async (req, res) => {
-  const { name, contact_email, address, phone_number, company_name } = req.body;
+  const { name, contact_email, address, phone_number, company_name, venture_id } = req.body;
   // const user = req.user;
 
   const { data, error } = await supabase.from("suppliers").insert({
-    venture_id: "f24163fc-d122-416a-a0d3-620ba1fbadcf",
+    venture_id,
     company_name,
     name,
     contact_email,

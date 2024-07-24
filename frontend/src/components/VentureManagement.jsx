@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosInstance from "../helpers/axiosInstance";
 import { supabase } from "../supabase";
-import { Row, Col, Button, Avatar, Input, Form, Modal, Card } from "antd";
+import { Row, Col, Button, Avatar, Input, Form, Modal, Card, Select, InputNumber } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
@@ -12,6 +12,16 @@ function VentureManagement() {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
+  const [properties, setProperties] = useState([
+    { type: '1 Bed', value: 0 },
+    { type: '2 Bed', value: 0 },
+    { type: '3 Bed', value: 0 },
+  ]);
+  const [editProperties, setEditProperties] = useState([
+    { type: '1 Bed', value: 0 },
+    { type: '2 Bed', value: 0 },
+    { type: '3 Bed', value: 0 },
+  ]);
   const [ventureId, setVentureId] = useState("");
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -20,13 +30,35 @@ function VentureManagement() {
     name: "",
     address: "",
     description: "",
+    properties: [
+      { type: '1 Bed', value: 0 },
+      { type: '2 Bed', value: 0 },
+      { type: '3 Bed', value: 0 },
+    ],
     ventureId: ""
   });
+
+  const handleTypeChange = (value, index) => {
+    const newProperties = [...properties];
+    newProperties[index].type = value;
+    setProperties(newProperties);
+  };
+
+  const handleValueChange = (value, index) => {
+    const newProperties = [...properties];
+    newProperties[index].value = value;
+    setProperties(newProperties);
+  };
 
   const showModal = () => {
     setName("");
     setAddress("");
     setDescription("");
+    setProperties([
+      { type: '1 Bed', value: 0 },
+      { type: '2 Bed', value: 0 },
+      { type: '3 Bed', value: 0 },
+    ]);
     setVentureId("");
     setIsModalVisible(true);
   };
@@ -39,6 +71,11 @@ function VentureManagement() {
     setName("");
     setAddress("");
     setDescription("");
+    setProperties([
+      { type: '1 Bed', value: 0 },
+      { type: '2 Bed', value: 0 },
+      { type: '3 Bed', value: 0 },
+    ]);
     setVentureId("");
     setIsModalVisible(false);
   };
@@ -56,6 +93,11 @@ function VentureManagement() {
     setName("");
     setAddress("");
     setDescription("");
+    setProperties([
+      { type: '1 Bed', value: 0 },
+      { type: '2 Bed', value: 0 },
+      { type: '3 Bed', value: 0 },
+    ]);
     setVentureId("");
     setIsEditModalVisible(false);
   };
@@ -95,11 +137,18 @@ function VentureManagement() {
         name,
         address,
         description,
+        properties
       });
-      // setName("");
-      // setAddress("");
-      // setDescription("");
       fetchVentures();
+      setName("");
+      setAddress("");
+      setDescription("");
+      setProperties([
+        { type: '1 Bed', value: 0 },
+        { type: '2 Bed', value: 0 },
+        { type: '3 Bed', value: 0 },
+      ]);
+      setVentureId("");
     } catch (error) {
       console.log("Error adding venture:", error);
     }
@@ -114,12 +163,18 @@ function VentureManagement() {
         name,
         address,
         description,
+        properties,
         ventureId
       });
 
       setName("");
       setAddress("");
       setDescription("");
+      setProperties([
+        { type: '1 Bed', value: 0 },
+        { type: '2 Bed', value: 0 },
+        { type: '3 Bed', value: 0 },
+      ]);
       setVentureId("");
       fetchVentures();
     } catch (error) {
@@ -189,6 +244,34 @@ function VentureManagement() {
               required
             />
           </Form.Item>
+          {/* <Form.Item label="Properties" name="properties">
+            <Select
+              value={properties}
+              style={{ width: 120 }}
+              onChange={onSelectVenture}
+              options={ventures}
+            />
+          </Form.Item> */}
+          <p>Select Properties</p>
+          {/* {console.log({properties})} */}
+          {properties?.map((property, index) => (
+            <Form.Item name="properties" key={index}>
+              <Select
+                style={{ width: 120, marginRight: 8 }}
+                value={property.type}
+                onChange={(value) => handleTypeChange(value, index)}
+              >
+                <Option value="1 Bed">1 Bed</Option>
+                <Option value="2 Bed">2 Bed</Option>
+                <Option value="3 Bed">3 Bed</Option>
+              </Select>
+              <InputNumber
+                min={0}
+                value={property.value}
+                onChange={(value) => handleValueChange(value, index)}
+              />
+            </Form.Item>
+          ))}
         </Form>
       </Modal>
       <Modal
@@ -235,6 +318,25 @@ function VentureManagement() {
               required
             />
           </Form.Item>
+          <p>Select Properties</p>
+          {editProperties?.map((property, index) => (
+            <Form.Item name="properties" key={index}>
+              <Select
+                style={{ width: 120, marginRight: 8 }}
+                value={property.type}
+                onChange={(value) => handleTypeChange(value, index)}
+              >
+                <Option value="1 Bed">1 Bed</Option>
+                <Option value="2 Bed">2 Bed</Option>
+                <Option value="3 Bed">3 Bed</Option>
+              </Select>
+              <InputNumber
+                min={0}
+                value={property.value}
+                onChange={(value) => handleValueChange(value, index)}
+              />
+            </Form.Item>
+          ))}
         </Form>
       </Modal>
       <div>
@@ -266,12 +368,17 @@ function VentureManagement() {
                                 name: venture?.name || "",
                                 address: venture?.address || "",
                                 description: venture?.description || "",
-                                ventureId: venture?.venture_id || ""
+                                ventureId: venture?.venture_id || "",
+                                properties: venture?.properties || [
+                                  { type: '1 Bed', value: 0 },
+                                  { type: '2 Bed', value: 0 },
+                                  { type: '3 Bed', value: 0 },
+                                ]
                               });
+                              setEditProperties(venture?.properties);
                             }}
                           />
                         </a>
-                        {/* <a><Avatar src={editIcon} style={{ height: '18px', width: '18px', paddingRight: '16px' }} onClick={() => editVenture(venture?.venture_id)}/></a> */}
                         <a>
                           <Avatar
                             src={deleteIcon}
@@ -285,7 +392,11 @@ function VentureManagement() {
                   style={{ border: "1px solid black" }}
                   bordered={false}
                 >
-                  <p>{venture?.description}</p>
+                  <p><b>Description: </b>{venture?.description}</p>
+                  <p><b>Properties: </b></p>
+                  {venture?.properties?.map((property, index) => (
+                    <p>{property.type} - {property.value}</p>
+                  ))}
                 </Card>
               </Col>
             ))}

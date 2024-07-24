@@ -22,7 +22,7 @@ import exitLogo from "../assets/exit.png";
 import { supabase } from "../supabase";
 const { Header } = Layout;
 
-const HeaderLayout = () => {
+const HeaderLayout = ({ userType }) => {
   // const [language, setLanguage] = useState("EN-GB");
   const [ventures, setVentures] = useState([]);
   const [selectedVenture, setSelectedVenture] = useState(null);
@@ -138,13 +138,14 @@ const HeaderLayout = () => {
         <img src={titleLogo} alt="Title Logo" style={{ height: "32px" }} />
       </div>
       <div>
-        {console.log({ selectedVenture })}
-        <Select
+        {/* <p>Use Venture: </p> */}
+        {/* {console.log({ selectedVenture })} */}
+        {userType === 'builder' && (<Select
           value={selectedVenture}
-          style={{ width: 120 }}
+          style={{ width: "auto", minWidth: "160px", marginRight: "16px", color: "white" }}
           onChange={onSelectVenture}
           options={ventures}
-        />
+        />)}
         <MessageOutlined
           style={{ color: "white" }}
           onClick={(event) => event.preventDefault()}

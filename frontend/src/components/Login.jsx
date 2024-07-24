@@ -44,7 +44,6 @@ const Login = () => {
   
       const { access_token, refresh_token } = session;
       setLoading(false);
-      setMessage("Login successful!");
       await supabase.auth.setSession({
         access_token,
         refresh_token,
@@ -76,7 +75,6 @@ const Login = () => {
     
       // const { access_token, refresh_token } = session;
       setLoading(false);
-      setMessage("Sent mail for reset password!");
     } catch (error) {
       setMessage("Reset password failed " + error.message);
       setLoading(false);

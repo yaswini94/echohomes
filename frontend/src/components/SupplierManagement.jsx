@@ -131,6 +131,7 @@ function SupplierManagement() {
   // Function to add a new supplier
   const addSupplier = async () => {
     setLoading(true);
+    const ventureId = localStorage.getItem("selectedVenture");
 
     try {
       const data = await axiosInstance.post("/addSupplier", {
@@ -139,6 +140,7 @@ function SupplierManagement() {
         contact_email: email,
         phone_number: phoneNumber,
         address: address,
+        venture_id: ventureId
       });
       fetchSuppliers();
     } catch (error) {
@@ -173,7 +175,7 @@ function SupplierManagement() {
     setLoading(false);
   };
 
-  // Fetch ventures on component mount
+  // Fetch suppliers on component mount
   useEffect(() => {
     fetchSuppliers();
   }, []);

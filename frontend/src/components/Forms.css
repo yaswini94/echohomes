@@ -23,6 +23,9 @@
   margin-bottom: 8px;
   color: #666;
 }
+.ant-card .ant-card-body {
+  padding: 0 24px !important;
+}
 
 .form-input {
   width: 100%;

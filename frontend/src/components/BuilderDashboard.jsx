@@ -3,6 +3,7 @@ import { Layout, theme } from 'antd';
 import VentureManagement from './VentureManagement';
 import SupplierManagement from './SupplierManagement';
 import BuyerInvite from './BuyerInvite';
+import FeatureManagement from './FeatureManagement';
 
 const { Content } = Layout;
 
@@ -27,6 +28,7 @@ const BuilderDashboard = ({ selectedKey }) => {
         {selectedKey === 'ventureManagement' && <VentureManagement />}
         {selectedKey === 'supplierManagement' && <SupplierManagement />}
         {selectedKey === 'buyerManagement' && <BuyerInvite />}
+        {selectedKey === 'featureManagement' && <FeatureManagement />}
       </div>
     </Content>
   )
