@@ -2,7 +2,18 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosInstance from "../helpers/axiosInstance";
 import { supabase } from "../supabase";
-import { Row, Col, Button, Avatar, Input, Form, Modal, Card, Select, InputNumber } from "antd";
+import {
+  Row,
+  Col,
+  Button,
+  Avatar,
+  Input,
+  Form,
+  Modal,
+  Card,
+  Select,
+  InputNumber,
+} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
@@ -13,14 +24,14 @@ function VentureManagement() {
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [properties, setProperties] = useState([
-    { type: '1 Bed', value: 0 },
-    { type: '2 Bed', value: 0 },
-    { type: '3 Bed', value: 0 },
+    { key: 1, type: "1 Bed", value: 0 },
+    { key: 2, type: "2 Bed", value: 0 },
+    { key: 3, type: "3 Bed", value: 0 },
   ]);
   const [editProperties, setEditProperties] = useState([
-    { type: '1 Bed', value: 0 },
-    { type: '2 Bed', value: 0 },
-    { type: '3 Bed', value: 0 },
+    { key: 1, type: "1 Bed", value: 0 },
+    { key: 2, type: "2 Bed", value: 0 },
+    { key: 3, type: "3 Bed", value: 0 },
   ]);
   const [ventureId, setVentureId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,11 +42,11 @@ function VentureManagement() {
     address: "",
     description: "",
     properties: [
-      { type: '1 Bed', value: 0 },
-      { type: '2 Bed', value: 0 },
-      { type: '3 Bed', value: 0 },
+      { key: 1, type: "1 Bed", value: 0 },
+      { key: 2, type: "2 Bed", value: 0 },
+      { key: 3, type: "3 Bed", value: 0 },
     ],
-    ventureId: ""
+    ventureId: "",
   });
 
   const handleTypeChange = (value, index) => {
@@ -45,7 +56,7 @@ function VentureManagement() {
   };
 
   const handleValueChange = (value, index) => {
-    const newProperties = [...properties];
+    const newProperties = [...initialValues.properties];
     newProperties[index].value = value;
     setProperties(newProperties);
   };
@@ -55,9 +66,9 @@ function VentureManagement() {
     setAddress("");
     setDescription("");
     setProperties([
-      { type: '1 Bed', value: 0 },
-      { type: '2 Bed', value: 0 },
-      { type: '3 Bed', value: 0 },
+      { key: 1, type: "1 Bed", value: 0 },
+      { key: 2, type: "2 Bed", value: 0 },
+      { key: 3, type: "3 Bed", value: 0 },
     ]);
     setVentureId("");
     setIsModalVisible(true);
@@ -72,15 +83,31 @@ function VentureManagement() {
     setAddress("");
     setDescription("");
     setProperties([
-      { type: '1 Bed', value: 0 },
-      { type: '2 Bed', value: 0 },
-      { type: '3 Bed', value: 0 },
+      { key: 1, type: "1 Bed", value: 0 },
+      { key: 2, type: "2 Bed", value: 0 },
+      { key: 3, type: "3 Bed", value: 0 },
     ]);
     setVentureId("");
     setIsModalVisible(false);
   };
 
-  const showEditModal = () => {
+  const showEditModal = (venture) => {
+    setInitialValues({
+      name: venture?.name || "",
+      address: venture?.address || "",
+      description: venture?.description || "",
+      ventureId: venture?.venture_id || "",
+      properties: venture?.properties || [
+        { key: 1, type: "1 Bed", value: 0 },
+        { key: 2, type: "2 Bed", value: 0 },
+        { key: 3, type: "3 Bed", value: 0 },
+      ],
+    });
+    setEditProperties(venture?.properties);
+    setAddress(venture?.address);
+    setName(venture?.name);
+    setDescription(venture?.description);
+    setVentureId(venture?.venture_id);
     setIsEditModalVisible(true);
   };
 
@@ -94,12 +121,13 @@ function VentureManagement() {
     setAddress("");
     setDescription("");
     setProperties([
-      { type: '1 Bed', value: 0 },
-      { type: '2 Bed', value: 0 },
-      { type: '3 Bed', value: 0 },
+      { key: 1, type: "1 Bed", value: 0 },
+      { key: 2, type: "2 Bed", value: 0 },
+      { key: 3, type: "3 Bed", value: 0 },
     ]);
     setVentureId("");
     setIsEditModalVisible(false);
+    // setInitialValues
   };
 
   const deleteVenture = async (id) => {
@@ -137,16 +165,16 @@ function VentureManagement() {
         name,
         address,
         description,
-        properties
+        properties,
       });
       fetchVentures();
       setName("");
       setAddress("");
       setDescription("");
       setProperties([
-        { type: '1 Bed', value: 0 },
-        { type: '2 Bed', value: 0 },
-        { type: '3 Bed', value: 0 },
+        { key: 1, type: "1 Bed", value: 0 },
+        { key: 2, type: "2 Bed", value: 0 },
+        { key: 3, type: "3 Bed", value: 0 },
       ]);
       setVentureId("");
     } catch (error) {
@@ -164,21 +192,23 @@ function VentureManagement() {
         address,
         description,
         properties,
-        ventureId
+        ventureId,
       });
 
       setName("");
       setAddress("");
       setDescription("");
       setProperties([
-        { type: '1 Bed', value: 0 },
-        { type: '2 Bed', value: 0 },
-        { type: '3 Bed', value: 0 },
+        { key: 1, type: "1 Bed", value: 0 },
+        { key: 2, type: "2 Bed", value: 0 },
+        { key: 3, type: "3 Bed", value: 0 },
       ]);
       setVentureId("");
       fetchVentures();
+      setIsEditModalVisible(false);
     } catch (error) {
       console.log("Error updaing venture:", error);
+      setIsEditModalVisible(false);
     }
     setLoading(false);
   };
@@ -253,9 +283,8 @@ function VentureManagement() {
             />
           </Form.Item> */}
           <p>Select Properties</p>
-          {/* {console.log({properties})} */}
           {properties?.map((property, index) => (
-            <Form.Item name="properties" key={index}>
+            <Form.Item name="properties" key={property.key}>
               <Select
                 style={{ width: 120, marginRight: 8 }}
                 value={property.type}
@@ -320,7 +349,7 @@ function VentureManagement() {
           </Form.Item>
           <p>Select Properties</p>
           {editProperties?.map((property, index) => (
-            <Form.Item name="properties" key={index}>
+            <Form.Item name="properties" key={property.key}>
               <Select
                 style={{ width: 120, marginRight: 8 }}
                 value={property.type}
@@ -344,7 +373,7 @@ function VentureManagement() {
         {ventures.length > 0 && (
           <Row gutter={16}>
             {ventures.map((venture, index) => (
-              <Col span={8}>
+              <Col key={venture.venture_id} span={8}>
                 <Card
                   title={
                     <Row justify="space-between" align="middle">
@@ -354,28 +383,12 @@ function VentureManagement() {
                         </Link>
                       </Col>
                       <Col>
-                        <a style={{marginRight: "6px"}}>
+                        <a style={{ marginRight: "6px" }}>
                           <Avatar
                             src={editIcon}
                             style={{ height: "18px", width: "18px" }}
                             onClick={() => {
-                              showEditModal();
-                              setAddress(venture?.address);
-                              setName(venture?.name);
-                              setDescription(venture?.description);
-                              setVentureId(venture?.venture_id);
-                              setInitialValues({
-                                name: venture?.name || "",
-                                address: venture?.address || "",
-                                description: venture?.description || "",
-                                ventureId: venture?.venture_id || "",
-                                properties: venture?.properties || [
-                                  { type: '1 Bed', value: 0 },
-                                  { type: '2 Bed', value: 0 },
-                                  { type: '3 Bed', value: 0 },
-                                ]
-                              });
-                              setEditProperties(venture?.properties);
+                              showEditModal(venture);
                             }}
                           />
                         </a>
@@ -392,10 +405,17 @@ function VentureManagement() {
                   style={{ border: "1px solid black" }}
                   bordered={false}
                 >
-                  <p><b>Description: </b>{venture?.description}</p>
-                  <p><b>Properties: </b></p>
-                  {venture?.properties?.map((property, index) => (
-                    <p>{property.type} - {property.value}</p>
+                  <p>
+                    <b>Description: </b>
+                    {venture?.description}
+                  </p>
+                  <p>
+                    <b>Properties: </b>
+                  </p>
+                  {venture?.properties?.map((property) => (
+                    <p key={property.key}>
+                      {property.type} - {property.value}
+                    </p>
                   ))}
                 </Card>
               </Col>

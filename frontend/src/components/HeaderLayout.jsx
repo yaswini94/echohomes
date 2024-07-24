@@ -57,7 +57,7 @@ const HeaderLayout = ({ userType }) => {
           };
         });
         setVentures(_ventures);
-        const _selectedVenture = _ventures[0].value;
+        const _selectedVenture = _ventures?.[0].value;
         setSelectedVenture(_selectedVenture);
         localStorage.setItem("selectedVenture", _selectedVenture);
       } catch (error) {
