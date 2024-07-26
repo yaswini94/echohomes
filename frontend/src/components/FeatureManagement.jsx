@@ -19,19 +19,19 @@ const getFileReader = (file) =>
   });
 
 function FeatureManagement() {
-  const [choices, setChoices] = useState([]);
-  const [extras, setExtras] = useState([]);
+  const [features, setFeatures] = useState([]);
   const [visible, setVisible] = useState(false);
   const [scaleStep, setScaleStep] = useState(0.5);
   const [name, setName] = useState("");
   const [details, setDetails] = useState("");
-  const [image, setImage] = useState("");
-  const [price, setPrice] = useState();
-  const [isChoicesModalVisible, setIsChoicesModalVisible] = useState(false);
-  const [isEditChoicesModalVisible, setIsEditChoicesModalVisible] = useState(false);
-  const [isExtrassModalVisible, setIsExtrasModalVisible] = useState(false);
-  const [isEditExtrasModalVisible, setIsEditExtrasModalVisible] = useState(false);
+  const [images, setImages] = useState([]);
+  const [price, setPrice] = useState(0);
+  const [featureId, setFeatureId] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [initialFormData, setInitialFormData] = useState();
+  const [isChanged, setIsChanged] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [fileList, setFileList] = useState([
@@ -56,123 +56,104 @@ function FeatureManagement() {
     console.log(newFileList);
     setFileList(newFileList);
   }
-
-  const [initialValues, setInitialValues] = useState({
-    name: "",
-    details: "",
-    image: "",
-    price: ""
-  });
   const showModal = () => {
     setName("");
     setDetails("");
-    setImage("");
-    setPrice("");
-    setIsChoicesModalVisible(true);
+    setImages([]);
+    setPrice(0);
+    setFeatureId("");
+    setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    // addChoice();
-    setIsChoicesModalVisible(false);
+    addFeature();
+    setIsModalVisible(false);
   };
   const handleCancel = () => {
-    setName("");
-    setDetails("");
-    setImage("");
-    setPrice("");
-    setIsChoicesModalVisible(false);
+    setIsModalVisible(false);
   };
 
-  const showEditModal = () => {
-    setIsEditChoicesModalVisible(true);
+  const showEditModal = (feature) => {
+    setInitialFormData(feature);
+    setIsEditModalVisible(true);
   };
 
   const handleEditOk = () => {
-    // editChoice();
-    setIsEditChoicesModalVisible(false);
+    updateFeature();
+    setIsEditModalVisible(false);
   };
 
   const handleEditCancel = () => {
-    setName("");
-    setDetails("");
-    setImage("");
-    setPrice("");
-    setIsEditChoicesModalVisible(false);
+    setIsEditModalVisible(false);
   };
 
-  const showExtrasModal = () => {
-    setName("");
-    setDetails("");
-    setImage("");
-    setPrice("");
-    setIsExtrasModalVisible(true);
+  const deleteFeature = async (id) => {
+    if (id) {
+      const { data, error } = await supabase
+        .from("features")
+        .delete()
+        .match({ feature_id: id });
+
+      if (error) {
+        console.error("Error deleting feature:", error);
+        return { error };
+      }
+
+      fetchFeatures();
+    }
   };
 
-  const handleExtrasOk = () => {
-    // addChoice();
-    setIsExtrasModalVisible(false);
-  };
-  const handleExtrasCancel = () => {
-    setName("");
-    setDetails("");
-    setImage("");
-    setPrice("");
-    setIsExtrasModalVisible(false);
-  };
+  const updateFeature = async () => {
+    setLoading(true);
 
-  const showEditExtrasModal = () => {
-    setIsEditChoicesModalVisible(true);
+    try {
+      const data = await axiosInstance.post("/updateFeature", {
+        name,
+        details,
+        price,
+        images,
+        feature_id: featureId
+      });
+      setName("");
+      setDetails("");
+      setPrice(0);
+      setImages([]);
+      setFeatureId("");
+      fetchFeatures();
+    } catch (error) {
+      console.log("Error updating feature:", error);
+    }
+    setLoading(false);
   };
-
-  const handleEditExtrasOk = () => {
-    // editChoice();
-    setIsEditChoicesModalVisible(false);
-  };
-
-  const handleEditExtrasCancel = () => {
-    setName("");
-    setDetails("");
-    setImage("");
-    setPrice("");
-    setIsEditChoicesModalVisible(false);
-  };
-  const deleteChoice = async (id) => {
-    const newData = choices.filter(item => item.id !== id);
-    setChoices(newData);
-    // if (id) {
-    //   const { data, error } = await supabase
-    //     .from("ventures")
-    //     .delete()
-    //     .match({ venture_id: id });
-
-    //   if (error) {
-    //     console.error("Error deleting venture:", error);
-    //     return { error };
-    //   }
-
-    //   fetchVentures();
-    // }
+  // Function to load features from Supabase
+  const fetchFeatures = async () => {
+    const { data, error } = await supabase.from("features").select("*");
+    if (error) {
+      console.log("Error fetching features:", error);
+    } else {
+      setFeatures(data);
+    }
   };
 
-  const deleteExtras = async (id) => {
-    const newData = extras.filter(item => item.id !== id);
-    setExtras(newData);
-    // if (id) {
-    //   const { data, error } = await supabase
-    //     .from("ventures")
-    //     .delete()
-    //     .match({ venture_id: id });
+  // Function to add a new feature
+  const addFeature = async () => {
+    setLoading(true);
 
-    //   if (error) {
-    //     console.error("Error deleting venture:", error);
-    //     return { error };
-    //   }
-
-    //   fetchVentures();
-    // }
+    try {
+      const data = await axiosInstance.post("/addFeature", {
+        name: name,
+        price: price,
+        details: details,
+        images: images,
+      });
+      fetchFeatures();
+    } catch (error) {
+      console.log("Error adding supplier:", error);
+    }
+    setLoading(false);
   };
 
-  const choicesColumns = [
+  const featuresColumns = [
     {
       title: 'Name',
       dataIndex: 'name',
@@ -185,9 +166,14 @@ function FeatureManagement() {
       key: 'details',
     },
     {
-      title: 'Image',
-      dataIndex: 'image',
-      key: 'image',
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+    },
+    {
+      title: 'Images',
+      dataIndex: 'images',
+      key: 'images',
       render: (text) => <img src={text} alt="image" style={{ width: 50, height: 50 }} />,
       // render: (_, record) => {
       //   <Space size="middle">
@@ -222,87 +208,39 @@ function FeatureManagement() {
               onClick={() => {
                 setName(record?.name);
                 setDetails(record?.details);
-                setImage(record?.image);
-                showEditModal();
-              }}
-            />
-          </a>
-          <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteChoice(record?.id)}/></a>
-        </Space>
-      ),
-    }
-  ];
-  const extrasColumns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      // render: (text) => <a>{`/venture/${venture.venture_id}`}</a>,
-    },
-    {
-      title: 'Details',
-      dataIndex: 'details',
-      key: 'details',
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      key: 'price',
-      render: (_, record) => (
-        // <space size="middle">
-          <p>£ {record?.price}</p>
-        // </space>
-      )
-    },
-    {
-      title: 'Image',
-      dataIndex: 'image',
-      key: 'image',
-      render: (text) => <img src={text} alt="image" style={{ width: 50, height: 50 }} />,
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a>
-            <Avatar
-              src={editIcon}
-              style={{ height: "18px", width: "18px" }}
-              onClick={() => {
-                setName(record?.name);
-                setDetails(record?.details);
-                setImage(record?.image);
                 setPrice(record?.price);
-                showEditExtrasModal();
+                setImages(record?.images);
+                setFeatureId(record?.feature_id);
+                showEditModal(record);
               }}
             />
           </a>
-          <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteExtras(record?.id)}/></a>
+          <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteFeature(record?.feature_id)}/></a>
         </Space>
       ),
     }
   ];
+ 
   // Fetch features on component mount
   useEffect(() => {
-    setChoices([
-      {id: '1', name: 'Carpet', feature_type: 'choice', details: 'extra text', image: '../assets/edit.png'}, 
-      {id: '2', name: 'Washbasin', feature_type: 'choice', details: 'new text', image: '../assets/edit.png'},
-      {id: '3', name: 'Low Quality Carpet', feature_type: 'choice', details: 'new text', image: '../assets/edit.png'}
-    ]);
-    setExtras([
-      {id: '1', name: 'Boiler', feature_type: 'extras', price: 500, details: 'some text', image: '../assets/edit.png'},
-      {id: '2', name: 'Curtains', feature_type: 'extras', price: 20, details: 'extra text', image: '../assets/edit.png'}, 
-      {id: '3', name: 'High Quality Carpet', feature_type: 'extras', price: 100, details: 'new text', image: '../assets/edit.png'}
-    ]);
-  }, []);
+    fetchFeatures();
+    const hasChanges = () => {
+      if (
+        name !== initialFormData?.name ||
+        details !== initialFormData?.details ||
+        price !== initialFormData?.price
+      ) {
+        return true;
+      }
+      return false;
+    };
+    setIsChanged(hasChanges());
+  }, [name, details, price]);
   return (
     <div>
-      <h3>Feature Management</h3>
-      <p><b>2 Bed</b></p>
       <Row justify="space-between" align="middle">
         <Col>
-        <h4>Choices</h4>
+          <h3>Feature Management</h3>
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
@@ -310,317 +248,175 @@ function FeatureManagement() {
           </Button>
         </Col>
       </Row>
-      <Modal
-        title="Add New Choice"
-        open={isChoicesModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={loading}
-            onClick={handleOk}
-          >
-            {loading ? "Adding..." : "Add Choice"}
-          </Button>,
-        ]}
-      >
-        <Form layout="vertical" initialValues={initialValues}>
-          <Form.Item label="Name" name="name">
-            <Input
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Details" name="details">
-            <Input
-              placeholder="Details"
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Image" name="image">
-            {/* <Input
-              placeholder="Image"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              required
-            /> */}
-            <>
-              <Upload
-                action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                listType="picture-circle"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 8 ? null : 
-                  <button style={{ border: 0, background: 'none' }} type="button">
-                    <PlusOutlined style={{color: 'black'}}/>
-                    <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
-                  </button>
-                }
-              </Upload>
-              {previewImage && (
-                <Image
-                  wrapperStyle={{ display: 'none' }}
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) => !visible && setPreviewImage(''),
-                  }}
-                  src={previewImage}
-                />
-              )}
-            </>
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal
-        title="Edit Choice"
-        open={isEditChoicesModalVisible}
-        onOk={handleEditOk}
-        onCancel={handleEditCancel}
-        footer={[
-          <Button key="back" onClick={handleEditCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={loading}
-            onClick={handleOk}
-          >
-            {loading ? "Updating..." : "Edit Choice"}
-          </Button>,
-        ]}
-      >
-        <Form layout="vertical" initialValues={initialValues}>
-          <Form.Item label="Name" name="name">
-            <Input
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Details" name="details">
-            <Input
-              placeholder="Details"
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Image" name="image">
-            {/* <Input
-              placeholder="Image"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              required
-            /> */}
-            <>
-              <Upload
-                action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                listType="picture-circle"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 8 ? null : 
-                  <button style={{ border: 0, background: 'none' }} type="button">
-                    <PlusOutlined style={{color: 'black'}}/>
-                    <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
-                  </button>
-                }
-              </Upload>
-              {previewImage && (
-                <Image
-                  wrapperStyle={{ display: 'none' }}
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) => !visible && setPreviewImage(''),
-                  }}
-                  src={previewImage}
-                />
-              )}
-            </>
-          </Form.Item>
-        </Form>
-      </Modal>
       <div>
-        {choices.length === 0 && <p>No Choices exist !</p>}
-        {choices.length > 0 && (
-        <Table columns={choicesColumns} dataSource={choices} />)}
+        <Modal
+          title="Add New Feature"
+          open={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleOk}
+            >
+              {loading ? "Adding..." : "Add Feature"}
+            </Button>,
+          ]}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Name">
+              <Input
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </Form.Item>
+            <Form.Item label="Details">
+              <Input
+                placeholder="Details"
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                required
+              />
+            </Form.Item>
+            <Form.Item label="Price">
+              <Input
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+              />
+            </Form.Item>
+              {/* <Input
+                placeholder="Images"
+                value={images}
+                onChange={(e) => setImages(e.target.value)}
+                required
+              /> */}
+            <Form.Item label="Images" name="images">
+              <>
+                <Upload
+                  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                  listType="picture-circle"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                >
+                  {fileList.length >= 8 ? null : 
+                    <button style={{ border: 0, background: 'none' }} type="button">
+                      <PlusOutlined style={{color: 'black'}}/>
+                      <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
+                    </button>
+                  }
+                </Upload>
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{ display: 'none' }}
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) => !visible && setPreviewImage(''),
+                    }}
+                    src={previewImage}
+                  />
+                )}
+              </>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="Edit Feature"
+          open={isEditModalVisible}
+          onOk={handleEditOk}
+          onCancel={handleEditCancel}
+          footer={[
+            <Button key="back" onClick={handleEditCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleEditOk}
+              disabled={!isChanged}
+            >
+              {loading ? "Updating..." : "Edit Feature"}
+            </Button>,
+          ]}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Name">
+              <Input
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </Form.Item>
+            <Form.Item label="Details">
+              <Input
+                placeholder="Details"
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                required
+              />
+            </Form.Item>
+            <Form.Item label="Price">
+              <Input
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+              />
+            </Form.Item>
+              {/* <Input
+                placeholder="Images"
+                value={images}
+                onChange={(e) => setImages(e.target.value)}
+                required
+              /> */}
+            <Form.Item label="Images" name="images">
+              <>
+                <Upload
+                  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                  listType="picture-circle"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                >
+                  {fileList.length >= 8 ? null : 
+                    <button style={{ border: 0, background: 'none' }} type="button">
+                      <PlusOutlined style={{color: 'black'}}/>
+                      <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
+                    </button>
+                  }
+                </Upload>
+                {previewImage && (
+                  <Image
+                    wrapperStyle={{ display: 'none' }}
+                    preview={{
+                      visible: previewOpen,
+                      onVisibleChange: (visible) => setPreviewOpen(visible),
+                      afterOpenChange: (visible) => !visible && setPreviewImage(''),
+                    }}
+                    src={previewImage}
+                  />
+                )}
+              </>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
-      <Row justify="space-between" align="middle">
-        <Col>
-        <h4>Extras</h4>
-        </Col>
-        <Col>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showExtrasModal}>>
-            Add
-          </Button>
-        </Col>
-      </Row>
-      <Modal
-        title="Add New Extras"
-        open={isExtrassModalVisible}
-        onOk={handleExtrasOk}
-        onCancel={handleExtrasCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={loading}
-            onClick={handleExtrasOk}
-          >
-            {loading ? "Adding..." : "Add Extras"}
-          </Button>,
-        ]}
-      >
-        <Form layout="vertical" initialValues={initialValues}>
-          <Form.Item label="Name" name="name">
-            <Input
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Details" name="details">
-            <Input
-              placeholder="Details"
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Image" name="image">
-            {/* <Input
-              placeholder="Image"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              required
-            /> */}
-            <>
-              <Upload
-                action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                listType="picture-circle"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 8 ? null : 
-                  <button style={{ border: 0, background: 'none' }} type="button">
-                    <PlusOutlined style={{color: 'black'}}/>
-                    <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
-                  </button>
-                }
-              </Upload>
-              {previewImage && (
-                <Image
-                  wrapperStyle={{ display: 'none' }}
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) => !visible && setPreviewImage(''),
-                  }}
-                  src={previewImage}
-                />
-              )}
-            </>
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal
-        title="Edit Extras"
-        open={isEditExtrasModalVisible}
-        onOk={handleEditExtrasOk}
-        onCancel={handleEditExtrasCancel}
-        footer={[
-          <Button key="back" onClick={handleEditExtrasCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={loading}
-            onClick={handleExtrasOk}
-          >
-            {loading ? "Updating..." : "Edit Extras"}
-          </Button>,
-        ]}
-      >
-        <Form layout="vertical" initialValues={initialValues}>
-          <Form.Item label="Name" name="name">
-            <Input
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Details" name="details">
-            <Input
-              placeholder="Details"
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Image" name="image">
-            {/* <Input
-              placeholder="Image"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              required
-            /> */}
-            <>
-              <Upload
-                action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                listType="picture-circle"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 8 ? null : 
-                  <button style={{ border: 0, background: 'none' }} type="button">
-                    <PlusOutlined style={{color: 'black'}}/>
-                    <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
-                  </button>
-                }
-              </Upload>
-              {previewImage && (
-                <Image
-                  wrapperStyle={{ display: 'none' }}
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) => !visible && setPreviewImage(''),
-                  }}
-                  src={previewImage}
-                />
-              )}
-            </>
-          </Form.Item>
-        </Form>
-      </Modal>
       <div>
-        {extras.length === 0 && <p>No Extras exist !</p>}
-        {extras.length > 0 && (
-        <Table columns={extrasColumns} dataSource={extras} />)}
+        {features.length === 0 && <p>No Features exist !</p>}
+        {features.length > 0 && (
+        <Table columns={featuresColumns} dataSource={features} />)}
       </div>
     </div>
   );

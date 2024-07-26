@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Breadcrumb } from 'antd';
 import HeaderLayout from './HeaderLayout';
 import NavigationLayout from './NavigationLayout';
@@ -18,7 +18,6 @@ const DashboardLayout = () => {
     setSelectedKey(key);
   };
 
-  if (user?.id) determineUserType(user?.id);
   async function determineUserType(userId) {
     try {
       // Check if the user is a builder
@@ -75,7 +74,9 @@ const DashboardLayout = () => {
         return <div>Content</div>;
     }
   };
-  
+  useEffect(() => {
+    if (user?.id) determineUserType(user?.id);
+  }, [user]);
   return (
     <Layout className="mainLayout">
       <HeaderLayout userType={userType}/>

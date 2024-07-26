@@ -18,6 +18,8 @@ function SupplierManagement() {
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [initialFormData, setInitialFormData] = useState();
 
   const showModal = () => {
     setName("");
@@ -36,7 +38,8 @@ function SupplierManagement() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  const showEditModal = () => {
+  const showEditModal = (supplier) => {
+    setInitialFormData(supplier);
     setIsEditModalVisible(true);
   };
 
@@ -92,7 +95,7 @@ function SupplierManagement() {
                 setPhoneNumber(record?.phone_number);
                 setEmail(record?.contact_email);
                 setCompanyName(record?.company_name);
-                showEditModal();
+                showEditModal(record);
               }}
             />
           </a>
@@ -178,7 +181,20 @@ function SupplierManagement() {
   // Fetch suppliers on component mount
   useEffect(() => {
     fetchSuppliers();
-  }, []);
+    const hasChanges = () => {
+      if (
+        name !== initialFormData?.name ||
+        companyName !== initialFormData?.company_name ||
+        address !== initialFormData?.address ||
+        phoneNumber !== initialFormData?.phone_number ||
+        email !== initialFormData?.contact_email
+      ) {
+        return true;
+      }
+      return false;
+    };
+    setIsChanged(hasChanges());
+  }, [name, companyName, email, phoneNumber, address]);
 
   return (
     <div>
@@ -262,7 +278,7 @@ function SupplierManagement() {
             <Button key="back" onClick={handleEditCancel}>
               Cancel
             </Button>,
-            <Button key="submit" type="primary" loading={loading} onClick={handleEditOk}>
+            <Button key="submit" type="primary" loading={loading} onClick={handleEditOk} disabled={!isChanged}>
               {loading ? "Updating..." : "Edit Supplier"}
             </Button>,
           ]}

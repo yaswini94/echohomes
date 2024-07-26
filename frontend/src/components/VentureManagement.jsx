@@ -28,26 +28,12 @@ function VentureManagement() {
     { key: 2, type: "2 Bed", value: 0 },
     { key: 3, type: "3 Bed", value: 0 },
   ]);
-  const [editProperties, setEditProperties] = useState([
-    { key: 1, type: "1 Bed", value: 0 },
-    { key: 2, type: "2 Bed", value: 0 },
-    { key: 3, type: "3 Bed", value: 0 },
-  ]);
   const [ventureId, setVentureId] = useState("");
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [initialValues, setInitialValues] = useState({
-    name: "",
-    address: "",
-    description: "",
-    properties: [
-      { key: 1, type: "1 Bed", value: 0 },
-      { key: 2, type: "2 Bed", value: 0 },
-      { key: 3, type: "3 Bed", value: 0 },
-    ],
-    ventureId: "",
-  });
+  const [isChanged, setIsChanged] = useState(false);
+  const [initialFormData, setInitialFormData] = useState();
 
   const handleTypeChange = (value, index) => {
     const newProperties = [...properties];
@@ -56,7 +42,7 @@ function VentureManagement() {
   };
 
   const handleValueChange = (value, index) => {
-    const newProperties = [...initialValues.properties];
+    const newProperties = [...properties];
     newProperties[index].value = value;
     setProperties(newProperties);
   };
@@ -79,35 +65,11 @@ function VentureManagement() {
     setIsModalVisible(false);
   };
   const handleCancel = () => {
-    setName("");
-    setAddress("");
-    setDescription("");
-    setProperties([
-      { key: 1, type: "1 Bed", value: 0 },
-      { key: 2, type: "2 Bed", value: 0 },
-      { key: 3, type: "3 Bed", value: 0 },
-    ]);
-    setVentureId("");
     setIsModalVisible(false);
   };
 
   const showEditModal = (venture) => {
-    setInitialValues({
-      name: venture?.name || "",
-      address: venture?.address || "",
-      description: venture?.description || "",
-      ventureId: venture?.venture_id || "",
-      properties: venture?.properties || [
-        { key: 1, type: "1 Bed", value: 0 },
-        { key: 2, type: "2 Bed", value: 0 },
-        { key: 3, type: "3 Bed", value: 0 },
-      ],
-    });
-    setEditProperties(venture?.properties);
-    setAddress(venture?.address);
-    setName(venture?.name);
-    setDescription(venture?.description);
-    setVentureId(venture?.venture_id);
+    setInitialFormData(venture);
     setIsEditModalVisible(true);
   };
 
@@ -117,17 +79,7 @@ function VentureManagement() {
   };
 
   const handleEditCancel = () => {
-    setName("");
-    setAddress("");
-    setDescription("");
-    setProperties([
-      { key: 1, type: "1 Bed", value: 0 },
-      { key: 2, type: "2 Bed", value: 0 },
-      { key: 3, type: "3 Bed", value: 0 },
-    ]);
-    setVentureId("");
     setIsEditModalVisible(false);
-    // setInitialValues
   };
 
   const deleteVenture = async (id) => {
@@ -168,15 +120,6 @@ function VentureManagement() {
         properties,
       });
       fetchVentures();
-      setName("");
-      setAddress("");
-      setDescription("");
-      setProperties([
-        { key: 1, type: "1 Bed", value: 0 },
-        { key: 2, type: "2 Bed", value: 0 },
-        { key: 3, type: "3 Bed", value: 0 },
-      ]);
-      setVentureId("");
     } catch (error) {
       console.log("Error adding venture:", error);
     }
@@ -185,7 +128,6 @@ function VentureManagement() {
 
   const editVenture = async () => {
     setLoading(true);
-
     try {
       const data = await axiosInstance.post("/UpdateVenture", {
         name,
@@ -216,7 +158,19 @@ function VentureManagement() {
   // Fetch ventures on component mount
   useEffect(() => {
     fetchVentures();
-  }, []);
+    const hasChanges = () => {
+      if (
+        name !== initialFormData?.name ||
+        address !== initialFormData?.address ||
+        description !== initialFormData?.description ||
+        JSON.stringify(properties) !== JSON.stringify(initialFormData?.properties)
+      ) {
+        return true;
+      }
+      return false;
+    };
+    setIsChanged(hasChanges());
+  }, [name, address, description, properties]);
 
   return (
     <div>
@@ -230,144 +184,147 @@ function VentureManagement() {
           </Button>
         </Col>
       </Row>
-      <Modal
-        title="Add New Venture"
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={loading}
-            onClick={handleOk}
-          >
-            {loading ? "Adding..." : "Add Venture"}
-          </Button>,
-        ]}
-      >
-        <Form layout="vertical" initialValues={initialValues}>
-          <Form.Item label="Name" name="name">
-            <Input
-              placeholder="Venture Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Address" name="address">
-            <Input
-              placeholder="Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Description" name="description">
-            <Input.TextArea
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </Form.Item>
-          {/* <Form.Item label="Properties" name="properties">
-            <Select
-              value={properties}
-              style={{ width: 120 }}
-              onChange={onSelectVenture}
-              options={ventures}
-            />
-          </Form.Item> */}
-          <p>Select Properties</p>
-          {properties?.map((property, index) => (
-            <Form.Item name="properties" key={property.key}>
-              <Select
-                style={{ width: 120, marginRight: 8 }}
-                value={property.type}
-                onChange={(value) => handleTypeChange(value, index)}
-              >
-                <Option value="1 Bed">1 Bed</Option>
-                <Option value="2 Bed">2 Bed</Option>
-                <Option value="3 Bed">3 Bed</Option>
-              </Select>
-              <InputNumber
-                min={0}
-                value={property.value}
-                onChange={(value) => handleValueChange(value, index)}
+      <div>
+        <Modal
+          title="Add New Venture"
+          open={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleOk}
+            >
+              {loading ? "Adding..." : "Add Venture"}
+            </Button>,
+          ]}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Name">
+              <Input
+                placeholder="Venture Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
               />
             </Form.Item>
-          ))}
-        </Form>
-      </Modal>
-      <Modal
-        title="Edit Venture"
-        open={isEditModalVisible}
-        onOk={handleEditOk}
-        onCancel={handleEditCancel}
-        footer={[
-          <Button key="back" onClick={handleEditCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={loading}
-            onClick={handleEditOk}
-          >
-            {loading ? "Updating..." : "Edit Venture"}
-          </Button>,
-        ]}
-      >
-        <Form layout="vertical" initialValues={initialValues}>
-          <Form.Item label="Name" name="name">
-            <Input
-              placeholder="Venture Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Address" name="address">
-            <Input
-              placeholder="Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <Form.Item label="Description" name="description">
-            <Input.TextArea
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </Form.Item>
-          <p>Select Properties</p>
-          {editProperties?.map((property, index) => (
-            <Form.Item name="properties" key={property.key}>
-              <Select
-                style={{ width: 120, marginRight: 8 }}
-                value={property.type}
-                onChange={(value) => handleTypeChange(value, index)}
-              >
-                <Option value="1 Bed">1 Bed</Option>
-                <Option value="2 Bed">2 Bed</Option>
-                <Option value="3 Bed">3 Bed</Option>
-              </Select>
-              <InputNumber
-                min={0}
-                value={property.value}
-                onChange={(value) => handleValueChange(value, index)}
+            <Form.Item label="Address">
+              <Input
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
               />
             </Form.Item>
-          ))}
-        </Form>
-      </Modal>
+            <Form.Item label="Description">
+              <Input.TextArea
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </Form.Item>
+            {/* <Form.Item label="Properties">
+              <Select
+                value={properties}
+                style={{ width: 120 }}
+                onChange={onSelectVenture}
+                options={ventures}
+              />
+            </Form.Item> */}
+            <p>Select Properties</p>
+            {properties?.map((property, index) => (
+              <Form.Item name="properties" key={property.key}>
+                <Select
+                  style={{ width: 120, marginRight: 8 }}
+                  value={property.type}
+                  onChange={(value) => handleTypeChange(value, index)}
+                >
+                  <Option value="1 Bed">1 Bed</Option>
+                  <Option value="2 Bed">2 Bed</Option>
+                  <Option value="3 Bed">3 Bed</Option>
+                </Select>
+                <InputNumber
+                  min={0}
+                  value={property.value}
+                  onChange={(value) => handleValueChange(value, index)}
+                />
+              </Form.Item>
+            ))}
+          </Form>
+        </Modal>
+        <Modal
+          title="Edit Venture"
+          open={isEditModalVisible}
+          onOk={handleEditOk}
+          onCancel={handleEditCancel}
+          footer={[
+            <Button key="back" onClick={handleEditCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleEditOk}
+              disabled={!isChanged}
+            >
+              {loading ? "Updating..." : "Edit Venture"}
+            </Button>,
+          ]}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Name">
+              <Input
+                placeholder="Venture Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </Form.Item>
+            <Form.Item label="Address">
+              <Input
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+              />
+            </Form.Item>
+            <Form.Item label="Description">
+              <Input.TextArea
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </Form.Item>
+            <p>Select Properties</p>
+            {properties?.map((property, index) => (
+              <Form.Item name="properties" key={property.key}>
+                <Select
+                  style={{ width: 120, marginRight: 8 }}
+                  value={property.type}
+                  onChange={(value) => handleTypeChange(value, index)}
+                >
+                  <Option value="1 Bed">1 Bed</Option>
+                  <Option value="2 Bed">2 Bed</Option>
+                  <Option value="3 Bed">3 Bed</Option>
+                </Select>
+                <InputNumber
+                  min={0}
+                  value={property.value}
+                  onChange={(value) => handleValueChange(value, index)}
+                />
+              </Form.Item>
+            ))}
+          </Form>
+        </Modal>
+      </div>
       <div>
         {ventures.length === 0 && <p>No ventures exist !</p>}
         {ventures.length > 0 && (
@@ -388,6 +345,11 @@ function VentureManagement() {
                             src={editIcon}
                             style={{ height: "18px", width: "18px" }}
                             onClick={() => {
+                              setName(venture?.name);
+                              setAddress(venture?.address);
+                              setDescription(venture?.description);
+                              setProperties(venture?.properties);
+                              setVentureId(venture?.venture_id);
                               showEditModal(venture);
                             }}
                           />

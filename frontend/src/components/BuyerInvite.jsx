@@ -31,6 +31,9 @@ function BuyerInvite() {
   const [message, setMessage] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [initialFormData, setInitialFormData] = useState();
+
   const items = [
     {
       key: "1",
@@ -64,7 +67,8 @@ function BuyerInvite() {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-  const showEditModal = () => {
+  const showEditModal = (buyer) => {
+    setInitialFormData(buyer);
     setIsEditModalVisible(true);
   };
 
@@ -124,7 +128,7 @@ function BuyerInvite() {
                 setPhoneNumber(record?.phone_number);
                 setEmail(record?.contact_email);
                 setHouseType(record?.house_type);
-                showEditModal();
+                showEditModal(record);
               }}
             />
           </a>
@@ -220,7 +224,20 @@ function BuyerInvite() {
 
   useEffect(() => {
     fetchBuyers();
-  }, []);
+    const hasChanges = () => {
+      if (
+        name !== initialFormData?.name ||
+        houseType !== initialFormData?.house_type ||
+        address !== initialFormData?.address ||
+        phoneNumber !== initialFormData?.phone_number ||
+        email !== initialFormData?.contact_email
+      ) {
+        return true;
+      }
+      return false;
+    };
+    setIsChanged(hasChanges());
+  }, [name, address, email, phoneNumber, houseType]);
 
   return (
     <div>
@@ -340,6 +357,7 @@ function BuyerInvite() {
               type="primary"
               loading={loading}
               onClick={handleEditOk}
+              disabled={!isChanged}
             >
               {loading ? "Updating..." : "Edit Buyer"}
             </Button>,

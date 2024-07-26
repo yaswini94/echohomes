@@ -335,6 +335,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
     house_type,
     contact_email: email,
     venture_id,
+    features: []
   });
 
   console.log({ data, error });
@@ -373,6 +374,56 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
   }
   res.status(201).json("Update successfull");
 });
+
+app.post("/addFeature", authenticateToken, async (req, res) => {
+  const { name, details, price, images } = req.body;
+  const user = req.user;
+
+  const { data, error } = await supabase.from("features").insert({
+    name,
+    details,
+    images,
+    price,
+    builder_id: user.id
+  });
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.status(201).json("Add Feature Successfull");
+});
+
+app.post("/updateFeature", authenticateToken, async (req, res) => {
+  const {
+    name,
+    details,
+    images,
+    price,
+    feature_id
+  } = req.body;
+
+  const { data, error } = await supabase
+    .from("features")
+    .update({ name, details, price, images })
+    .eq("feature_id", feature_id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json("Update successfull");
+});
+
+app.get("/features", authenticateToken, async (req, res) => {
+  const { data, error } = await supabase.from("features").select("*");
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
 app.get("/", (req, res) => {
   res.send("Welcome to Echo homes!");
 });
