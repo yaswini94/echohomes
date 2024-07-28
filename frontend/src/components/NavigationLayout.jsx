@@ -2,6 +2,7 @@ import React from "react";
 import { Layout, Menu, theme } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
+import { userRoles } from "../utils/constants";
 const { Sider } = Layout;
 
 const NavigationLayout = () => {
@@ -9,7 +10,7 @@ const NavigationLayout = () => {
   const { role } = useAuth();
 
   const items = {
-    builder: [
+    [userRoles.BUILDERS]: [
       {
         label: <Link to="/">Home</Link>,
         key: "/",
@@ -35,13 +36,13 @@ const NavigationLayout = () => {
         key: "/orders",
       },
     ],
-    buyer: [
+    [userRoles.BUYERS]: [
       { label: "Home", key: "home" },
       { label: "Choices Configuration", key: "choicesConfiguration" },
       { label: "In-Budget Suggestions", key: "inBudgetSuggestions" },
       { label: "Payments/ Invoice", key: "payments/invoice" },
     ],
-    supplier: [
+    [userRoles.SUPPLIERS]: [
       { label: "Home", key: "home" },
       { label: "Orders", key: "orders" },
       { label: "Invoices", key: "invoices" },

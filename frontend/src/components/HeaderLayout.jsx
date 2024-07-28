@@ -25,6 +25,7 @@ import titleLogo from "../assets/echohomesTitle.png";
 import exitLogo from "../assets/exit.png";
 import { supabase } from "../supabase";
 import { useAuth } from "../auth/useAuth";
+import { userRoles } from "../utils/constants";
 const { Header } = Layout;
 
 const HeaderLayout = () => {
@@ -225,7 +226,7 @@ const HeaderLayout = () => {
       <div>
         {/* <p>Use Venture: </p> */}
         {/* {console.log({ selectedVenture })} */}
-        {role === "builder" && (
+        {role === userRoles.BUILDERS && (
           <Select
             value={selectedVenture}
             style={{

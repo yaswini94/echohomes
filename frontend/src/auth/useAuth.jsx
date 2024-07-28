@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { supabase } from "../supabase";
+import { userRoles } from "../utils/constants";
 
 const AuthContext = createContext();
 
@@ -31,14 +32,14 @@ export const AuthProvider = ({ children }) => {
         // Check if the user is a builder
         const isBuilder = await checkIdExists("builders", userId, "builder_id");
         if (isBuilder) {
-          setUserRole("builder");
+          setUserRole(userRoles.BUILDERS);
           return;
         }
 
         // Check if the user is buyer
         const isBuyer = await checkIdExists("buyers", userId, "buyer_id");
         if (isBuyer) {
-          setUserRole("buyer");
+          setUserRole(userRoles.BUYERS);
           return;
         }
 
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }) => {
           "supplier_id"
         );
         if (isSupplier) {
-          setUserRole("supplier");
+          setUserRole(userRoles.SUPPLIERS);
           return;
         }
 
