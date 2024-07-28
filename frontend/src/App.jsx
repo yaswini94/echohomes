@@ -14,15 +14,14 @@ import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./auth/useAuth";
 import VentureDetail from "./components/VentureDetail";
 import ResetPassword from "./components/ResetPassword";
-// import SupplierDashboard from "./components/SupplierDashboard";
-import SupplierManagement from "./components/SupplierManagement";
 import { Layout, theme } from "antd";
 import HeaderLayout from "./components/HeaderLayout";
 import NavigationLayout from "./components/NavigationLayout";
-import BuyerInvite from "./components/BuyerInvite";
+import BuyerManagement from "./components/BuyerManagement";
 import FeatureManagement from "./components/FeatureManagement";
 import OrdersManagement from "./components/OrdersManagement";
 import VentureManagement from "./components/VentureManagement";
+import SupplierManagement from "./components/SupplierManagement";
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
@@ -142,7 +141,7 @@ function App() {
               key="buyerManagement"
               element={
                 <PrivateRoute>
-                  <BuyerInvite />
+                  <BuyerManagement />
                 </PrivateRoute>
               }
             />

@@ -368,6 +368,8 @@ app.post("/invite", authenticateToken, async (req, res) => {
     return res.status(400).json({ error: createdUserError.message });
   }
 
+  console.log({ createdUser: createdUser?.user?.id, builderId: user.id });
+
   const { data, error } = await supabase.from("buyers").insert({
     buyer_id: createdUser?.user?.id,
     builder_id: user.id,
@@ -401,12 +403,37 @@ app.post("/invite", authenticateToken, async (req, res) => {
 });
 
 app.post("/updateBuyer", authenticateToken, async (req, res) => {
+<<<<<<< Updated upstream
   const { name, contact_email, address, phone_number, house_type, buyer_id, settings } =
     req.body;
 
   const { data, error } = await supabase
     .from("buyers")
     .update({ name, contact_email, address, phone_number, house_type, settings })
+=======
+  const {
+    name,
+    contact_email,
+    address,
+    phone_number,
+    house_type,
+    buyer_id,
+    settings,
+    feedback,
+  } = req.body;
+
+  const { data, error } = await supabase
+    .from("buyers")
+    .update({
+      name,
+      contact_email,
+      address,
+      phone_number,
+      house_type,
+      settings,
+      feedback,
+    })
+>>>>>>> Stashed changes
     .eq("buyer_id", buyer_id);
 
   if (error) {

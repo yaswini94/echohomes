@@ -83,6 +83,7 @@ function BuyerInvite() {
     const selectedItem = items.find((item) => item.key === value.key);
     setHouseType(selectedItem ? selectedItem.label : null);
   };
+
   const columns = [
     {
       title: "Name",
