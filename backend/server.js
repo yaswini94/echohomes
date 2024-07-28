@@ -403,14 +403,6 @@ app.post("/invite", authenticateToken, async (req, res) => {
 });
 
 app.post("/updateBuyer", authenticateToken, async (req, res) => {
-<<<<<<< Updated upstream
-  const { name, contact_email, address, phone_number, house_type, buyer_id, settings } =
-    req.body;
-
-  const { data, error } = await supabase
-    .from("buyers")
-    .update({ name, contact_email, address, phone_number, house_type, settings })
-=======
   const {
     name,
     contact_email,
@@ -433,7 +425,6 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
       settings,
       feedback,
     })
->>>>>>> Stashed changes
     .eq("buyer_id", buyer_id);
 
   if (error) {
