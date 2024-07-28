@@ -145,10 +145,26 @@ const HeaderLayout = () => {
     setLoading(true);
 
     try {
-      const data = await axiosInstance.post("/updateBuilder", {
-        builder_id: user?.id,
-        settings
-      });
+      switch(role) {
+        case userRoles.BUILDERS:
+          const data = await axiosInstance.post("/updateBuilder", {
+            builder_id: user?.id,
+            settings
+          });
+          break;
+        case userRoles.BUYERS:
+          const dataBuyer = await axiosInstance.post("/updateBuyer", {
+            buyer_id: user?.id,
+            settings
+          });
+          break;
+        case userRoles.SUPPLIERS:
+          const dataSupplier = await axiosInstance.post("/updateSupplier", {
+            supplier_id: user?.id,
+            settings
+          });
+          break;
+      }
     } catch (error) {
       console.log("Error updating settings:", error);
     }
@@ -189,8 +205,8 @@ const HeaderLayout = () => {
         >
           <Form layout="vertical">
             <Form.Item label="Font" name="font">
-              {/* <Select value={font} onChange={(value) => handleChange('font', value)}> */}
-              <Select value={font} onChange={e => setFont(e.target.value)}>
+              <Select value={font} onChange={(value) => handleChange('font', value)}>
+              {/* <Select value={font} onChange={e => setFont(e.target.value)}> */}
                 <Option value="Arial">Arial</Option>
                 <Option value="Georgia">Georgia</Option>
                 <Option value="Verdana">Verdana</Option>
@@ -198,15 +214,15 @@ const HeaderLayout = () => {
               </Select>
             </Form.Item>
             <Form.Item label="Theme" name="theme">
-              {/* <Select value={theme} onChange={(value) => handleChange('theme', value)}> */}
-              <Select value={theme} onChange={e => setTheme(e.target.value)}>
+              <Select value={theme} onChange={(value) => handleChange('theme', value)}>
+              {/* <Select value={theme} onChange={e => setTheme(e.target.value)}> */}
                 <Option value="light">Light</Option>
                 <Option value="dark">Dark</Option>
               </Select>
             </Form.Item>
             <Form.Item label="Font Size" name="fontSize">
-              <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={e => setFontSize(e.target.value)}/>
-              {/* <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={(value) => handleChange('fontSize', value)}/> */}
+              {/* <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={e => setFontSize(e.target.value)}/> */}
+              <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={(value) => handleChange('fontSize', value)}/>
             </Form.Item>
           </Form>
         </Modal>
