@@ -30,24 +30,34 @@ const { Header } = Layout;
 
 const HeaderLayout = () => {
   const { role } = useAuth();
-
   const [language, setLanguage] = useState("EN-GB");
   const [ventures, setVentures] = useState([]);
   const [selectedVenture, setSelectedVenture] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [initalSettings, setInitalSettings] = useState({
-    font: "Arial",
-    fontSize: "14",
-    theme: "light",
-  });
   const [settings, setSettings] = useState({});
   const [loading, setLoading] = useState(false);
+  const [font, setFont] = useState("");
+  const [fontSize, setFontSize] = useState();
+  const [theme, setTheme] = useState("");
+  const { user } = useAuth();
 
   const onLanguageChange = (value) => {
     setLanguage(value);
     localStorage.setItem("language", value);
   };
 
+  const fetchUserSettings = async (role) => {
+    if (role) {
+      try {
+        const response = await axiosInstance.get(`/${role}/${user?.id}`);
+        setFont(response?.settings?.font);
+        setFontSize(response?.settings?.fontSize);
+        setTheme(response?.settings?.theme);
+      } catch (error) {
+        console.log("Error fetching user settings:", error);
+      }
+    }
+  };
   useEffect(() => {
     const fetchVentures = async () => {
       try {
@@ -59,16 +69,16 @@ const HeaderLayout = () => {
           };
         });
         setVentures(_ventures);
-        const _selectedVenture = _ventures?.[0].value;
+        const _selectedVenture = _ventures?.[0]?.value;
         setSelectedVenture(_selectedVenture);
         localStorage.setItem("selectedVenture", _selectedVenture);
       } catch (error) {
         console.log("Error fetching ventures:", error);
       }
     };
-
     fetchVentures();
-  }, []);
+    fetchUserSettings(role);
+  }, [role]);
 
   const onSelectVenture = (value) => {
     setSelectedVenture(value);
@@ -79,22 +89,12 @@ const HeaderLayout = () => {
     setIsModalVisible(true);
   };
   const handleOk = () => {
-    console.log(initalSettings);
-    console.log(settings);
+    saveSettings(settings);
     setIsModalVisible(false);
   };
   const handleCancel = () => {
     setIsModalVisible(false);
   };
-
-  // const updateKeys = () => {
-  //   let updatedSettings = {
-  //     font: (settings?.font) ? settings?.font : initalSettings.font,
-  //     fontSize: (settings?.fontSize) ? settings?.fontSize : initalSettings.fontSize,
-  //     theme: (settings?.theme) ? settings?.theme : initalSettings.theme
-  //   };
-  //   return updatedSettings;
-  // };
 
   const handleChange = (key, value) => {
     setSettings({ ...settings, [key]: value });
@@ -103,79 +103,9 @@ const HeaderLayout = () => {
   const user_items = [
     {
       key: "1",
-      label: (
-        <>
-          <Button type="text" onClick={showModal}>
-            Settings
-          </Button>
-          ,
-          <div>
-            <Modal
-              title="Settings"
-              open={isModalVisible}
-              onOk={handleOk}
-              onCancel={handleCancel}
-              footer={[
-                <Button key="back" onClick={handleCancel}>
-                  Cancel
-                </Button>,
-                <Button
-                  key="submit"
-                  type="primary"
-                  loading={loading}
-                  onClick={handleOk}
-                >
-                  {loading ? "Updating..." : "Save"}
-                </Button>,
-              ]}
-            >
-              <Form layout="vertical">
-                <Form.Item
-                  label="Font"
-                  name="font"
-                  initialValue={initalSettings?.font}
-                >
-                  <Select
-                    value={settings?.font}
-                    onChange={(value) => handleChange("font", value)}
-                  >
-                    <Option value="Arial">Arial</Option>
-                    <Option value="Georgia">Georgia</Option>
-                    <Option value="Verdana">Verdana</Option>
-                    <Option value="Courier New">Courier New</Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  label="Font Size"
-                  name="fontSize"
-                  initialValue={initalSettings?.fontSize}
-                >
-                  <InputNumber
-                    min={10}
-                    max={30}
-                    value={settings?.value}
-                    onChange={(value) => handleChange("fontSize", value)}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label="Theme"
-                  name="theme"
-                  initialValue={initalSettings?.theme}
-                >
-                  <Select
-                    value={settings?.theme}
-                    onChange={(value) => handleChange("theme", value)}
-                  >
-                    <Option value="light">Light</Option>
-                    <Option value="dark">Dark</Option>
-                  </Select>
-                </Form.Item>
-              </Form>
-            </Modal>
-          </div>
-        </>
-      ),
       icon: <SettingOutlined />,
+      label: 
+        <a type="text" onClick={showModal}>Settings</a>
     },
     {
       key: "2",
@@ -211,6 +141,20 @@ const HeaderLayout = () => {
     },
   ];
 
+  const saveSettings = async (settings) => {
+    setLoading(true);
+
+    try {
+      const data = await axiosInstance.post("/updateBuilder", {
+        builder_id: user?.id,
+        settings
+      });
+    } catch (error) {
+      console.log("Error updating settings:", error);
+    }
+    setLoading(false);
+  };
+
   return (
     <Header
       style={{
@@ -224,24 +168,58 @@ const HeaderLayout = () => {
         <img src={titleLogo} alt="Title Logo" style={{ height: "32px" }} />
       </div>
       <div>
-        {/* <p>Use Venture: </p> */}
-        {/* {console.log({ selectedVenture })} */}
-        {role === userRoles.BUILDERS && (
-          <Select
-            value={selectedVenture}
-            style={{
-              width: "auto",
-              minWidth: "160px",
-              marginRight: "24px",
-              color: "white",
-            }}
-            onChange={onSelectVenture}
-            options={ventures}
-          />
-        )}
-        <Select
-          key="language"
-          style={{ width: "auto", minWidth: "80px", marginRight: "24px" }}
+        <Modal
+          title="Settings"
+          open={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleOk}
+            >
+              {loading ? "Updating..." : "Save"}
+            </Button>,
+          ]}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Font" name="font">
+              {/* <Select value={font} onChange={(value) => handleChange('font', value)}> */}
+              <Select value={font} onChange={e => setFont(e.target.value)}>
+                <Option value="Arial">Arial</Option>
+                <Option value="Georgia">Georgia</Option>
+                <Option value="Verdana">Verdana</Option>
+                <Option value="Courier New">Courier New</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Theme" name="theme">
+              {/* <Select value={theme} onChange={(value) => handleChange('theme', value)}> */}
+              <Select value={theme} onChange={e => setTheme(e.target.value)}>
+                <Option value="light">Light</Option>
+                <Option value="dark">Dark</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Font Size" name="fontSize">
+              <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={e => setFontSize(e.target.value)}/>
+              {/* <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={(value) => handleChange('fontSize', value)}/> */}
+            </Form.Item>
+          </Form>
+        </Modal>
+      </div>
+      <div>
+        {role === userRoles.BUILDERS && (<Select
+          value={selectedVenture}
+          style={{ width: "auto", minWidth: "160px", marginRight: "24px", color: "white" }}
+          onChange={onSelectVenture}
+          options={ventures}
+        />)}
+        <Select key="language"
+          style={{width: 'auto', minWidth: '80px', marginRight: '24px'}}
           onClick={(event) => event.preventDefault()}
           onChange={onLanguageChange}
           value={language}

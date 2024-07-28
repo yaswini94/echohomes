@@ -146,6 +146,19 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+app.post("/updateBuilder", authenticateToken, async (req, res) => {
+  const { settings, builder_id } = req.body;
+  const { data, error } = await supabase
+    .from("builders")
+    .update({ settings })
+    .eq("builder_id", builder_id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json("Update successfull");
+});
+
 app.post("/addVenture", authenticateToken, async (req, res) => {
   const { name, address, description, properties } = req.body;
   const user = req.user;
@@ -386,12 +399,12 @@ app.post("/invite", authenticateToken, async (req, res) => {
 });
 
 app.post("/updateBuyer", authenticateToken, async (req, res) => {
-  const { name, contact_email, address, phone_number, house_type, buyer_id } =
+  const { name, contact_email, address, phone_number, house_type, buyer_id, settings, feedback } =
     req.body;
 
   const { data, error } = await supabase
     .from("buyers")
-    .update({ name, contact_email, address, phone_number, house_type })
+    .update({ name, contact_email, address, phone_number, house_type, settings, feedback })
     .eq("buyer_id", buyer_id);
 
   if (error) {

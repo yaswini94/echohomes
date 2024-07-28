@@ -22,7 +22,6 @@ import NavigationLayout from "./components/NavigationLayout";
 import BuyerInvite from "./components/BuyerInvite";
 import FeatureManagement from "./components/FeatureManagement";
 import OrdersManagement from "./components/OrdersManagement";
-import Settings from "./components/Settings";
 import VentureManagement from "./components/VentureManagement";
 const { Content } = Layout;
 

@@ -2,17 +2,18 @@ import BuyerDashboard from "./BuyerDashboard";
 import SupplierDashboard from "./SupplierDashboard";
 import BuilderDashboard from "./BuilderDashboard";
 import { useAuth } from "../auth/useAuth";
+import { userRoles } from "../utils/constants";
 
 const DashboardLayout = () => {
   const { role } = useAuth();
 
   const renderDashboards = () => {
     switch (role) {
-      case "buyer":
+      case userRoles.BUYERS:
         return <BuyerDashboard />;
-      case "builder":
+      case userRoles.BUILDERS:
         return <BuilderDashboard />;
-      case "supplier":
+      case userRoles.SUPPLIERS:
         return <SupplierDashboard />;
       default:
         return <div>Content</div>;
