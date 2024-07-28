@@ -172,14 +172,6 @@ function App() {
                 </PublicRoute>
               }
             />
-            <Route
-              path="/settings"
-              element={
-                <PrivateRoute>
-                  <Settings />
-                </PrivateRoute>
-              }
-            />
             <Route path="/" element={<Navigate to="/login" />} />
           </Routes>
         </AppLayout>
