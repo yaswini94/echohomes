@@ -50,9 +50,10 @@ const HeaderLayout = () => {
     if (role) {
       try {
         const response = await axiosInstance.get(`/${role}/${user?.id}`);
-        setFont(response?.settings?.font);
-        setFontSize(response?.settings?.fontSize);
-        setTheme(response?.settings?.theme);
+        setFont(response?.data?.settings?.font);
+        setFontSize(response?.data?.settings?.fontSize);
+        setTheme(response?.data?.settings?.theme);
+        console.log(font, fontSize, theme);
       } catch (error) {
         console.log("Error fetching user settings:", error);
       }
@@ -97,6 +98,17 @@ const HeaderLayout = () => {
   };
 
   const handleChange = (key, value) => {
+    switch(key) {
+      case 'font':
+        setFont(value);
+        break;
+      case 'fontSize':
+        setFontSize(value);
+        break;
+      case 'theme':
+        setTheme(value);
+        break;
+    }
     setSettings({ ...settings, [key]: value });
   };
 
@@ -204,25 +216,22 @@ const HeaderLayout = () => {
           ]}
         >
           <Form layout="vertical">
-            <Form.Item label="Font" name="font">
-              <Select value={font} onChange={(value) => handleChange('font', value)}>
-              {/* <Select value={font} onChange={e => setFont(e.target.value)}> */}
+            <Form.Item label="Font">
+              <Select defaultValue={font} value={font} onChange={(value) => handleChange('font', value)}>
                 <Option value="Arial">Arial</Option>
                 <Option value="Georgia">Georgia</Option>
                 <Option value="Verdana">Verdana</Option>
                 <Option value="Courier New">Courier New</Option>
               </Select>
             </Form.Item>
-            <Form.Item label="Theme" name="theme">
-              <Select value={theme} onChange={(value) => handleChange('theme', value)}>
-              {/* <Select value={theme} onChange={e => setTheme(e.target.value)}> */}
+            <Form.Item label="Theme">
+              <Select defaultValue={theme} value={theme} onChange={(value) => handleChange('theme', value)}>
                 <Option value="light">Light</Option>
                 <Option value="dark">Dark</Option>
               </Select>
             </Form.Item>
-            <Form.Item label="Font Size" name="fontSize">
-              {/* <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={e => setFontSize(e.target.value)}/> */}
-              <InputNumber style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={(value) => handleChange('fontSize', value)}/>
+            <Form.Item label="Font Size">
+              <InputNumber defaultValue={fontSize} style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={(value) => handleChange('fontSize', value)}/>
             </Form.Item>
           </Form>
         </Modal>
