@@ -9,6 +9,8 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  console.log({ user });
+
   useEffect(() => {
     setLoading(true);
 

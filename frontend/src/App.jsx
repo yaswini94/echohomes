@@ -13,7 +13,6 @@ import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./auth/useAuth";
 import VentureDetail from "./components/VentureDetail";
 import ResetPassword from "./components/ResetPassword";
-import VentureManagement from "./components/VentureManagement";
 // import SupplierDashboard from "./components/SupplierDashboard";
 import SupplierManagement from "./components/SupplierManagement";
 import { Layout, theme } from "antd";
@@ -23,6 +22,7 @@ import BuyerInvite from "./components/BuyerInvite";
 import FeatureManagement from "./components/FeatureManagement";
 import OrdersManagement from "./components/OrdersManagement";
 import Settings from "./components/Settings";
+import VentureManagement from "./components/VentureManagement";
 const { Content } = Layout;
 
 function App() {
