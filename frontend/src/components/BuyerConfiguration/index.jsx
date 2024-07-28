@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import axiosInstance from "../helpers/axiosInstance";
-import { useAuth } from "../auth/useAuth";
+import axiosInstance from "../../helpers/axiosInstance";
+import { useAuth } from "../../auth/useAuth";
 
-function ChoicesConfiguration() {
+function BuyerConfiguration() {
   const [choices, setChoices] = useState([]);
   const [extras, setExtras] = useState([]);
   const [name, setName] = useState("");
@@ -66,4 +66,4 @@ function ChoicesConfiguration() {
     </div>
   );
 }
-export default ChoicesConfiguration;
+export default BuyerConfiguration;
