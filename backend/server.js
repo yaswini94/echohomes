@@ -372,7 +372,6 @@ app.post("/invite", authenticateToken, async (req, res) => {
 
   const { data, error } = await supabase.from("buyers").insert({
     buyer_id: createdUser?.user?.id,
-    builder_id: user.id,
     name,
     address,
     phone_number,

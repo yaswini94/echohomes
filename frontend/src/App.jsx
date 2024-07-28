@@ -18,10 +18,10 @@ import { Layout, theme } from "antd";
 import HeaderLayout from "./components/HeaderLayout";
 import NavigationLayout from "./components/NavigationLayout";
 import BuyerManagement from "./components/BuyerManagement";
-import FeatureManagement from "./components/FeatureManagement";
 import OrdersManagement from "./components/OrdersManagement";
 import VentureManagement from "./components/VentureManagement";
 import SupplierManagement from "./components/SupplierManagement";
+import FeatureManagement from "./components/FeatureManagement";
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
