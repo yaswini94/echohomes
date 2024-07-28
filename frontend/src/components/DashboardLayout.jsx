@@ -27,17 +27,17 @@ const DashboardLayout = () => {
         return;
       }
 
-      // Check if the user is a supplier
-      const isSupplier = await checkIdExists('suppliers', userId, 'supplier_id');
-      if (isSupplier) {
-        setUserType("supplier");
-        return;
-      }
-
       // Check if the user is buyer
       const isBuyer = await checkIdExists('buyers', userId, 'buyer_id');
       if (isBuyer) {
         setUserType("buyer");
+        return;
+      }
+
+      // Check if the user is a supplier
+      const isSupplier = await checkIdExists('suppliers', userId, 'supplier_id');
+      if (isSupplier) {
+        setUserType("supplier");
         return;
       }
 
@@ -65,11 +65,11 @@ const DashboardLayout = () => {
   const renderDashboards = () => {
     switch(userType) {
       case "buyer":
-        return <BuyerDashboard />;
+        return <BuyerDashboard selectedKey={selectedKey}/>;
       case "builder":
         return <BuilderDashboard selectedKey={selectedKey} />;
       case "supplier":
-        return <SupplierDashboard />;
+        return <SupplierDashboard selectedKey={selectedKey}/>;
       default:
         return <div>Content</div>;
     }

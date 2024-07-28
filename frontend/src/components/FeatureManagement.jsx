@@ -5,6 +5,7 @@ import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal } from 'antd
 import { PlusOutlined } from '@ant-design/icons';
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
+import linkIcon from "../assets/link.png";
 import axiosInstance from "../helpers/axiosInstance";
 import { Image, Upload } from 'antd';
 
@@ -243,6 +244,9 @@ function FeatureManagement() {
           <h3>Feature Management</h3>
         </Col>
         <Col>
+          <Button type="primary" style={{ margin: '6px' }} onClick={console.log("clicked button")}>
+            <Avatar src={linkIcon} style={{ height: '18px', width: '18px', color: 'white' }} onClick={() => console.log("kjds")} /> Link Features
+          </Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
             Add
           </Button>

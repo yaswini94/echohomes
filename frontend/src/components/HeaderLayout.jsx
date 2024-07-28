@@ -8,6 +8,10 @@ import {
   Dropdown,
   Space,
   Typography,
+  Button,
+  Modal,
+  Form,
+  InputNumber
 } from "antd";
 import {
   UserOutlined,
@@ -23,28 +27,18 @@ import { supabase } from "../supabase";
 const { Header } = Layout;
 
 const HeaderLayout = ({ userType }) => {
-  // const [language, setLanguage] = useState("EN-GB");
+  const [language, setLanguage] = useState("EN-GB");
   const [ventures, setVentures] = useState([]);
   const [selectedVenture, setSelectedVenture] = useState(null);
-
-  // const onLanguageChange = (value) => {
-  //   switch (value) {
-  //     case 'en-us':
-  //       setLanguage("EN-US");
-  //       form.setFieldsValue({
-  //         note: 'en-us!',
-  //       });
-  //       setUsertype(value);
-  //       break;
-  //     case 'en-gb':
-  //       setLanguage("EN-GB");
-  //       form.setFieldsValue({
-  //         note: 'en-gb!',
-  //       });
-  //       break;
-  //     default:
-  //   }
-  // };
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [initalSettings, setInitalSettings] = useState({font: 'Arial', fontSize: '14', theme: 'light'});
+  const [settings, setSettings] = useState({});
+  const [loading, setLoading] = useState(false);
+  
+  const onLanguageChange = (value) => {
+    setLanguage(value);
+    localStorage.setItem("language", value);
+  };
 
   useEffect(() => {
     const fetchVentures = async () => {
@@ -73,14 +67,79 @@ const HeaderLayout = ({ userType }) => {
     localStorage.setItem("selectedVenture", value);
   };
 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+  const handleOk = () => {
+    console.log(initalSettings);
+    console.log(settings);
+    setIsModalVisible(false);
+  };
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  // const updateKeys = () => {
+  //   let updatedSettings = {
+  //     font: (settings?.font) ? settings?.font : initalSettings.font,
+  //     fontSize: (settings?.fontSize) ? settings?.fontSize : initalSettings.fontSize,
+  //     theme: (settings?.theme) ? settings?.theme : initalSettings.theme
+  //   };
+  //   return updatedSettings;
+  // };
+
+  const handleChange = (key, value) => {
+    setSettings({ ...settings, [key]: value });
+  };
+
   const user_items = [
     {
       key: "1",
-      label: (
-        <a target="_blank" rel="noopener noreferrer" href="">
-          Settings
-        </a>
-      ),
+      label: 
+      <>
+        <Button type="text" onClick={showModal}>Settings</Button>,
+        <div>
+          <Modal
+            title="Settings"
+            open={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={[
+              <Button key="back" onClick={handleCancel}>
+                Cancel
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                loading={loading}
+                onClick={handleOk}
+              >
+                {loading ? "Updating..." : "Save"}
+              </Button>,
+            ]}
+          >
+            <Form layout="vertical">
+              <Form.Item label="Font" name="font" initialValue={initalSettings?.font}>
+                <Select value={settings?.font} onChange={(value) => handleChange('font', value)}>
+                  <Option value="Arial">Arial</Option>
+                  <Option value="Georgia">Georgia</Option>
+                  <Option value="Verdana">Verdana</Option>
+                  <Option value="Courier New">Courier New</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item label="Font Size" name="fontSize" initialValue={initalSettings?.fontSize}>
+                <InputNumber min={10} max={30} value={settings?.value} onChange={(value) => handleChange('fontSize', value)}/>
+              </Form.Item>
+              <Form.Item label="Theme" name="theme" initialValue={initalSettings?.theme}>
+                <Select value={settings?.theme} onChange={(value) => handleChange('theme', value)}>
+                  <Option value="light">Light</Option>
+                  <Option value="dark">Dark</Option>
+                </Select>
+              </Form.Item>
+            </Form>
+          </Modal>
+        </div>
+      </>,
       icon: <SettingOutlined />,
     },
     {
@@ -108,20 +167,12 @@ const HeaderLayout = ({ userType }) => {
 
   const languages = [
     {
-      key: "1",
-      label: (
-        <a target="_blank" rel="noopener noreferrer" href="">
-          EN-GB
-        </a>
-      ),
+      value: 'en-gb',
+      label: 'EN-GB'
     },
     {
-      key: "2",
-      label: (
-        <a target="_blank" rel="noopener noreferrer" href="">
-          EN-US
-        </a>
-      ),
+      value: 'en-us',
+      label: 'EN-US'
     },
   ];
 
@@ -142,33 +193,24 @@ const HeaderLayout = ({ userType }) => {
         {/* {console.log({ selectedVenture })} */}
         {userType === 'builder' && (<Select
           value={selectedVenture}
-          style={{ width: "auto", minWidth: "160px", marginRight: "16px", color: "white" }}
+          style={{ width: "auto", minWidth: "160px", marginRight: "24px", color: "white" }}
           onChange={onSelectVenture}
           options={ventures}
         />)}
+        <Select key="language"
+          style={{width: 'auto', minWidth: '80px', marginRight: '24px'}}
+          onClick={(event) => event.preventDefault()}
+          onChange={onLanguageChange}
+          value={language}
+          options={languages}
+        >
+          <Option value="en-us">EN-US</Option>
+          <Option value="en-gb">EN-GB</Option>
+        </Select>
         <MessageOutlined
-          style={{ color: "white" }}
+          style={{ color: "white", fontSize: "24px", width: "24px", height: "24px", marginRight: "24px" }}
           onClick={(event) => event.preventDefault()}
         />
-        {/* <Dropdown menu={{languages}}> */}
-        <a
-          style={{ margin: "0 20px", color: "white" }}
-          onClick={(event) => event.preventDefault()}
-        >
-          EN-GB
-        </a>
-        {/* <Select key="language"
-            style={{color: "white", border: "none"}}
-            // placeholder={{language}}
-            onClick={(event) => event.preventDefault()}
-            onChange={onLanguageChange}
-            value={language}
-            allowClear
-          >
-            <Option value="en-us">EN-US</Option>
-            <Option value="en-gb">EN-GB</Option>
-          </Select> */}
-        {/* </Dropdown> */}
         <Dropdown menu={{ items: user_items }}>
           <a
             style={{ color: "white" }}
@@ -189,31 +231,6 @@ const HeaderLayout = ({ userType }) => {
             </span>
           </a>
         </Dropdown>
-        {/* <Menu mode="horizontal" theme="dark" style={{flex: 1, minWidth: 0}} selectable={false}>
-          <Menu.Item key="language">EN-US
-            <Select
-              // placeholder={{language}}
-              onChange={onLanguageChange}
-              value={language}
-              allowClear
-            >
-              <Option value="en-us">EN-US</Option>
-              <Option value="en-gb">EN-GB</Option>
-            </Select>
-          </Menu.Item>
-          <Menu.Item key="notifications">
-            <Badge count={5}>
-              <BellOutlined style={{ fontSize: '50%'}}/>
-            </Badge>
-          </Menu.Item>
-          <Menu.Item key="settings"><SettingOutlined /></Menu.Item>
-          <Menu.Item key="user">
-            <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00', fontSize: '100%' }} icon={<UserOutlined />} />
-          </Menu.Item>
-          <Menu.Item key="signout" onClick={() => supabase.auth.signOut()}>
-            Signout
-          </Menu.Item>
-        </Menu> */}
       </div>
     </Header>
   );

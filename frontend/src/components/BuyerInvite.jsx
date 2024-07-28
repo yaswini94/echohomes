@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../helpers/axiosInstance";
-// import nodemailer from 'nodemailer';
 import { supabase } from "../supabase";
 import {
   Space,
@@ -15,6 +14,7 @@ import {
   Dropdown,
   Typography,
 } from "antd";
+import { Link } from "react-router-dom";
 import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
@@ -28,7 +28,6 @@ function BuyerInvite() {
   const [houseType, setHouseType] = useState("");
   const [buyerId, setBuyerId] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
@@ -37,16 +36,15 @@ function BuyerInvite() {
   const items = [
     {
       key: "1",
-      label: "2 bed",
-      // trigger: method(),
+      label: "1 bed",
     },
     {
       key: "2",
-      label: "3 bed",
+      label: "2 bed",
     },
     {
       key: "3",
-      label: "4 bed",
+      label: "3 bed",
     },
   ];
   const showModal = () => {
@@ -90,7 +88,13 @@ function BuyerInvite() {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // render: (text) => <a>{`/ventures/${venture.venture_id}`}</a>,
+      render: (_, record) => (
+        <Link to={`/buyerDetails/${record?.buyer_id}`}>
+          {record?.name}
+        </Link>
+        // <a >{`/buyerDetails/${record?.buyer_id}`}</a>
+      )
+      // render: (text) => <a>{`/buyerDetails/${buyer_id}`}</a>,
     },
     {
       title: "Address",
@@ -214,7 +218,10 @@ function BuyerInvite() {
 
   // Function to load Buyers from Supabase
   const fetchBuyers = async () => {
+    // const ventureId = localStorage.getItem("selectedVenture");
+    
     try {
+      // const response = await axiosInstance.get(`/buyers/${ventureId}`);
       const response = await axiosInstance.get("/buyers");
       setBuyers(response.data);
     } catch (error) {

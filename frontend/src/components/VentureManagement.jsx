@@ -35,12 +35,6 @@ function VentureManagement() {
   const [isChanged, setIsChanged] = useState(false);
   const [initialFormData, setInitialFormData] = useState();
 
-  const handleTypeChange = (value, index) => {
-    const newProperties = [...properties];
-    newProperties[index].type = value;
-    setProperties(newProperties);
-  };
-
   const handleValueChange = (value, index) => {
     const newProperties = [...properties];
     newProperties[index].value = value;
@@ -243,7 +237,7 @@ function VentureManagement() {
                 <Select
                   style={{ width: 120, marginRight: 8 }}
                   value={property.type}
-                  onChange={(value) => handleTypeChange(value, index)}
+                  disabled
                 >
                   <Option value="1 Bed">1 Bed</Option>
                   <Option value="2 Bed">2 Bed</Option>
@@ -309,7 +303,7 @@ function VentureManagement() {
                 <Select
                   style={{ width: 120, marginRight: 8 }}
                   value={property.type}
-                  onChange={(value) => handleTypeChange(value, index)}
+                  disabled
                 >
                   <Option value="1 Bed">1 Bed</Option>
                   <Option value="2 Bed">2 Bed</Option>

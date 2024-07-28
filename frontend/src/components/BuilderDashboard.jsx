@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, theme } from 'antd';
+import { Layout, theme, Col, Row, Statistic, Card } from 'antd';
 import VentureManagement from './VentureManagement';
 import SupplierManagement from './SupplierManagement';
 import BuyerInvite from './BuyerInvite';
@@ -24,7 +24,39 @@ const BuilderDashboard = ({ selectedKey }) => {
     >
       <div>
         {/* Render different content based on selectedKey */}
-        {selectedKey === 'home' && <p>Home</p>}
+        {selectedKey === 'home' && 
+          <>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Card title="Card title" bordered={false}>
+                  <Statistic title="Pending Houses" value={112893} />
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card title="Card title" bordered={false}>
+                <Statistic title="Pending Houses" value={112893} />
+                  
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card title="Card title" bordered={false}>
+                <Statistic title="Pending Houses" value={112893} />
+                </Card>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <Statistic title="feedback" value={112893} precision={2} />
+              </Col>
+              <Col span={12}>
+                <Statistic title="xx" value={112893} precision={2} />
+              </Col>
+              <Col span={12}>
+                <Statistic title="xx" value={112893} precision={2} />
+              </Col>
+            </Row>
+          </>
+        }
         {selectedKey === 'ventureManagement' && <VentureManagement />}
         {selectedKey === 'supplierManagement' && <SupplierManagement />}
         {selectedKey === 'buyerManagement' && <BuyerInvite />}

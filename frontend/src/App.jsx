@@ -12,6 +12,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./auth/useAuth";
 import VentureDetail from "./components/VentureDetail";
+import ResetPassword from "./components/ResetPassword";
+// import Settings from "./components/Settings";
 
 function App() {
   return (
@@ -50,6 +52,22 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/resetPassword"
+            element={
+              <PublicRoute>
+                <ResetPassword />
+              </PublicRoute>
+            }
+          />
+          {/* <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <Settings />
+              </PrivateRoute>
+            }
+          /> */}
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </Router>

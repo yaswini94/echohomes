@@ -83,24 +83,27 @@ function SupplierManagement() {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <Space size="middle">
-          <a>
-            <Avatar
-              src={editIcon}
-              style={{ height: "18px", width: "18px" }}
-              onClick={() => {
-                setAddress(record?.address);
-                setName(record?.name);
-                setSupplierId(record?.supplier_id);
-                setPhoneNumber(record?.phone_number);
-                setEmail(record?.contact_email);
-                setCompanyName(record?.company_name);
-                showEditModal(record);
-              }}
-            />
-          </a>
-          <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteSupplier(record?.supplier_id)}/></a>
-        </Space>
+        (record?.venture_id) ? 
+          <Space size="middle">
+            <a>
+              <Avatar
+                src={editIcon}
+                style={{ height: "18px", width: "18px" }}
+                onClick={() => {
+                  setAddress(record?.address);
+                  setName(record?.name);
+                  setSupplierId(record?.supplier_id);
+                  setPhoneNumber(record?.phone_number);
+                  setEmail(record?.contact_email);
+                  setCompanyName(record?.company_name);
+                  showEditModal(record);
+                }}
+              />
+            </a>
+            <a><Avatar src={deleteIcon} style={{ height: '18px', width: '18px' }} onClick={() => deleteSupplier(record?.supplier_id)}/></a>
+          </Space>
+        : 
+          <p>-</p>
       ),
     }
   ];

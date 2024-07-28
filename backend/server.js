@@ -3,7 +3,7 @@ const cors = require("cors");
 const { createClient } = require("@supabase/supabase-js");
 const sgMail = require("@sendgrid/mail");
 const bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const app = express();
@@ -33,7 +33,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 // JWT secret key (use a strong secret key in production)
-const jwtSecret = process.env.JWT_SECRET;
+// const jwtSecret = process.env.JWT_SECRET;
 
 // Middleware to verify JWT token
 const authenticateToken = async (req, res, next) => {
@@ -55,15 +55,24 @@ const authenticateToken = async (req, res, next) => {
 
 app.post("/resetlink", async (req, res) => {
   const { email } = req.body;
+
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "/register",
+    redirectTo: "/resetPassword",
   });
-  //   {
-  //   email: email,
-  // });
   console.log("error here is ", error);
   if (error) return res.status(400).json({ error: error.message });
   res.json({ message: "Reset password email sent successful", data });
+});
+
+app.post("/updatePassword", async (req, res) => {
+  const { data, error } = await supabase.auth.updateUser({
+    email: req.body?.email,
+    password: req.body?.password
+  });
+  console.log("error here is ", error);
+  console.log("data here is ", req.body);
+  if (error) return res.status(400).json({ error: error.message });
+  res.json({ message: "Update password is successful", data });
 });
 
 app.post("/login", async (req, res) => {
@@ -183,13 +192,14 @@ app.get("/ventures", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// To fetch venture details based on id
 app.get("/ventures/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
+  const { venture_id } = req.params;
 
   const { data, error } = await supabase
     .from("ventures")
     .select("*")
-    .eq("venture_id", id)
+    .eq("venture_id", venture_id)
     .single();
 
   if (error) {
@@ -277,13 +287,31 @@ app.get("/buyers", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// To list suppliers for the selected Venture
+// app.get("/buyers/:id", authenticateToken, async (req, res) => {
+//   const { venture_id } = req.params;
+//   const { data, error } = await supabase
+//     .from("buyers")
+//     .select("*")
+//     .eq("venture_id", venture_id)
+//     .single();
+
+//   if (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+
+//   res.json(data);
+// });
+
+// To list details of the buyer
+// app.get("/buyerDetails/:id", authenticateToken, async (req, res) => {
 app.get("/buyers/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
+  const { buyer_id } = req.params;
 
   const { data, error } = await supabase
     .from("buyers")
     .select("*")
-    .eq("buyer_id", id)
+    .eq("buyer_id", buyer_id)
     .single();
 
   if (error) {
