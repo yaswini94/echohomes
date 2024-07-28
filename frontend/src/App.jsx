@@ -22,6 +22,7 @@ import OrdersManagement from "./components/OrdersManagement";
 import VentureManagement from "./components/VentureManagement";
 import SupplierManagement from "./components/SupplierManagement";
 import FeatureManagement from "./components/FeatureManagement";
+import ChoicesConfiguration from "./components/ChoicesConfiguration";
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
@@ -142,6 +143,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <BuyerManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/choicesConfiguration"
+              key="choicesConfiguration"
+              element={
+                <PrivateRoute>
+                  <ChoicesConfiguration />
                 </PrivateRoute>
               }
             />

@@ -121,14 +121,7 @@ const HeaderLayout = () => {
     },
     {
       key: "2",
-      label: (
-        <>
-          <a target="_blank" rel="noopener noreferrer" href="">
-            Notifications
-          </a>
-          {/* <Badge count={5} style={{marginLeft: "8px"}}></Badge> */}
-        </>
-      ),
+      label: "Notifications",
       icon: <BellOutlined />,
     },
     {

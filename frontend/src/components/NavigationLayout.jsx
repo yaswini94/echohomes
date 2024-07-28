@@ -38,7 +38,7 @@ const NavigationLayout = () => {
     ],
     [userRoles.BUYERS]: [
       { label: "Home", key: "home" },
-      { label: "Choices Configuration", key: "choicesConfiguration" },
+      { label: <Link to="/choicesConfiguration">Choices Configuration</Link>, key: "/choicesConfiguration" },
       { label: "In-Budget Suggestions", key: "inBudgetSuggestions" },
       { label: "Payments/ Invoice", key: "payments/invoice" },
     ],
