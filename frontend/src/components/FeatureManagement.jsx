@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../supabase";
-import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal } from 'antd';
+import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
@@ -28,6 +28,7 @@ function FeatureManagement() {
   const [images, setImages] = useState([]);
   const [price, setPrice] = useState(0);
   const [featureId, setFeatureId] = useState("");
+  const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,6 +36,7 @@ function FeatureManagement() {
   const [isChanged, setIsChanged] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
+  let featureOptions = [];
   const [fileList, setFileList] = useState([
     // {
     //   uid: '-1',
@@ -57,6 +59,18 @@ function FeatureManagement() {
     console.log(newFileList);
     setFileList(newFileList);
   }
+
+  const showLinkModal = () => {
+    setIsLinkModalVisible(true);
+  };
+  const handleLinkOk = () => {
+    addVenture();
+    setIsLinkModalVisible(false);
+  };
+  const handleLinkCancel = () => {
+    setIsLinkModalVisible(false);
+  };
+
   const showModal = () => {
     setName("");
     setDetails("");
@@ -133,8 +147,22 @@ function FeatureManagement() {
       console.log("Error fetching features:", error);
     } else {
       setFeatures(data);
+      makeOptions(data);
     }
   };
+
+  const makeOptions = async (_features) => {
+    let options = [];
+    _features.forEach((feature) => {
+      options.push({
+        value: feature?.name,
+        label: feature?.name,
+        id: feature?.feature_id
+      })
+    });
+    console.log(options);
+    featureOptions = options;
+  }
 
   // Function to add a new feature
   const addFeature = async () => {
@@ -244,7 +272,7 @@ function FeatureManagement() {
           <h3>Feature Management</h3>
         </Col>
         <Col>
-          <Button type="primary" style={{ margin: '6px' }} onClick={console.log("clicked button")}>
+          <Button type="primary" style={{ margin: '6px' }} onClick={showLinkModal}>
             <Avatar src={linkIcon} style={{ height: '18px', width: '18px', color: 'white' }} onClick={() => console.log("kjds")} /> Link Features
           </Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
@@ -253,6 +281,97 @@ function FeatureManagement() {
         </Col>
       </Row>
       <div>
+        <Modal
+          title="Link Features"
+          open={isLinkModalVisible}
+          onOk={handleLinkOk}
+          onCancel={handleLinkCancel}
+          footer={[
+            <Button key="back" onClick={handleLinkCancel}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleLinkOk}
+            >
+              {loading ? "Linking..." : "Link Features"}
+            </Button>,
+          ]}
+        >
+          <>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <p style={{margin: "12px 0 0 0", }}><b>1 Bed : </b></p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p>Choices </p>
+                <Select
+                  mode="tags"
+                  placeholder="Please select"
+                  onChange={handleChange}
+                  style={{ width: '85%' }}
+                  options={featureOptions}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p>Extras </p>
+                <Select
+                  mode="tags"
+                  placeholder="Please select"
+                  onChange={handleChange}
+                  style={{ width: '85%' }}
+                  options={featureOptions}
+                />
+              </div>
+            </Space>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <p style={{margin: "12px 0 0 0"}}><b>2 Bed : </b></p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p>Choices </p>
+                <Select
+                  mode="tags"
+                  placeholder="Please select"
+                  onChange={handleChange}
+                  style={{ width: '85%' }}
+                  options={featureOptions}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p>Extras </p>
+                <Select
+                  mode="tags"
+                  placeholder="Please select"
+                  onChange={handleChange}
+                  style={{ width: '85%' }}
+                  options={featureOptions}
+                />
+              </div>
+            </Space>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <p style={{margin: "12px 0 0 0"}}><b>3 Bed : </b></p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p>Choices </p>
+                <Select
+                  mode="tags"
+                  placeholder="Please select"
+                  onChange={handleChange}
+                  style={{ width: '85%' }}
+                  options={featureOptions}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p>Extras </p>
+                <Select
+                  mode="tags"
+                  placeholder="Please select"
+                  onChange={handleChange}
+                  style={{ width: '85%' }}
+                  options={featureOptions}
+                />
+              </div>
+            </Space>
+          </>
+        </Modal>
         <Modal
           title="Add New Feature"
           open={isModalVisible}
