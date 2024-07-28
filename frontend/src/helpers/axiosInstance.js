@@ -8,7 +8,7 @@ const getAuthToken = async () => {
     console.error("Error getting auth session:", error);
     return null;
   }
-  return data.session.access_token;
+  return data?.session?.access_token;
 };
 
 // Create an Axios instance

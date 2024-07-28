@@ -94,7 +94,7 @@
   min-height: 100vh; /* Full viewport height */
   display: flex;
   align-items: center; /* This centers the form vertically */
-  padding-left: 50px;
+  /* padding-left: 50px; */
   min-width: 1920px;
 }
 .disabled-link {
