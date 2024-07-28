@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { supabase } from "../../supabase";
+import React, { useState } from "react";
 import {
-  Space,
-  Table,
-  Row,
-  Col,
   Button,
-  Avatar,
   Input,
   Form,
   Modal,
-  Select,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import axiosInstance from "../../helpers/axiosInstance";
