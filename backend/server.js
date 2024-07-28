@@ -59,7 +59,7 @@ app.post("/resetlink", async (req, res) => {
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: "/resetPassword",
   });
-  console.log("error here is ", error);
+
   if (error) return res.status(400).json({ error: error.message });
   res.json({ message: "Reset password email sent successful", data });
 });
@@ -67,10 +67,9 @@ app.post("/resetlink", async (req, res) => {
 app.post("/updatePassword", async (req, res) => {
   const { data, error } = await supabase.auth.updateUser({
     email: req.body?.email,
-    password: req.body?.password
+    password: req.body?.password,
   });
-  console.log("error here is ", error);
-  console.log("data here is ", req.body);
+
   if (error) return res.status(400).json({ error: error.message });
   res.json({ message: "Update password is successful", data });
 });
@@ -156,7 +155,7 @@ app.post("/addVenture", authenticateToken, async (req, res) => {
     name,
     address,
     description,
-    properties
+    properties,
   });
 
   if (error) {
@@ -183,8 +182,6 @@ app.post("/updateVenture", authenticateToken, async (req, res) => {
 app.get("/ventures", authenticateToken, async (req, res) => {
   const { data, error } = await supabase.from("ventures").select("*");
 
-  console.log({ data, error });
-
   if (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -210,7 +207,14 @@ app.get("/ventures/:id", authenticateToken, async (req, res) => {
 });
 
 app.post("/addSupplier", authenticateToken, async (req, res) => {
-  const { name, contact_email, address, phone_number, company_name, venture_id } = req.body;
+  const {
+    name,
+    contact_email,
+    address,
+    phone_number,
+    company_name,
+    venture_id,
+  } = req.body;
   // const user = req.user;
 
   const { data, error } = await supabase.from("suppliers").insert({
@@ -349,11 +353,6 @@ app.post("/invite", authenticateToken, async (req, res) => {
     return res.status(400).json({ error: createdUserError.message });
   }
 
-  console.log({
-    createdUserId: createdUser?.user?.id,
-    builder_id: user.id,
-  });
-
   const { data, error } = await supabase.from("buyers").insert({
     buyer_id: createdUser?.user?.id,
     builder_id: user.id,
@@ -363,10 +362,8 @@ app.post("/invite", authenticateToken, async (req, res) => {
     house_type,
     contact_email: email,
     venture_id,
-    features: []
+    features: [],
   });
-
-  console.log({ data, error });
 
   if (error) {
     return res.status(400).json({ error: error.message });
@@ -412,7 +409,7 @@ app.post("/addFeature", authenticateToken, async (req, res) => {
     details,
     images,
     price,
-    builder_id: user.id
+    builder_id: user.id,
   });
 
   if (error) {
@@ -423,13 +420,7 @@ app.post("/addFeature", authenticateToken, async (req, res) => {
 });
 
 app.post("/updateFeature", authenticateToken, async (req, res) => {
-  const {
-    name,
-    details,
-    images,
-    price,
-    feature_id
-  } = req.body;
+  const { name, details, images, price, feature_id } = req.body;
 
   const { data, error } = await supabase
     .from("features")
