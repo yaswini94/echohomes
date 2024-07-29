@@ -5,9 +5,9 @@ import axiosInstance from "../../helpers/axiosInstance";
 const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([
-    { key: 1, type: "1 Bed", value: 0 },
-    { key: 2, type: "2 Bed", value: 0 },
-    { key: 3, type: "3 Bed", value: 0 },
+    { key: 1, label: "1 Bed", value: 0 },
+    { key: 2, label: "2 Bed", value: 0 },
+    { key: 3, label: "3 Bed", value: 0 },
   ]);
   const [name, setName] = useState(null);
   const [address, setAddress] = useState(null);
@@ -84,7 +84,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
           <Form.Item name={`property${property.key}`} key={property.key}>
             <Select
               style={{ width: 120, marginRight: 8 }}
-              value={property.type}
+              value={property.label}
               disabled
             >
               <Option value="1 Bed">1 Bed</Option>

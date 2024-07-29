@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   Layout,
-  Menu,
   Avatar,
   Select,
-  Badge,
   Dropdown,
   Space,
-  Typography,
   Button,
   Modal,
   Form,
@@ -34,6 +31,7 @@ const HeaderLayout = () => {
   const [ventures, setVentures] = useState([]);
   const [selectedVenture, setSelectedVenture] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [initialSettings, setinitialSettings] = useState({});
   const [settings, setSettings] = useState({});
   const [loading, setLoading] = useState(false);
   const [font, setFont] = useState("");
@@ -53,7 +51,7 @@ const HeaderLayout = () => {
         setFont(response?.data?.settings?.font);
         setFontSize(response?.data?.settings?.fontSize);
         setTheme(response?.data?.settings?.theme);
-        console.log(font, fontSize, theme);
+        setinitialSettings(response?.data?.settings);
       } catch (error) {
         console.log("Error fetching user settings:", error);
       }
@@ -145,28 +143,37 @@ const HeaderLayout = () => {
       label: "EN-US",
     },
   ];
+  const fillSettings = (settings) => {
+    let data = {...settings};
+    if(Object.keys(settings).length < 3) {
+      if (!(data?.font)) {data['font'] = initialSettings.font}; 
+      if (!(data?.fontSize)) {data['fontSize'] = initialSettings.fontSize}; 
+      if (!(data?.theme)) {data['theme'] = initialSettings.theme}; 
+    }
+    return data;
+  };
 
   const saveSettings = async (settings) => {
     setLoading(true);
-
+    let _settings = fillSettings(settings);
     try {
       switch(role) {
         case userRoles.BUILDERS:
           const data = await axiosInstance.post("/updateBuilder", {
             builder_id: user?.id,
-            settings
+            _settings
           });
           break;
         case userRoles.BUYERS:
           const dataBuyer = await axiosInstance.post("/updateBuyer", {
             buyer_id: user?.id,
-            settings
+            _settings
           });
           break;
         case userRoles.SUPPLIERS:
           const dataSupplier = await axiosInstance.post("/updateSupplier", {
             supplier_id: user?.id,
-            settings
+            _settings
           });
           break;
       }

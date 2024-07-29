@@ -7,12 +7,7 @@ import {
   Col,
   Button,
   Avatar,
-  Input,
-  Form,
-  Modal,
   Card,
-  Select,
-  InputNumber,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
@@ -152,7 +147,7 @@ function VentureManagement() {
                       </Col>
                     </Row>
                   }
-                  style={{ border: "1px solid black" }}
+                  style={{ border: "1px solid black", margin: "8px 0" }}
                   bordered={false}
                 >
                   <p>
@@ -164,7 +159,7 @@ function VentureManagement() {
                   </p>
                   {venture?.properties?.map((property) => (
                     <p key={property.key}>
-                      {property.type} - {property.value}
+                      {property.label} - {property.value}
                     </p>
                   ))}
                 </Card>

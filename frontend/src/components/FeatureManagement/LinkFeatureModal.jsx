@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Space, Button, Modal, Select } from "antd";
+import axiosInstance from "../../helpers/axiosInstance";
 
 const LinkFeatureModal = ({
   isOpened,
@@ -8,6 +9,7 @@ const LinkFeatureModal = ({
   featureOptions,
 }) => {
   const [loading, setLoading] = useState("");
+  const [properties, setProperties] = useState();
 
   const [types, setTypes] = useState([
     {
@@ -41,18 +43,35 @@ const LinkFeatureModal = ({
   };
 
   const handleLinkFeature = async () => {
-    console.log({ types });
+    let updatedProperties = properties?.map(prop => {
+      const additional = types.find(item => item.key === prop.key);
+      return { ...prop, choices: additional.choices, extras: additional.extras };
+    });
     setLoading(true);
 
     try {
-      // await axiosInstance.post("/linkFeature", {
-      // });
+      await axiosInstance.post("/updateVenture", {
+        properties: updatedProperties,
+        ventureId: localStorage.getItem("selectedVenture")
+      });
     } catch (error) {
-      console.log("Error linking feature:", error);
+      console.log("Error updating venture with linked features:", error);
     }
     setLoading(false);
     handleOk();
   };
+
+  useEffect(() => {
+    const fetchVentureInfo = async () => {
+      try {
+        const response = await axiosInstance.get(`/ventures/${localStorage.getItem("selectedVenture")}`);
+        setProperties(response?.data?.properties);
+      } catch (error) {
+        console.log("Error fetching venture info:", error);
+      }
+    };
+    fetchVentureInfo();
+  });
 
   return (
     <Modal
@@ -91,6 +110,7 @@ const LinkFeatureModal = ({
               <Select
                 mode="tags"
                 placeholder="Please select"
+                maxTagCount="responsive"
                 onChange={(value) => handleChange(value, type.key, "choices")}
                 style={{ width: "85%" }}
                 options={featureOptions}
@@ -107,6 +127,7 @@ const LinkFeatureModal = ({
               <Select
                 mode="tags"
                 placeholder="Please select"
+                maxTagCount="responsive"
                 onChange={(value) => handleChange(value, type.key, "extras")}
                 style={{ width: "85%" }}
                 options={featureOptions}
@@ -115,119 +136,6 @@ const LinkFeatureModal = ({
           </Space>
         );
       })}
-      <>
-        {/* <Space direction="vertical" style={{ width: "100%" }}>
-          <p style={{ margin: "12px 0 0 0" }}>
-            <b>1 Bed : </b>
-          </p>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <p>Choices </p>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              onChange={handleChange}
-              style={{ width: "85%" }}
-              options={featureOptions}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <p>Extras </p>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              onChange={handleChange}
-              style={{ width: "85%" }}
-              options={featureOptions}
-            />
-          </div>
-        </Space>
-        <Space direction="vertical" style={{ width: "100%" }}>
-          <p style={{ margin: "12px 0 0 0" }}>
-            <b>2 Bed : </b>
-          </p>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <p>Choices </p>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              onChange={handleChange}
-              style={{ width: "85%" }}
-              options={featureOptions}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <p>Extras </p>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              onChange={handleChange}
-              style={{ width: "85%" }}
-              options={featureOptions}
-            />
-          </div>
-        </Space>
-        <Space direction="vertical" style={{ width: "100%" }}>
-          <p style={{ margin: "12px 0 0 0" }}>
-            <b>3 Bed : </b>
-          </p>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <p>Choices </p>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              onChange={handleChange}
-              style={{ width: "85%" }}
-              options={featureOptions}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <p>Extras </p>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              onChange={handleChange}
-              style={{ width: "85%" }}
-              options={featureOptions}
-            />
-          </div>
-        </Space> */}
-      </>
     </Modal>
   );
 };

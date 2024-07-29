@@ -7,11 +7,8 @@ import {
   Col,
   Button,
   Avatar,
-  Input,
-  Form,
-  Modal,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddSupplierModal from "./AddSupplierModal";
@@ -103,10 +100,8 @@ function SupplierManagement() {
               />
             </a>
           </Space>
-        ) : (
-          <p>-</p>
-        ),
-    },
+        ) : ( <MinusOutlined />)
+    }
   ];
 
   const deleteSupplier = async (id) => {

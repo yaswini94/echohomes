@@ -9,16 +9,6 @@ import AddFeatureModal from "./AddFeatureModal";
 import EditFeatureModal from "./EditFeatureModal";
 import LinkFeatureModal from "./LinkFeatureModal";
 
-// type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
-const getFileReader = (file) =>
-  new Promise((resolve, reject) => {
-    const readerInfo = new FileReader();
-    readerInfo.readAsDataURL(file);
-    readerInfo.onload = () => resolve(readerInfo.result);
-    readerInfo.onerror = (error) => reject(error);
-  });
-
 const FeatureManagement = () => {
   const [features, setFeatures] = useState([]);
   const [selectedFeature, setSelectedFeature] = useState([]);
@@ -107,8 +97,6 @@ const FeatureManagement = () => {
     }
   };
 
-  // Function to add a new feature
-
   const featuresColumns = [
     {
       title: "Name",
@@ -125,34 +113,6 @@ const FeatureManagement = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-    },
-    {
-      title: "Images",
-      dataIndex: "images",
-      key: "images",
-      render: (text) => (
-        <img src={text} alt="image" style={{ width: 50, height: 50 }} />
-      ),
-      // render: (_, record) => {
-      //   <Space size="middle">
-      //     <Button type="primary" onClick={() => setVisible(true)}>
-      //       show image preview
-      //     </Button>
-      //     <Image
-      //       width={200}
-      //       style={{ display: 'none' }}
-      //       src={record?.Image}
-      //       preview={{
-      //         visible,
-      //         scaleStep,
-      //         src: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      //         onVisibleChange: (value) => {
-      //           setVisible(value);
-      //         },
-      //       }}
-      //     />
-      //   </Space>
-      // }
     },
     {
       title: "Action",

@@ -109,6 +109,11 @@ app.post("/register", async (req, res) => {
           phone_number: phoneNumber,
           address: address,
           name: name,
+          settings: {
+            font: "Arial",
+            fontSize: 14,
+            theme: "light",
+          }
         }
       : {
           supplier_id: userId,
@@ -117,6 +122,11 @@ app.post("/register", async (req, res) => {
           contact_email: email,
           phone_number: phoneNumber,
           address: address,
+          settings: {
+            font: "Arial",
+            fontSize: 14,
+            theme: "light",
+          },
           registered_date: new Date().toISOString(),
         };
   const { data, insertError } = await supabase.from(table).insert([payload]);
@@ -204,12 +214,11 @@ app.get("/ventures", authenticateToken, async (req, res) => {
 
 // To fetch venture details based on id
 app.get("/ventures/:id", authenticateToken, async (req, res) => {
-  const { venture_id } = req.params;
-
+  const { id } = req.params;
   const { data, error } = await supabase
     .from("ventures")
     .select("*")
-    .eq("venture_id", venture_id)
+    .eq("venture_id", id)
     .single();
 
   if (error) {
@@ -237,6 +246,11 @@ app.post("/addSupplier", authenticateToken, async (req, res) => {
     contact_email,
     phone_number,
     address: address,
+    settings: {
+      font: "Arial",
+      fontSize: 14,
+      theme: "light",
+    },
     registered_date: new Date().toISOString(),
   });
 
@@ -378,6 +392,11 @@ app.post("/invite", authenticateToken, async (req, res) => {
     house_type,
     contact_email: email,
     venture_id,
+    settings: {
+      font: "Arial",
+      fontSize: 14,
+      theme: "light",
+    },
     features: [],
   });
 
