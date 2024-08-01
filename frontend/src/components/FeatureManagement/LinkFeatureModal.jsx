@@ -61,17 +61,17 @@ const LinkFeatureModal = ({
     handleOk();
   };
 
+  const fetchVentureInfo = async () => {
+    try {
+      const response = await axiosInstance.get(`/ventures/${localStorage.getItem("selectedVenture")}`);
+      setProperties(response?.data?.properties);
+    } catch (error) {
+      console.log("Error fetching venture info:", error);
+    }
+  };
   useEffect(() => {
-    const fetchVentureInfo = async () => {
-      try {
-        const response = await axiosInstance.get(`/ventures/${localStorage.getItem("selectedVenture")}`);
-        setProperties(response?.data?.properties);
-      } catch (error) {
-        console.log("Error fetching venture info:", error);
-      }
-    };
     fetchVentureInfo();
-  });
+  }, [isOpened]);
 
   return (
     <Modal

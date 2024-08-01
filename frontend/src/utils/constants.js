@@ -3,3 +3,5 @@ export const userRoles = {
   BUYERS: "buyers",
   SUPPLIERS: "suppliers",
 };
+
+export const MAX_COUNT = 3;

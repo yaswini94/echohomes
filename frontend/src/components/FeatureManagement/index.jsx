@@ -92,7 +92,6 @@ const FeatureManagement = () => {
           id: feature?.feature_id,
         });
       });
-      console.log(options);
       setFeatureOptions(options);
     }
   };
@@ -102,7 +101,6 @@ const FeatureManagement = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // render: (text) => <a>{`/venture/${venture.venture_id}`}</a>,
     },
     {
       title: "Details",

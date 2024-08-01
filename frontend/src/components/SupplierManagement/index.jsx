@@ -7,18 +7,21 @@ import {
   Col,
   Button,
   Avatar,
+  Rate,
 } from "antd";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddSupplierModal from "./AddSupplierModal";
 import EditSupplierModal from "./EditSupplierModal";
+const describeRate = ['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful'];
 
 function SupplierManagement() {
   const [suppliers, setSuppliers] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [feedback, setFeedback] = useState(null);
 
   // add supplier
   const showModal = () => {
@@ -36,7 +39,6 @@ function SupplierManagement() {
 
   // edit modal
   const showEditModal = (supplier) => {
-    console.log("edit modal");
     setSelectedSupplier(supplier);
     setIsEditModalVisible(true);
   };
@@ -83,6 +85,7 @@ function SupplierManagement() {
       render: (_, record) =>
         record?.venture_id ? (
           <Space size="middle">
+            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={(addFeedback(record?.supplier_id, feedback))} value={record?.feedback} />
             <a>
               <Avatar
                 src={editIcon}
@@ -100,7 +103,12 @@ function SupplierManagement() {
               />
             </a>
           </Space>
-        ) : ( <MinusOutlined />)
+        ) : (
+          <>
+            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={addFeedback(record?.supplier_id, feedback)} value={record?.feedback} />
+            <MinusOutlined style={{marginLeft: "16px"}}/>
+          </>
+        )
     }
   ];
 
@@ -127,6 +135,17 @@ function SupplierManagement() {
       console.log("Error fetching suppliers:", error);
     } else {
       setSuppliers(data);
+    }
+  };
+
+  const addFeedback = async (id, feedback) => {
+    try {
+      await axiosInstance.post("/updateSupplier", {
+        feedback,
+        supplier_id: id,
+      });
+    } catch (error) {
+      console.log("Error adding supplier:", error);
     }
   };
 

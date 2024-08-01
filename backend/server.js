@@ -320,31 +320,15 @@ app.get("/buyers", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-// To list suppliers for the selected Venture
-// app.get("/buyers/:id", authenticateToken, async (req, res) => {
-//   const { venture_id } = req.params;
-//   const { data, error } = await supabase
-//     .from("buyers")
-//     .select("*")
-//     .eq("venture_id", venture_id)
-//     .single();
-
-//   if (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-
-//   res.json(data);
-// });
-
 // To list details of the buyer
 // app.get("/buyerDetails/:id", authenticateToken, async (req, res) => {
 app.get("/buyers/:id", authenticateToken, async (req, res) => {
-  const { buyer_id } = req.params;
+  const { id } = req.params;
 
   const { data, error } = await supabase
     .from("buyers")
     .select("*")
-    .eq("buyer_id", buyer_id)
+    .eq("buyer_id", id)
     .single();
 
   if (error) {
