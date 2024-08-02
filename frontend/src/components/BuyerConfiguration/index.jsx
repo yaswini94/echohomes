@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../../supabase";
-import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal } from 'antd';
+import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
@@ -9,6 +9,7 @@ import AddChoicesModal from "./ChoicesConfiguration/AddChoicesModal";
 import EditChoicesModal from "./ChoicesConfiguration/EditChoicesModal";
 import AddExtrasModal from "./ExtrasConfiguration/AddExtrasModal";
 import EditExtrasModal from "./ExtrasConfiguration/EditExtrasModal";
+import { MAX_COUNT } from "../../utils/constants";
 
 function BuyerConfiguration() {
   const [choices, setChoices] = useState([{name: 'hi', price: 0, details: 'djssd'}]);
@@ -19,6 +20,7 @@ function BuyerConfiguration() {
   const [isExtrasModalVisible, setIsExtrasModalVisible] = useState(false);
   const [isEditExtrasModalVisible, setIsEditExtrasModalVisible] = useState(false);
   const { user } = useAuth();
+  const types = [{id: 1, label: 'xyz', value: 'xyz'}, {id: 2, label: 'yzz', value: 'yzz'}, {id: 3, label: 'xyzz', value: 'xyzz'}, {id: 4, label: 'yzzv', value: 'yzzv'}];
 
   // add Choice
   const showChoiceModal = () => {
@@ -191,6 +193,21 @@ function BuyerConfiguration() {
       </Row>
       <div>
         {isChoiceModalVisible && (
+          <>
+            <Select
+              mode="tags"
+              placeholder="Please select"
+              maxCount={MAX_COUNT}
+              onChange={(value) => console.log(value)}
+              // onChange={(value) => handleChange(value, type.key, "choices")}
+              style={{ width: "50%" }}
+              options={types}
+            />
+            <Button>
+              add
+            </Button>
+          </>)}
+        {/* {isChoiceModalVisible && (
           <AddChoicesModal
             isOpened={isChoiceModalVisible}
             handleOk={handleChoiceOk}
@@ -204,7 +221,7 @@ function BuyerConfiguration() {
             handleOk={handleEditChoiceOk}
             handleCancel={handleEditChoiceCancel}
           />
-        )}
+        )} */}
       </div>
       <div>
         {choices.length === 0 && <p>No Choices exist !</p>}
@@ -222,7 +239,23 @@ function BuyerConfiguration() {
         </Col>
       </Row>
       <div>
-         {isExtrasModalVisible && (
+        {isExtrasModalVisible && (
+          <>
+            <Select
+              mode="tags"
+              placeholder="Please select"
+              maxCount={MAX_COUNT}
+              onChange={(value) => console.log(value)}
+              // onChange={(value) => handleChange(value, type.key, "choices")}
+              style={{ width: "50%" }}
+              options={types}
+            />
+            <Button>
+              add
+            </Button>
+          </>
+        )}
+         {/* {isExtrasModalVisible && (
           <AddExtrasModal
             isOpened={isExtrasModalVisible}
             handleOk={handleExtrasOk}
@@ -236,7 +269,7 @@ function BuyerConfiguration() {
             handleOk={handleEditExtrasOk}
             handleCancel={handleEditExtrasCancel}
           />
-        )}
+        )} */}
       </div>
       <div>
         {extras.length === 0 && <p>No Extras exist !</p>}

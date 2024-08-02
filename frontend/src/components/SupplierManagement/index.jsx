@@ -14,6 +14,7 @@ import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddSupplierModal from "./AddSupplierModal";
 import EditSupplierModal from "./EditSupplierModal";
+import axiosInstance from "../../helpers/axiosInstance";
 const describeRate = ['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful'];
 
 function SupplierManagement() {
@@ -85,7 +86,7 @@ function SupplierManagement() {
       render: (_, record) =>
         record?.venture_id ? (
           <Space size="middle">
-            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={(addFeedback(record?.supplier_id, feedback))} value={record?.feedback} />
+            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={(value) => {addFeedback(record?.supplier_id, value)}} value={record?.feedback} />
             <a>
               <Avatar
                 src={editIcon}
@@ -144,6 +145,7 @@ function SupplierManagement() {
         feedback,
         supplier_id: id,
       });
+      // fetchSuppliers();
     } catch (error) {
       console.log("Error adding supplier:", error);
     }

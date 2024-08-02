@@ -156,6 +156,24 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+updateBuilderFeedback
+app.post("/updateBuilderFeedback", authenticateToken, async (req, res) => {
+  const {
+    builder_id,
+    feedback
+  } = req.body;
+
+  const { data, error } = await supabase
+    .from("builders")
+    .update({ feedback })
+    .eq("builder_id", builder_id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json("Update successfull");
+});
+
 app.post("/updateBuilder", authenticateToken, async (req, res) => {
   const { settings, feedback, builder_id } = req.body;
   const { data, error } = await supabase
@@ -328,7 +346,7 @@ app.get("/buyers/:id", authenticateToken, async (req, res) => {
   const { data, error } = await supabase
     .from("buyers")
     .select("*")
-    .eq("buyer_id", id)
+    .eq("venture_id", id)
     .single();
 
   if (error) {

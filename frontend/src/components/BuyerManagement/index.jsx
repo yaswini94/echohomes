@@ -9,7 +9,7 @@ import editIcon from "../../assets/edit.png";
 import AddBuyerModal from "./AddBuyerModal";
 import EditBuyerModal from "./EditBuyerModal";
 
-function BuyerInvite() {
+function BuyerInvite({ventureId}) {
   const [buyers, setBuyers] = useState([]);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -137,9 +137,9 @@ function BuyerInvite() {
     // const ventureId = localStorage.getItem("selectedVenture");
 
     try {
-      // const response = await axiosInstance.get(`/buyers/${ventureId}`);
-      const response = await axiosInstance.get("/buyers");
-      setBuyers(response.data);
+      const response = await axiosInstance.get(`/buyers/${ventureId}`);
+      // const response = await axiosInstance.get("/buyers");
+      setBuyers([response.data]);
     } catch (error) {
       console.log("Error fetching buyers:", error);
     }

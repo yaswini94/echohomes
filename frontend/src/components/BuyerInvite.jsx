@@ -19,7 +19,7 @@ import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
 
-function BuyerInvite() {
+function BuyerInvite({ventureId}) {
   const [buyers, setBuyers] = useState([]);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -222,9 +222,9 @@ function BuyerInvite() {
     // const ventureId = localStorage.getItem("selectedVenture");
     
     try {
-      // const response = await axiosInstance.get(`/buyers/${ventureId}`);
-      const response = await axiosInstance.get("/buyers");
-      setBuyers(response.data);
+      const response = await axiosInstance.get(`/buyers/${ventureId}`);
+      // const response = await axiosInstance.get("/buyers");
+      setBuyers([response.data]);
     } catch (error) {
       console.log("Error fetching buyers:", error);
     }

@@ -9,6 +9,7 @@ import {
   Modal,
   Form,
   InputNumber,
+  Rate
 } from "antd";
 import {
   UserOutlined,
@@ -23,6 +24,7 @@ import exitLogo from "../assets/exit.png";
 import { supabase } from "../supabase";
 import { useAuth } from "../auth/useAuth";
 import { userRoles } from "../utils/constants";
+const describeRate = ['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful'];
 const { Header } = Layout;
 
 const HeaderLayout = () => {
@@ -37,6 +39,7 @@ const HeaderLayout = () => {
   const [font, setFont] = useState("");
   const [fontSize, setFontSize] = useState();
   const [theme, setTheme] = useState("");
+  const [feedback, setFeedback] = useState(0);
   const { user } = useAuth();
 
   const onLanguageChange = (value) => {
@@ -183,6 +186,18 @@ const HeaderLayout = () => {
     setLoading(false);
   };
 
+  const addFeedback = async (buyer_id, feedback) => {
+    setFeedback(feedback);
+    try {
+      await axiosInstance.post("/updateBuilderFeedback", {
+        feedback: {buyer_id, feedback},
+        builder_id: user?.id
+      });
+      // fetchSuppliers();
+    } catch (error) {
+      console.log("Error adding supplier:", error);
+    }
+  };
   return (
     <Header
       style={{
@@ -243,6 +258,7 @@ const HeaderLayout = () => {
           onChange={onSelectVenture}
           options={ventures}
         />)}
+        {role === userRoles.BUYERS && (<Rate style={{marginRight: "8px", backgroundColor: "white"}} tooltips={describeRate} onChange={(value) => {addFeedback(user?.id, value)}} value={feedback} />)}
         <Select key="language"
           style={{width: 'auto', minWidth: '80px', marginRight: '24px'}}
           onClick={(event) => event.preventDefault()}
