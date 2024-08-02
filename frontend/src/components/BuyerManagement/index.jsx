@@ -8,27 +8,16 @@ import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddBuyerModal from "./AddBuyerModal";
 import EditBuyerModal from "./EditBuyerModal";
+import useLocalStorage from "../../utils/useLocalStorage";
 
-function BuyerInvite({ventureId}) {
+function BuyerInvite() {
   const [buyers, setBuyers] = useState([]);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [ventureId] = useLocalStorage("selectedVenture", null);
 
-  const items = [
-    {
-      key: "1",
-      label: "1 bed",
-    },
-    {
-      key: "2",
-      label: "2 bed",
-    },
-    {
-      key: "3",
-      label: "3 bed",
-    },
-  ];
+  console.log({ ventureId });
 
   // add modal
   const showModal = () => {
@@ -134,26 +123,32 @@ function BuyerInvite({ventureId}) {
 
   // Function to load Buyers from Supabase
   const fetchBuyers = async () => {
-    // const ventureId = localStorage.getItem("selectedVenture");
-
     try {
-      const response = await axiosInstance.get(`/buyers/${ventureId}`);
-      // const response = await axiosInstance.get("/buyers");
-      setBuyers([response.data]);
+      const response = await axiosInstance.get(
+        `/buyers?venture_id=${ventureId}`
+      );
+      if (response?.data?.length > 0) {
+        console.log("Buyers fetched:", response.data);
+        setBuyers(response.data);
+      } else {
+        console.log("No Buyers found");
+        setBuyers([]);
+      }
     } catch (error) {
       console.log("Error fetching buyers:", error);
     }
   };
 
   useEffect(() => {
+    console.log("ventureId changed fetching buyers");
     fetchBuyers();
-  }, []);
+  }, [ventureId]);
 
   return (
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>Buyer Management</h3>
+          <h3>Buyer Management 1</h3>
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>

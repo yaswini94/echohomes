@@ -18,8 +18,9 @@ import { Link } from "react-router-dom";
 import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import deleteIcon from "../assets/delete.png";
 import editIcon from "../assets/edit.png";
+import useLocalStorage from "../utils/useLocalStorage";
 
-function BuyerInvite({ventureId}) {
+function BuyerInvite() {
   const [buyers, setBuyers] = useState([]);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -32,6 +33,8 @@ function BuyerInvite({ventureId}) {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [initialFormData, setInitialFormData] = useState();
+
+  const [ventureId] = useLocalStorage("selectedVenture");
 
   const items = [
     {
@@ -47,6 +50,7 @@ function BuyerInvite({ventureId}) {
       label: "3 bed",
     },
   ];
+
   const showModal = () => {
     setAddress("");
     setName("");
@@ -90,11 +94,9 @@ function BuyerInvite({ventureId}) {
       dataIndex: "name",
       key: "name",
       render: (_, record) => (
-        <Link to={`/buyerDetails/${record?.buyer_id}`}>
-          {record?.name}
-        </Link>
+        <Link to={`/buyerDetails/${record?.buyer_id}`}>{record?.name}</Link>
         // <a >{`/buyerDetails/${record?.buyer_id}`}</a>
-      )
+      ),
       // render: (text) => <a>{`/buyerDetails/${buyer_id}`}</a>,
     },
     {
@@ -154,9 +156,10 @@ function BuyerInvite({ventureId}) {
     return Math.random().toString(36).slice(-8); // Simple random password generator
   };
 
+  console.log({ ventureIdBuyer: ventureId });
+
   async function inviteBuyer() {
     const tempPassword = generateRandomPassword();
-    const ventureId = localStorage.getItem("selectedVenture");
     try {
       const resp = await axiosInstance.post("http://localhost:3001/invite", {
         email,
@@ -219,11 +222,10 @@ function BuyerInvite({ventureId}) {
 
   // Function to load Buyers from Supabase
   const fetchBuyers = async () => {
-    // const ventureId = localStorage.getItem("selectedVenture");
-    
     try {
-      const response = await axiosInstance.get(`/buyers/${ventureId}`);
-      // const response = await axiosInstance.get("/buyers");
+      const response = await axiosInstance.get(
+        `/buyers?venture_id=${ventureId}`
+      );
       setBuyers([response.data]);
     } catch (error) {
       console.log("Error fetching buyers:", error);

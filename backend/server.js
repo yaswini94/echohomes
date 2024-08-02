@@ -113,7 +113,7 @@ app.post("/register", async (req, res) => {
             font: "Arial",
             fontSize: 14,
             theme: "light",
-          }
+          },
         }
       : {
           supplier_id: userId,
@@ -156,12 +156,8 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-updateBuilderFeedback
 app.post("/updateBuilderFeedback", authenticateToken, async (req, res) => {
-  const {
-    builder_id,
-    feedback
-  } = req.body;
+  const { builder_id, feedback } = req.body;
 
   const { data, error } = await supabase
     .from("builders")
@@ -288,12 +284,20 @@ app.post("/updateSupplier", authenticateToken, async (req, res) => {
     company_name,
     supplier_id,
     settings,
-    feedback
+    feedback,
   } = req.body;
 
   const { data, error } = await supabase
     .from("suppliers")
-    .update({ name, contact_email, address, phone_number, company_name, settings, feedback })
+    .update({
+      name,
+      contact_email,
+      address,
+      phone_number,
+      company_name,
+      settings,
+      feedback,
+    })
     .eq("supplier_id", supplier_id);
 
   if (error) {
@@ -329,7 +333,11 @@ app.get("/suppliers/:id", authenticateToken, async (req, res) => {
 });
 
 app.get("/buyers", authenticateToken, async (req, res) => {
-  const { data, error } = await supabase.from("buyers").select("*");
+  const ventureId = req.query.venture_id;
+  const { data, error } = await supabase
+    .from("buyers")
+    .select("*")
+    .eq("venture_id", ventureId);
 
   if (error) {
     return res.status(500).json({ error: error.message });

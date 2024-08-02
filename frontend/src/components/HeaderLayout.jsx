@@ -9,7 +9,7 @@ import {
   Modal,
   Form,
   InputNumber,
-  Rate
+  Rate,
 } from "antd";
 import {
   UserOutlined,
@@ -24,14 +24,14 @@ import exitLogo from "../assets/exit.png";
 import { supabase } from "../supabase";
 import { useAuth } from "../auth/useAuth";
 import { userRoles } from "../utils/constants";
-const describeRate = ['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful'];
+import useLocalStorage from "../utils/useLocalStorage";
+const describeRate = ["Terrible", "Bad", "Normal", "Good", "Wonderful"];
 const { Header } = Layout;
 
 const HeaderLayout = () => {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const [language, setLanguage] = useState("EN-GB");
   const [ventures, setVentures] = useState([]);
-  const [selectedVenture, setSelectedVenture] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [initialSettings, setinitialSettings] = useState({});
   const [settings, setSettings] = useState({});
@@ -40,12 +40,13 @@ const HeaderLayout = () => {
   const [fontSize, setFontSize] = useState();
   const [theme, setTheme] = useState("");
   const [feedback, setFeedback] = useState(0);
-  const { user } = useAuth();
 
   const onLanguageChange = (value) => {
     setLanguage(value);
     localStorage.setItem("language", value);
   };
+
+  const [ventureId, setVentureId] = useLocalStorage("selectedVenture", null);
 
   const fetchUserSettings = async (role) => {
     if (role) {
@@ -60,6 +61,7 @@ const HeaderLayout = () => {
       }
     }
   };
+
   useEffect(() => {
     const fetchVentures = async () => {
       try {
@@ -72,8 +74,7 @@ const HeaderLayout = () => {
         });
         setVentures(_ventures);
         const _selectedVenture = _ventures?.[0]?.value;
-        setSelectedVenture(_selectedVenture);
-        localStorage.setItem("selectedVenture", _selectedVenture);
+        setVentureId(_selectedVenture);
       } catch (error) {
         console.log("Error fetching ventures:", error);
       }
@@ -83,8 +84,8 @@ const HeaderLayout = () => {
   }, [role]);
 
   const onSelectVenture = (value) => {
-    setSelectedVenture(value);
-    localStorage.setItem("selectedVenture", value);
+    console.log({ setVentureId, value });
+    setVentureId(value);
   };
 
   const showModal = () => {
@@ -99,14 +100,14 @@ const HeaderLayout = () => {
   };
 
   const handleChange = (key, value) => {
-    switch(key) {
-      case 'font':
+    switch (key) {
+      case "font":
         setFont(value);
         break;
-      case 'fontSize':
+      case "fontSize":
         setFontSize(value);
         break;
-      case 'theme':
+      case "theme":
         setTheme(value);
         break;
     }
@@ -117,8 +118,11 @@ const HeaderLayout = () => {
     {
       key: "1",
       icon: <SettingOutlined />,
-      label: 
-        <a type="text" onClick={showModal}>Settings</a>
+      label: (
+        <a type="text" onClick={showModal}>
+          Settings
+        </a>
+      ),
     },
     {
       key: "2",
@@ -146,12 +150,19 @@ const HeaderLayout = () => {
       label: "EN-US",
     },
   ];
+
   const fillSettings = (settings) => {
-    let data = {...settings};
-    if(Object.keys(settings).length < 3) {
-      if (!(data?.font)) {data['font'] = initialSettings.font}; 
-      if (!(data?.fontSize)) {data['fontSize'] = initialSettings.fontSize}; 
-      if (!(data?.theme)) {data['theme'] = initialSettings.theme}; 
+    let data = { ...settings };
+    if (Object.keys(settings).length < 3) {
+      if (!data?.font) {
+        data["font"] = initialSettings.font;
+      }
+      if (!data?.fontSize) {
+        data["fontSize"] = initialSettings.fontSize;
+      }
+      if (!data?.theme) {
+        data["theme"] = initialSettings.theme;
+      }
     }
     return data;
   };
@@ -159,24 +170,25 @@ const HeaderLayout = () => {
   const saveSettings = async (settings) => {
     setLoading(true);
     let _settings = fillSettings(settings);
+
     try {
-      switch(role) {
+      switch (role) {
         case userRoles.BUILDERS:
           const data = await axiosInstance.post("/updateBuilder", {
             builder_id: user?.id,
-            _settings
+            _settings,
           });
           break;
         case userRoles.BUYERS:
           const dataBuyer = await axiosInstance.post("/updateBuyer", {
             buyer_id: user?.id,
-            _settings
+            _settings,
           });
           break;
         case userRoles.SUPPLIERS:
           const dataSupplier = await axiosInstance.post("/updateSupplier", {
             supplier_id: user?.id,
-            _settings
+            _settings,
           });
           break;
       }
@@ -190,14 +202,14 @@ const HeaderLayout = () => {
     setFeedback(feedback);
     try {
       await axiosInstance.post("/updateBuilderFeedback", {
-        feedback: {buyer_id, feedback},
-        builder_id: user?.id
+        feedback: { buyer_id, feedback },
+        builder_id: user?.id,
       });
-      // fetchSuppliers();
     } catch (error) {
       console.log("Error adding supplier:", error);
     }
   };
+
   return (
     <Header
       style={{
@@ -232,7 +244,11 @@ const HeaderLayout = () => {
         >
           <Form layout="vertical">
             <Form.Item label="Font">
-              <Select defaultValue={font} value={font} onChange={(value) => handleChange('font', value)}>
+              <Select
+                defaultValue={font}
+                value={font}
+                onChange={(value) => handleChange("font", value)}
+              >
                 <Option value="Arial">Arial</Option>
                 <Option value="Georgia">Georgia</Option>
                 <Option value="Verdana">Verdana</Option>
@@ -240,27 +256,55 @@ const HeaderLayout = () => {
               </Select>
             </Form.Item>
             <Form.Item label="Theme">
-              <Select defaultValue={theme} value={theme} onChange={(value) => handleChange('theme', value)}>
+              <Select
+                defaultValue={theme}
+                value={theme}
+                onChange={(value) => handleChange("theme", value)}
+              >
                 <Option value="light">Light</Option>
                 <Option value="dark">Dark</Option>
               </Select>
             </Form.Item>
             <Form.Item label="Font Size">
-              <InputNumber defaultValue={fontSize} style={{width: "100%"}} min={10} max={30} value={fontSize} onChange={(value) => handleChange('fontSize', value)}/>
+              <InputNumber
+                defaultValue={fontSize}
+                style={{ width: "100%" }}
+                min={10}
+                max={30}
+                value={fontSize}
+                onChange={(value) => handleChange("fontSize", value)}
+              />
             </Form.Item>
           </Form>
         </Modal>
       </div>
       <div>
-        {role === userRoles.BUILDERS && (<Select
-          value={selectedVenture}
-          style={{ width: "auto", minWidth: "160px", marginRight: "24px", color: "white" }}
-          onChange={onSelectVenture}
-          options={ventures}
-        />)}
-        {role === userRoles.BUYERS && (<Rate style={{marginRight: "8px", backgroundColor: "white"}} tooltips={describeRate} onChange={(value) => {addFeedback(user?.id, value)}} value={feedback} />)}
-        <Select key="language"
-          style={{width: 'auto', minWidth: '80px', marginRight: '24px'}}
+        {role === userRoles.BUILDERS && (
+          <Select
+            value={ventureId}
+            style={{
+              width: "auto",
+              minWidth: "160px",
+              marginRight: "24px",
+              color: "white",
+            }}
+            onChange={onSelectVenture}
+            options={ventures}
+          />
+        )}
+        {role === userRoles.BUYERS && (
+          <Rate
+            style={{ marginRight: "8px", backgroundColor: "white" }}
+            tooltips={describeRate}
+            onChange={(value) => {
+              addFeedback(user?.id, value);
+            }}
+            value={feedback}
+          />
+        )}
+        <Select
+          key="language"
+          style={{ width: "auto", minWidth: "80px", marginRight: "24px" }}
           onClick={(event) => event.preventDefault()}
           onChange={onLanguageChange}
           value={language}

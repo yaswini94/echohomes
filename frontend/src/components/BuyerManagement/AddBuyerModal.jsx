@@ -1,15 +1,8 @@
 import React, { useState } from "react";
 import axiosInstance from "../../helpers/axiosInstance";
-import {
-  Space,
-  Button,
-  Input,
-  Form,
-  Modal,
-  Dropdown,
-  Typography,
-} from "antd";
+import { Space, Button, Input, Form, Modal, Dropdown, Typography } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+import useLocalStorage from "../../utils/useLocalStorage";
 
 const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   const [loading, setLoading] = useState(false);
@@ -18,6 +11,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [houseType, setHouseType] = useState("");
+  const [ventureId] = useLocalStorage("selectedVenture", null);
 
   const items = [
     {
@@ -47,7 +41,6 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   async function inviteBuyer() {
     setLoading(true);
     const tempPassword = generateRandomPassword();
-    const ventureId = localStorage.getItem("selectedVenture");
 
     try {
       const resp = await axiosInstance.post("http://localhost:3001/invite", {
