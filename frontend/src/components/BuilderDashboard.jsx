@@ -1,35 +1,52 @@
 import React from "react";
-import { Col, Row, Statistic, Card } from "antd";
+import { Col, Row, Statistic, Card, Rate } from "antd";
 
 const BuilderDashboard = () => {
   return (
     <div>
-      <Row gutter={16}>
+      <Row gutter={24}>
         <Col span={8}>
-          <Card title="Card title" bordered={false}>
-            <Statistic title="Pending Houses" value={112893} />
+          <Card title="Venture Information" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
+            <Statistic title="Total Houses" value={770} />
+            <Statistic title="Pending Houses" value={300} />
+            <Statistic title="Configured Houses" value={320} />
           </Card>
         </Col>
         <Col span={8}>
-          <Card title="Card title" bordered={false}>
-            <Statistic title="Pending Houses" value={112893} />
+          <Card title="Orders" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
+            <Statistic title="Total Orders" value={182} />
+            <Statistic title="Purchase Order Amount (£)" value={230} precision={2} />
+            <Statistic title="Invoice Amount (£)" value={670} precision={2} />
           </Card>
         </Col>
         <Col span={8}>
-          <Card title="Card title" bordered={false}>
-            <Statistic title="Pending Houses" value={112893} />
+          <Card title="Feedback" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
+            <Row justify="space-between" align="middle">
+              <Col><p>5 star</p></Col>
+              <Col><Rate style={{marginRight: "8px"}} value={5} /></Col>
+              <Col><p>15</p></Col>
+            </Row>
+            <Row justify="space-between" align="middle">
+              <Col><p>4 star</p></Col>
+              <Col><Rate style={{marginRight: "8px"}} value={3} /></Col>
+              <Col><p>15%</p></Col>
+            </Row>
+            <Row justify="space-between" align="middle">
+              <Col><p>3 star</p></Col>
+              <Col><Rate style={{marginRight: "8px"}} value={4} /></Col>
+              <Col><p>15%</p></Col>
+            </Row>
+            <Row justify="space-between" align="middle">
+              <Col><p>2 star</p></Col>
+              <Col><Rate style={{marginRight: "8px"}} value={2} /></Col>
+              <Col><p>15</p></Col>
+            </Row>
+            <Row justify="space-between" align="middle">
+              <Col><p>1 star</p></Col>
+              <Col><Rate style={{marginRight: "8px"}} value={0} /></Col>
+              <Col><p>15</p></Col>
+            </Row>
           </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={12}>
-          <Statistic title="feedback" value={112893} precision={2} />
-        </Col>
-        <Col span={12}>
-          <Statistic title="xx" value={112893} precision={2} />
-        </Col>
-        <Col span={12}>
-          <Statistic title="xx" value={112893} precision={2} />
         </Col>
       </Row>
     </div>

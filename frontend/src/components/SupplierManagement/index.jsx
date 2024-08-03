@@ -14,6 +14,7 @@ import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddSupplierModal from "./AddSupplierModal";
 import EditSupplierModal from "./EditSupplierModal";
+import axiosInstance from "../../helpers/axiosInstance";
 const describeRate = ['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful'];
 
 function SupplierManagement() {
