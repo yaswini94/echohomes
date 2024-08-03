@@ -22,7 +22,6 @@ function SupplierManagement() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
-  const [feedback, setFeedback] = useState(null);
 
   // add supplier
   const showModal = () => {
@@ -106,7 +105,7 @@ function SupplierManagement() {
           </Space>
         ) : (
           <>
-            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={addFeedback(record?.supplier_id, feedback)} value={record?.feedback} />
+            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={(value) => {addFeedback(record?.supplier_id, value)}} value={record?.feedback} />
             <MinusOutlined style={{marginLeft: "16px"}}/>
           </>
         )
@@ -140,12 +139,13 @@ function SupplierManagement() {
   };
 
   const addFeedback = async (id, feedback) => {
+    if (!feedback) return;
     try {
       await axiosInstance.post("/updateSupplier", {
         feedback,
         supplier_id: id,
       });
-      // fetchSuppliers();
+      fetchSuppliers();
     } catch (error) {
       console.log("Error adding supplier:", error);
     }
