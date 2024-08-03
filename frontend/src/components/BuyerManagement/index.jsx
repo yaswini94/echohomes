@@ -10,14 +10,12 @@ import AddBuyerModal from "./AddBuyerModal";
 import EditBuyerModal from "./EditBuyerModal";
 import useLocalStorage from "../../utils/useLocalStorage";
 
-function BuyerInvite() {
+const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const [buyers, setBuyers] = useState([]);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [ventureId] = useLocalStorage("selectedVenture", null);
-
-  console.log({ ventureId });
 
   // add modal
   const showModal = () => {
@@ -125,7 +123,7 @@ function BuyerInvite() {
   const fetchBuyers = async () => {
     try {
       const response = await axiosInstance.get(
-        `/buyers?venture_id=${ventureId}`
+        `/buyers?venture_id=${ventureIdParam || ventureId}`
       );
       if (response?.data?.length > 0) {
         console.log("Buyers fetched:", response.data);
@@ -142,13 +140,13 @@ function BuyerInvite() {
   useEffect(() => {
     console.log("ventureId changed fetching buyers");
     fetchBuyers();
-  }, [ventureId]);
+  }, [ventureIdParam, ventureId]);
 
   return (
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>Buyer Management 1</h3>
+          <h3>Buyer Management</h3>
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
@@ -180,6 +178,6 @@ function BuyerInvite() {
       </div>
     </div>
   );
-}
+};
 
-export default BuyerInvite;
+export default BuyerManagement;
