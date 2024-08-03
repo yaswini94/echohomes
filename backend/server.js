@@ -392,7 +392,6 @@ app.post("/invite", authenticateToken, async (req, res) => {
       fontSize: 14,
       theme: "light",
     },
-    features: [],
   });
 
   if (error) {
