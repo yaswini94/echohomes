@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col } from "antd";
+import { Row, Col, Table, Space, Button } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
 
@@ -9,6 +9,46 @@ const BuyerConfiguration = () => {
   const [venture, setVenture] = useState(null);
   const [features, setFeatures] = useState(null);
   const [configuration, setConfiguration] = useState(null);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  const onSelectChange = (newSelectedRowKeys) => {
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const hasSelected = selectedRowKeys.length > 0;
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Details",
+      dataIndex: "details",
+      key: "details",
+    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       <Button>Add</Button>
+    //     </Space>
+    //   ),
+    // },
+  ];
 
   useEffect(() => {
     const fetchFeatures = async () => {
@@ -73,27 +113,33 @@ const BuyerConfiguration = () => {
           <Row>
             <Col span={24}>
               <h3>Choices</h3>
-              {configuration?.choices?.map((choice) => {
+              {/* {configuration?.choices?.map((choice) => {
                 const feature = features[choice];
                 return (
                   <div key={feature.feature_id}>
                     <p>{feature.name}</p>
                   </div>
                 );
-              })}
+              })} */}
+              {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
+              <Table rowSelection={rowSelection} columns={columns} dataSource={configuration?.choices?.map((choice) => { console.log(features[choice]); return features[choice]})} />
+              {/* <Table columns={columns} dataSource={configuration?.choices?.map((choice) => { return features[choice]})} /> */}
             </Col>
           </Row>
           <Row>
             <Col span={24}>
               <h3>Extras</h3>
-              {configuration?.extras?.map((extra) => {
+              {/* {configuration?.extras?.map((extra) => {
                 const feature = features[extra];
                 return (
                   <div key={feature.feature_id}>
                     <p>{feature.name}</p>
                   </div>
                 );
-              })}
+              })} */}
+              {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
+              <Table rowSelection={rowSelection} columns={columns} dataSource={configuration?.extras?.map((extra) => { console.log(features[extra]); return features[extra]})} />
+              {/* <Table columns={columns} dataSource={configuration?.extra?.map((extra) => { return features[extra]})} /> */}
             </Col>
           </Row>
         </>
