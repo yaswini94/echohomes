@@ -156,20 +156,6 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-app.post("/updateBuilderFeedback", authenticateToken, async (req, res) => {
-  const { builder_id, feedback } = req.body;
-
-  const { data, error } = await supabase
-    .from("builders")
-    .update({ feedback })
-    .eq("builder_id", builder_id);
-
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-  res.status(201).json("Update successfull");
-});
-
 app.post("/updateBuilder", authenticateToken, async (req, res) => {
   const { settings, feedback, builder_id } = req.body;
   const { data, error } = await supabase
@@ -347,7 +333,6 @@ app.get("/buyers", authenticateToken, async (req, res) => {
 });
 
 // To list details of the buyer
-// app.get("/buyerDetails/:id", authenticateToken, async (req, res) => {
 app.get("/buyers/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
@@ -438,6 +423,7 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
     phone_number,
     house_type,
     buyer_id,
+    features,
     settings,
     feedback,
   } = req.body;
@@ -449,6 +435,7 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
       contact_email,
       address,
       phone_number,
+      features,
       house_type,
       settings,
       feedback,

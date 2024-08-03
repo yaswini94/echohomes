@@ -198,15 +198,15 @@ const HeaderLayout = () => {
     setLoading(false);
   };
 
-  const addFeedback = async (buyer_id, feedback) => {
-    setFeedback(feedback);
+  const addFeedback = async (value) => {
+    setFeedback(value);
     try {
-      await axiosInstance.post("/updateBuilderFeedback", {
-        feedback: { buyer_id, feedback },
-        builder_id: user?.id,
+      await axiosInstance.post("/updateBuyer", {
+        feedback: value ,
+        buyer_id: user?.id,
       });
     } catch (error) {
-      console.log("Error adding supplier:", error);
+      console.log("Error updating buyer:", error);
     }
   };
 
@@ -297,7 +297,7 @@ const HeaderLayout = () => {
             style={{ marginRight: "8px", backgroundColor: "white" }}
             tooltips={describeRate}
             onChange={(value) => {
-              addFeedback(user?.id, value);
+              addFeedback(value);
             }}
             value={feedback}
           />
