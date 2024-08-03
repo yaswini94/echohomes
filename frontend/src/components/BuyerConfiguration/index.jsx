@@ -19,6 +19,10 @@ const BuyerConfiguration = () => {
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
+    getCheckboxProps: (record) => ({
+      // Disable the checkbox if the selection count is 4 and the item is not selected
+      disabled: selectedRowKeys.length >= 4 && !selectedRowKeys.includes(record.key),
+    }),
   };
 
   const hasSelected = selectedRowKeys.length > 0;
