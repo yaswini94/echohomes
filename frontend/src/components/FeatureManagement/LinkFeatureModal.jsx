@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Space, Button, Modal, Select } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
+import useLocalStorage from "../../utils/useLocalStorage";
 
 const LinkFeatureModal = ({
   isOpened,
@@ -10,6 +11,7 @@ const LinkFeatureModal = ({
 }) => {
   const [loading, setLoading] = useState("");
   const [properties, setProperties] = useState();
+  const [ventureId] = useLocalStorage("selectedVenture", null);
 
   const [types, setTypes] = useState([
     {
@@ -43,16 +45,20 @@ const LinkFeatureModal = ({
   };
 
   const handleLinkFeature = async () => {
-    let updatedProperties = properties?.map(prop => {
-      const additional = types.find(item => item.key === prop.key);
-      return { ...prop, choices: additional.choices, extras: additional.extras };
+    let updatedProperties = properties?.map((prop) => {
+      const additional = types.find((item) => item.key === prop.key);
+      return {
+        ...prop,
+        choices: additional.choices,
+        extras: additional.extras,
+      };
     });
     setLoading(true);
 
     try {
       await axiosInstance.post("/updateVenture", {
         properties: updatedProperties,
-        ventureId: localStorage.getItem("selectedVenture")
+        ventureId: ventureId,
       });
     } catch (error) {
       console.log("Error updating venture with linked features:", error);
@@ -62,8 +68,9 @@ const LinkFeatureModal = ({
   };
 
   const fetchVentureInfo = async () => {
+    const _ventureId = ventureId;
     try {
-      const response = await axiosInstance.get(`/ventures/${localStorage.getItem("selectedVenture")}`);
+      const response = await axiosInstance.get(`/ventures/${_ventureId}`);
       setProperties(response?.data?.properties);
     } catch (error) {
       console.log("Error fetching venture info:", error);

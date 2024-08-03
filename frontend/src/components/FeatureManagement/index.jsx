@@ -78,6 +78,7 @@ const FeatureManagement = () => {
   };
 
   // Function to load features from Supabase
+  // change to BE call
   const fetchFeatures = async () => {
     const { data, error } = await supabase.from("features").select("*");
     if (error) {

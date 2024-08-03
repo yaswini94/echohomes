@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Form, Modal } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
+import useLocalStorage from "../../utils/useLocalStorage";
 
 const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
   const [loading, setLoading] = useState(false);
@@ -9,10 +10,10 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
+  const [ventureId] = useLocalStorage("selectedVenture", null);
 
   const addSupplier = async () => {
     setLoading(true);
-    const ventureId = localStorage.getItem("selectedVenture");
 
     try {
       const data = await axiosInstance.post("/addSupplier", {

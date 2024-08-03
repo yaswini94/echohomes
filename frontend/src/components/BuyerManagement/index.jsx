@@ -8,27 +8,14 @@ import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddBuyerModal from "./AddBuyerModal";
 import EditBuyerModal from "./EditBuyerModal";
+import useLocalStorage from "../../utils/useLocalStorage";
 
-function BuyerInvite() {
+const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const [buyers, setBuyers] = useState([]);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-
-  const items = [
-    {
-      key: "1",
-      label: "1 bed",
-    },
-    {
-      key: "2",
-      label: "2 bed",
-    },
-    {
-      key: "3",
-      label: "3 bed",
-    },
-  ];
+  const [ventureId] = useLocalStorage("selectedVenture", null);
 
   // add modal
   const showModal = () => {
@@ -134,20 +121,26 @@ function BuyerInvite() {
 
   // Function to load Buyers from Supabase
   const fetchBuyers = async () => {
-    // const ventureId = localStorage.getItem("selectedVenture");
-
     try {
-      // const response = await axiosInstance.get(`/buyers/${ventureId}`);
-      const response = await axiosInstance.get("/buyers");
-      setBuyers(response.data);
+      const response = await axiosInstance.get(
+        `/buyers?venture_id=${ventureIdParam || ventureId}`
+      );
+      if (response?.data?.length > 0) {
+        console.log("Buyers fetched:", response.data);
+        setBuyers(response.data);
+      } else {
+        console.log("No Buyers found");
+        setBuyers([]);
+      }
     } catch (error) {
       console.log("Error fetching buyers:", error);
     }
   };
 
   useEffect(() => {
+    console.log("ventureId changed fetching buyers");
     fetchBuyers();
-  }, []);
+  }, [ventureIdParam, ventureId]);
 
   return (
     <div>
@@ -185,6 +178,6 @@ function BuyerInvite() {
       </div>
     </div>
   );
-}
+};
 
-export default BuyerInvite;
+export default BuyerManagement;

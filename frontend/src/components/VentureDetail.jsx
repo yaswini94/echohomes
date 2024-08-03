@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import BuyerInvite from "./BuyerInvite";
+import BuyerManagement from "./BuyerManagement";
 import axiosInstance from "../helpers/axiosInstance";
 
 function VentureDetail() {
@@ -39,7 +39,7 @@ function VentureDetail() {
         <em>{venture.description}</em>
       </div>
 
-      <BuyerInvite builderId={venture.builder_id} />
+      <BuyerManagement ventureId={id} builderId={venture.builder_id} />
     </div>
   );
 }
