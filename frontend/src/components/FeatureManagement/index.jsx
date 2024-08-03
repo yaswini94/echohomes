@@ -8,14 +8,52 @@ import linkIcon from "../../assets/link.png";
 import AddFeatureModal from "./AddFeatureModal";
 import EditFeatureModal from "./EditFeatureModal";
 import LinkFeatureModal from "./LinkFeatureModal";
+import useLocalStorage from "../../utils/useLocalStorage";
+import axiosInstance from "../../helpers/axiosInstance";
 
 const FeatureManagement = () => {
   const [features, setFeatures] = useState([]);
   const [selectedFeature, setSelectedFeature] = useState([]);
   const [featureOptions, setFeatureOptions] = useState([]);
+  const [defaultValues, setDefaultValues] = useState([
+    {
+      key: 1,
+      label: "1 Bed",
+      choices: [],
+      extras: [],
+    },
+    {
+      key: 2,
+      label: "2 Bed",
+      choices: [],
+      extras: [],
+    },
+    {
+      key: 3,
+      label: "3 Bed",
+      choices: [],
+      extras: [],
+    },
+  ]);
   const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [ventureId] = useLocalStorage("selectedVenture", null);
+
+  useEffect(() => {
+    if (!ventureId) return;
+
+    const fetchVenture = async () => {
+      try {
+        const response = await axiosInstance.get(`/ventures/${ventureId}`);
+        setDefaultValues(response.data?.properties);
+      } catch (error) {
+        console.log("Error fetching ventures:", error);
+      }
+    };
+
+    fetchVenture();
+  }, [ventureId]);
 
   // add modal
   const showModal = () => {
@@ -88,9 +126,8 @@ const FeatureManagement = () => {
       let options = [];
       data?.forEach((feature) => {
         options.push({
-          value: feature?.name,
+          value: feature?.feature_id,
           label: feature?.name,
-          id: feature?.feature_id,
         });
       });
       setFeatureOptions(options);
@@ -175,6 +212,7 @@ const FeatureManagement = () => {
             handleOk={handleLinkOk}
             handleCancel={handleLinkCancel}
             featureOptions={featureOptions}
+            defaultValues={defaultValues}
           />
         )}
         {isModalVisible && (

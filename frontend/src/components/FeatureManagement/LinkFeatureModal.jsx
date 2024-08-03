@@ -8,31 +8,13 @@ const LinkFeatureModal = ({
   handleOk,
   handleCancel,
   featureOptions,
+  defaultValues,
 }) => {
   const [loading, setLoading] = useState("");
   const [properties, setProperties] = useState();
   const [ventureId] = useLocalStorage("selectedVenture", null);
 
-  const [types, setTypes] = useState([
-    {
-      key: 1,
-      label: "1 Bed",
-      choices: [],
-      extras: [],
-    },
-    {
-      key: 2,
-      label: "2 Bed",
-      choices: [],
-      extras: [],
-    },
-    {
-      key: 3,
-      label: "3 Bed",
-      choices: [],
-      extras: [],
-    },
-  ]);
+  const [types, setTypes] = useState(defaultValues);
 
   const handleChange = (values, key, type) => {
     const _types = types.map((_type) => {
@@ -121,6 +103,7 @@ const LinkFeatureModal = ({
                 onChange={(value) => handleChange(value, type.key, "choices")}
                 style={{ width: "85%" }}
                 options={featureOptions}
+                defaultValue={type.choices}
               />
             </div>
             <div
@@ -138,6 +121,7 @@ const LinkFeatureModal = ({
                 onChange={(value) => handleChange(value, type.key, "extras")}
                 style={{ width: "85%" }}
                 options={featureOptions}
+                defaultValue={type.extras}
               />
             </div>
           </Space>

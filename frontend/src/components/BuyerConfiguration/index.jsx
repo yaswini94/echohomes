@@ -1,282 +1,105 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { supabase } from "../../supabase";
-import { Space, Table, Row, Col, Button, Avatar, Input, Form, Modal, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Row, Col } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
-import AddChoicesModal from "./ChoicesConfiguration/AddChoicesModal";
-import EditChoicesModal from "./ChoicesConfiguration/EditChoicesModal";
-import AddExtrasModal from "./ExtrasConfiguration/AddExtrasModal";
-import EditExtrasModal from "./ExtrasConfiguration/EditExtrasModal";
-import { MAX_COUNT } from "../../utils/constants";
 
-function BuyerConfiguration() {
-  const [choices, setChoices] = useState([{name: 'hi', price: 0, details: 'djssd'}]);
-  const [extras, setExtras] = useState([{name: 'hi', price: 10, details: 'djssd', quantity: 2}]);
-  const [buyerInfo, setBuyerInfo] = useState({});
-  const [isChoiceModalVisible, setIsChoiceModalVisible] = useState(false);
-  const [isEditChoiceModalVisible, setIsEditChoiceModalVisible] = useState(false);
-  const [isExtrasModalVisible, setIsExtrasModalVisible] = useState(false);
-  const [isEditExtrasModalVisible, setIsEditExtrasModalVisible] = useState(false);
+const BuyerConfiguration = () => {
   const { user } = useAuth();
-  const types = [{id: 1, label: 'xyz', value: 'xyz'}, {id: 2, label: 'yzz', value: 'yzz'}, {id: 3, label: 'xyzz', value: 'xyzz'}, {id: 4, label: 'yzzv', value: 'yzzv'}];
-
-  // add Choice
-  const showChoiceModal = () => {
-    setIsChoiceModalVisible(true);
-  };
-
-  const handleChoiceOk = () => {
-    // fetchSuppliers();
-    setIsChoiceModalVisible(false);
-  };
-
-  const handleChoiceCancel = () => {
-    setIsChoiceModalVisible(false);
-  };
-
-  // edit choice modal
-  const showEditChoiceModal = (supplier) => {
-    // setSelectedSupplier(supplier);
-    setIsEditChoiceModalVisible(true);
-  };
-
-  const handleEditChoiceOk = () => {
-    // fetchSuppliers();
-    setIsEditChoiceModalVisible(false);
-  };
-
-  const handleEditChoiceCancel = () => {
-    setIsEditChoiceModalVisible(false);
-  };
-
-  // add extras
-  const showExtrasModal = () => {
-    setIsExtrasModalVisible(true);
-  };
-
-  const handleExtrasOk = () => {
-    // fetchSuppliers();
-    setIsExtrasModalVisible(false);
-  };
-
-  const handleExtrasCancel = () => {
-    setIsExtrasModalVisible(false);
-  };
-
-  // edit extras modal
-  const showEditExtrasModal = (supplier) => {
-    // setSelectedSupplier(supplier);
-    setIsEditExtrasModalVisible(true);
-  };
-
-  const handleEditExtrasOk = () => {
-    // fetchSuppliers();
-    setIsEditExtrasModalVisible(false);
-  };
-
-  const handleEditExtrasCancel = () => {
-    setIsEditExtrasModalVisible(false);
-  };
-
-  const choicesColumns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Details",
-      dataIndex: "details",
-      key: "details",
-    },
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <Space size="middle">
-    //       <a>
-    //         <Avatar
-    //           src={editIcon}
-    //           style={{ height: "18px", width: "18px" }}
-    //           onClick={() => {
-    //             showEditModal(record);
-    //           }}
-    //         />
-    //       </a>
-    //       <a>
-    //         <Avatar
-    //           src={deleteIcon}
-    //           style={{ height: "18px", width: "18px" }}
-    //           onClick={() => deleteFeature(record?.feature_id)}
-    //         />
-    //       </a>
-    //     </Space>
-    //   ),
-    // },
-  ];
-
-  const extrasColumns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Details",
-      dataIndex: "details",
-      key: "details",
-    },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <Space size="middle">
-    //       <a>
-    //         <Avatar
-    //           src={editIcon}
-    //           style={{ height: "18px", width: "18px" }}
-    //           onClick={() => {
-    //             showEditModal(record);
-    //           }}
-    //         />
-    //       </a>
-    //       <a>
-    //         <Avatar
-    //           src={deleteIcon}
-    //           style={{ height: "18px", width: "18px" }}
-    //           onClick={() => deleteFeature(record?.feature_id)}
-    //         />
-    //       </a>
-    //     </Space>
-    //   ),
-    // },
-  ];
-
-  const fetchBuyerInfo = async() => {
-    try {
-      const response = await axiosInstance.get(`/buyers/${user?.id}`);
-      setBuyerInfo(response.data);
-    } catch(error) {
-      console.log("Error fetching Buyer Info", error);
-    }
-  };
+  const [buyer, setBuyer] = useState(null);
+  const [venture, setVenture] = useState(null);
+  const [features, setFeatures] = useState(null);
+  const [configuration, setConfiguration] = useState(null);
 
   useEffect(() => {
-    fetchBuyerInfo();
-  }, [user]);
+    const fetchFeatures = async () => {
+      try {
+        const response = await axiosInstance.get("/features");
+        const _featuresMap = response?.data?.reduce((acc, feature) => {
+          acc[feature.feature_id] = feature;
+          return acc;
+        }, {});
+        setFeatures(_featuresMap);
+      } catch (error) {
+        console.log("Error fetching features:", error);
+      }
+    };
+
+    fetchFeatures();
+  }, []);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchBuyer = async () => {
+      try {
+        const response = await axiosInstance.get(`/buyers/${user.id}`);
+        setBuyer(response.data);
+      } catch (error) {
+        console.log("Error fetching ventures:", error);
+      }
+    };
+
+    fetchBuyer();
+  }, [user.id]);
+
+  useEffect(() => {
+    if (!buyer?.buyer_id) return;
+
+    const fetchVenture = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/ventures/${buyer.venture_id}`
+        );
+        const _venture = response.data;
+        setVenture(_venture);
+        const _configuration = (_venture?.properties || []).filter(
+          (property) => property.key === buyer.house_type
+        );
+        setConfiguration(_configuration[0]);
+      } catch (error) {
+        console.log("Error fetching ventures:", error);
+      }
+    };
+
+    fetchVenture();
+  }, [buyer?.buyer_id]);
 
   return (
     <div>
-      <h3>Choices Configuration</h3>
-      <p><b>{buyerInfo?.house_type}</b></p>
-      <Row justify="space-between" align="middle">
-        <Col>
-        <p><b>Choices</b></p>
-        </Col>
-        <Col>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showChoiceModal}>
-            Configure
-          </Button>
-        </Col>
-      </Row>
-      <div>
-        {isChoiceModalVisible && (
-          <>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              maxCount={MAX_COUNT}
-              onChange={(value) => console.log(value)}
-              // onChange={(value) => handleChange(value, type.key, "choices")}
-              style={{ width: "50%" }}
-              options={types}
-            />
-            <Button>
-              add
-            </Button>
-          </>)}
-        {/* {isChoiceModalVisible && (
-          <AddChoicesModal
-            isOpened={isChoiceModalVisible}
-            handleOk={handleChoiceOk}
-            handleCancel={handleChoiceCancel}
-          />
-        )}
-        {isEditChoiceModalVisible && (
-          <EditChoicesModal
-            // feature={selectedFeature}
-            isOpened={isEditChoiceModalVisible}
-            handleOk={handleEditChoiceOk}
-            handleCancel={handleEditChoiceCancel}
-          />
-        )} */}
-      </div>
-      <div>
-        {choices.length === 0 && <p>No Choices exist !</p>}
-        {choices.length > 0 && (
-        <Table columns={choicesColumns} dataSource={choices} />)}
-      </div>
-      <Row justify="space-between" align="middle">
-        <Col>
-        <p><b>Extras</b></p>
-        </Col>
-        <Col>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showExtrasModal}>
-            Configure
-          </Button>
-        </Col>
-      </Row>
-      <div>
-        {isExtrasModalVisible && (
-          <>
-            <Select
-              mode="tags"
-              placeholder="Please select"
-              maxCount={MAX_COUNT}
-              onChange={(value) => console.log(value)}
-              // onChange={(value) => handleChange(value, type.key, "choices")}
-              style={{ width: "50%" }}
-              options={types}
-            />
-            <Button>
-              add
-            </Button>
-          </>
-        )}
-         {/* {isExtrasModalVisible && (
-          <AddExtrasModal
-            isOpened={isExtrasModalVisible}
-            handleOk={handleExtrasOk}
-            handleCancel={handleExtrasCancel}
-          />
-        )}
-        {isEditExtrasModalVisible && (
-          <EditExtrasModal
-            // feature={selectedFeature}
-            isOpened={isEditExtrasModalVisible}
-            handleOk={handleEditExtrasOk}
-            handleCancel={handleEditExtrasCancel}
-          />
-        )} */}
-      </div>
-      <div>
-        {extras.length === 0 && <p>No Extras exist !</p>}
-        {extras.length > 0 && (
-        <Table columns={extrasColumns} dataSource={extras} />)}
-      </div>
+      <p>Venture Name: {venture?.name}</p>
+      <p>House Type: {buyer?.house_type} Bed</p>
+      {features && configuration && (
+        <>
+          <Row>
+            <Col span={24}>
+              <h3>Choices</h3>
+              {configuration?.choices?.map((choice) => {
+                const feature = features[choice];
+                return (
+                  <div key={feature.feature_id}>
+                    <p>{feature.name}</p>
+                  </div>
+                );
+              })}
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <h3>Extras</h3>
+              {configuration?.extras?.map((extra) => {
+                const feature = features[extra];
+                return (
+                  <div key={feature.feature_id}>
+                    <p>{feature.name}</p>
+                  </div>
+                );
+              })}
+            </Col>
+          </Row>
+        </>
+      )}
     </div>
   );
-}
+};
+
 export default BuyerConfiguration;

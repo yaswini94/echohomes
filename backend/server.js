@@ -354,7 +354,7 @@ app.get("/buyers/:id", authenticateToken, async (req, res) => {
   const { data, error } = await supabase
     .from("buyers")
     .select("*")
-    .eq("venture_id", id)
+    .eq("buyer_id", id)
     .single();
 
   if (error) {
@@ -495,7 +495,10 @@ app.post("/updateFeature", authenticateToken, async (req, res) => {
 });
 
 app.get("/features", authenticateToken, async (req, res) => {
-  const { data, error } = await supabase.from("features").select("*");
+  const user = req.user;
+  const { data, error } = await supabase
+    .from("features")
+    .select("*");
 
   if (error) {
     return res.status(500).json({ error: error.message });

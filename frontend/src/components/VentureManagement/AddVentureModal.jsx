@@ -87,9 +87,9 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
               value={property.label}
               disabled
             >
-              <Option value="1 Bed">1 Bed</Option>
-              <Option value="2 Bed">2 Bed</Option>
-              <Option value="3 Bed">3 Bed</Option>
+              <Option value="1">1 Bed</Option>
+              <Option value="2">2 Bed</Option>
+              <Option value="3">3 Bed</Option>
             </Select>
             <InputNumber
               min={0}
