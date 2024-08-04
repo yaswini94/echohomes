@@ -10,7 +10,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
-  const [houseType, setHouseType] = useState("");
+  const [houseType, setHouseType] = useState();
   const [ventureId] = useLocalStorage("selectedVenture", null);
 
   const items = [
@@ -30,7 +30,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
 
   const onHouseTypeChange = (value) => {
     const selectedItem = items.find((item) => item.key === value.key);
-    setHouseType(selectedItem ? selectedItem.label : null);
+    setHouseType(selectedItem ? selectedItem.key : null);
   };
 
   // Function to generate a random password

@@ -9,7 +9,6 @@ import {
   Modal,
   Form,
   InputNumber,
-  Rate,
 } from "antd";
 import {
   UserOutlined,
@@ -25,7 +24,7 @@ import { supabase } from "../supabase";
 import { useAuth } from "../auth/useAuth";
 import { userRoles } from "../utils/constants";
 import useLocalStorage from "../utils/useLocalStorage";
-const describeRate = ["Terrible", "Bad", "Normal", "Good", "Wonderful"];
+
 const { Header } = Layout;
 
 const HeaderLayout = () => {
@@ -39,7 +38,6 @@ const HeaderLayout = () => {
   const [font, setFont] = useState("");
   const [fontSize, setFontSize] = useState();
   const [theme, setTheme] = useState("");
-  const [feedback, setFeedback] = useState(0);
 
   const onLanguageChange = (value) => {
     setLanguage(value);
@@ -84,7 +82,6 @@ const HeaderLayout = () => {
   }, [role]);
 
   const onSelectVenture = (value) => {
-    console.log({ setVentureId, value });
     setVentureId(value);
   };
 
@@ -198,18 +195,6 @@ const HeaderLayout = () => {
     setLoading(false);
   };
 
-  const addFeedback = async (value) => {
-    setFeedback(value);
-    try {
-      await axiosInstance.post("/updateBuyer", {
-        feedback: value ,
-        buyer_id: user?.id,
-      });
-    } catch (error) {
-      console.log("Error updating buyer:", error);
-    }
-  };
-
   return (
     <Header
       style={{
@@ -290,16 +275,6 @@ const HeaderLayout = () => {
             }}
             onChange={onSelectVenture}
             options={ventures}
-          />
-        )}
-        {role === userRoles.BUYERS && (
-          <Rate
-            style={{ marginRight: "8px", backgroundColor: "white" }}
-            tooltips={describeRate}
-            onChange={(value) => {
-              addFeedback(value);
-            }}
-            value={feedback}
           />
         )}
         <Select

@@ -13,12 +13,18 @@ const BuyerConfiguration = () => {
   const [selectedChoices, setSelectedChoices] = useState([]);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [quantityMap, setQuantityMap] = useState({});
+  const [sum, setSum] = useState(0);
 
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
   };
 
   const onSelectExtrasChange = (newSelectedRowKeys) => {
+    // setQuantityMap({
+    //   ...quantityMap,
+    //   [newSelectedRowKeys]: 1,
+    // });
+    setSum(sum + allFeatures[newSelectedRowKeys]?.price);
     setSelectedExtras(newSelectedRowKeys);
   };
 
@@ -26,10 +32,10 @@ const BuyerConfiguration = () => {
     selectedRowKeys: selectedChoices,
     onChange: onSelectChoiceChange,
     getCheckboxProps: (record) => ({
-      // Disable the checkbox if the selection count is 4 and the item is not selected
+      // Disable the checkbox if the selection count is 3 and the item is not selected
       disabled:
         Boolean(selectedFeatures) ||
-        (selectedChoices.length >= 4 && !selectedChoices.includes(record.key)),
+        (selectedChoices.length >= 3 && !selectedChoices.includes(record.key)),
     }),
     hideSelectAll: true,
   };
@@ -37,8 +43,7 @@ const BuyerConfiguration = () => {
   const rowExtrasSelection = {
     selectedRowKeys: selectedExtras,
     onChange: onSelectExtrasChange,
-    getCheckboxProps: (record) => ({
-      // Disable the checkbox if the selection count is 4 and the item is not selected
+    getCheckboxProps: () => ({
       disabled: Boolean(selectedFeatures),
     }),
     hideSelectAll: Boolean(selectedFeatures),
@@ -51,15 +56,18 @@ const BuyerConfiguration = () => {
       key: "name",
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      render: (_, record) => <p>Free</p>,
-    },
-    {
       title: "Details",
       dataIndex: "details",
       key: "details",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (_, record) => 
+        <div>
+          <p>£ {record.price} (inclusive)</p> 
+        </div>
     },
     {
       title: "Quantity",
@@ -75,14 +83,18 @@ const BuyerConfiguration = () => {
       key: "name",
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-    },
-    {
       title: "Details",
       dataIndex: "details",
       key: "details",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (_, record) => 
+        <div>
+          <p>£ {record.price}</p> 
+        </div>
     },
     {
       title: "Quantity",
@@ -100,6 +112,8 @@ const BuyerConfiguration = () => {
                 ...quantityMap,
                 [record.feature_id]: value,
               });
+              console.log(sum + (record?.price));
+              (value && setSum(sum + (value * record?.price)));
             }}
           />
         );
@@ -130,7 +144,6 @@ const BuyerConfiguration = () => {
       const data = response.data;
       setBuyer(data);
       const _features = data?.features || null;
-      console.log({ _features });
       setSelectedFeatures(_features);
 
       if (Object.keys(_features || {})?.length === 0) return;
@@ -232,16 +245,24 @@ const BuyerConfiguration = () => {
 
   return (
     <div>
-      <p>Venture Name: {venture?.name}</p>
-      <p>House Type: {buyer?.house_type} Bed</p>
-      <Button onClick={handleConfirmOrder}>Confirm Order</Button>
+      <Row justify="space-between" align="middle">
+        <Col>
+          <p><b>Venture Name: </b>{venture?.name}</p>
+          <p><b>House Type: </b>{buyer?.house_type} Bed</p>
+        </Col>
+        <Col>
+          <p><b>Total cost: </b>$ {sum}</p>
+          <Button type="primary" disabled={!selectedChoices?.length && !selectedExtras?.length} onClick={handleConfirmOrder}>Confirm Order</Button>
+        </Col>
+      </Row>
+      
       {allFeatures && configuration && (
         <>
           <Row>
             <Col span={24}>
               <h3>Choices</h3>
               {selectedChoices?.length > 0
-                ? `Selected ${selectedChoices.length} items`
+                ? <p>Selected {selectedChoices.length} choices</p>
                 : null}
               <Table
                 rowSelection={rowChoiceSelection}
@@ -256,7 +277,7 @@ const BuyerConfiguration = () => {
             <Col span={24}>
               <h3>Extras</h3>
               {selectedExtras?.length > 0
-                ? `Selected ${selectedExtras.length} items`
+                ? <p>Selected {selectedExtras.length} extras</p>
                 : null}
               <Table
                 rowSelection={rowExtrasSelection}
