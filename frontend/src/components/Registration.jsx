@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Forms.css";
 import logo from "../assets/echohomes.png";
-import { Button, Form, Input, message, Radio } from "antd";
+import { Button, Form, Input, Radio } from "antd";
 import axiosInstance from "../helpers/axiosInstance";
 
 const layout = {
@@ -47,7 +47,6 @@ const Registration = () => {
         name: name,
         address: address,
       });
-
       setLoading(false);
       navigate("/dashboard");
     } catch (error) {

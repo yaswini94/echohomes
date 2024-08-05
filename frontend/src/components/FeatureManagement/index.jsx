@@ -149,6 +149,7 @@ const FeatureManagement = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      render: (_, record) => "£ " + record?.price
     },
     {
       title: "Action",
@@ -196,7 +197,6 @@ const FeatureManagement = () => {
             <Avatar
               src={linkIcon}
               style={{ height: "18px", width: "18px", color: "white" }}
-              onClick={() => console.log("kjds")}
             />{" "}
             Link Features
           </Button>

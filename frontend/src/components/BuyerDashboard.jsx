@@ -43,9 +43,9 @@ const BuyerDashboard = () => {
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="Provide Feedback" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
+          <Card title="Provide Feedback to Builder" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
             <Rate
-            style={{ marginRight: "8px", backgroundColor: "white" }}
+            style={{ margin: "24px", backgroundColor: "white" }}
             tooltips={describeRate}
             onChange={(value) => {
               addFeedback(value);

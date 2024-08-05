@@ -13,18 +13,12 @@ const BuyerConfiguration = () => {
   const [selectedChoices, setSelectedChoices] = useState([]);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [quantityMap, setQuantityMap] = useState({});
-  const [sum, setSum] = useState(0);
 
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
   };
 
   const onSelectExtrasChange = (newSelectedRowKeys) => {
-    // setQuantityMap({
-    //   ...quantityMap,
-    //   [newSelectedRowKeys]: 1,
-    // });
-    setSum(sum + allFeatures[newSelectedRowKeys]?.price);
     setSelectedExtras(newSelectedRowKeys);
   };
 
@@ -103,7 +97,7 @@ const BuyerConfiguration = () => {
       render: (_, record) => {
         return (
           <InputNumber
-            type="numnber"
+            type="number"
             disabled={Boolean(selectedFeatures)}
             value={quantityMap[record.feature_id] || 0}
             min={0}
@@ -112,8 +106,6 @@ const BuyerConfiguration = () => {
                 ...quantityMap,
                 [record.feature_id]: value,
               });
-              console.log(sum + (record?.price));
-              (value && setSum(sum + (value * record?.price)));
             }}
           />
         );
@@ -217,6 +209,7 @@ const BuyerConfiguration = () => {
       acc[choice] = {
         price: 0,
         quantity: 1,
+        status: null
       };
 
       return acc;
@@ -225,12 +218,12 @@ const BuyerConfiguration = () => {
     selections.extras = selectedExtras.reduce((acc, extra) => {
       acc[extra] = {
         price: allFeatures[extra].price,
-        quantity: quantityMap[extra],
+        quantity: quantityMap[extra] || 1,
+        status: null
       };
 
       return acc;
     }, {});
-
     try {
       await axiosInstance.post("/updateBuyer", {
         features: selections,
@@ -251,7 +244,6 @@ const BuyerConfiguration = () => {
           <p><b>House Type: </b>{buyer?.house_type} Bed</p>
         </Col>
         <Col>
-          <p><b>Total cost: </b>$ {sum}</p>
           <Button type="primary" disabled={!selectedChoices?.length && !selectedExtras?.length} onClick={handleConfirmOrder}>Confirm Order</Button>
         </Col>
       </Row>
@@ -268,7 +260,7 @@ const BuyerConfiguration = () => {
                 rowSelection={rowChoiceSelection}
                 columns={choicesColumns}
                 dataSource={configuration?.choices?.map((choice) => {
-                  return { ...allFeatures[choice], key: choice, quantity: 1 };
+                  return { ...allFeatures[choice], key: choice, quantity: 1, status: null };
                 })}
               />
             </Col>
@@ -283,7 +275,7 @@ const BuyerConfiguration = () => {
                 rowSelection={rowExtrasSelection}
                 columns={extrasColumns}
                 dataSource={configuration?.extras?.map((extra) => {
-                  return { ...allFeatures[extra], key: extra, quantity: 0 };
+                  return { ...allFeatures[extra], key: extra, quantity: 0, status: null };
                 })}
               />
             </Col>

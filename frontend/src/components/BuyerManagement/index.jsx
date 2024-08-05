@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../helpers/axiosInstance";
 import { supabase } from "../../supabase";
-import { Space, Table, Row, Col, Button, Avatar } from "antd";
+import { Space, Table, Row, Col, Button, Avatar, Tag, message, Tooltip } from "antd";
 import { Link } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
@@ -12,10 +12,14 @@ import useLocalStorage from "../../utils/useLocalStorage";
 
 const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const [buyers, setBuyers] = useState([]);
+  // const [features, setFeatures] = useState();
+  const [allFeatures, setAllFeatures] = useState(null);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [ventureId] = useLocalStorage("selectedVenture", null);
+  const [expandedRowId, setExpandedRowId] = useState(null);
+  const [messageApi, messageHolder] = message.useMessage();
 
   // add modal
   const showModal = () => {
@@ -23,6 +27,10 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   };
 
   const handleOk = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Buyer Created',
+    });
     fetchBuyers();
     setIsModalVisible(false);
   };
@@ -38,6 +46,10 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   };
 
   const handleEditOk = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Buyer Updated',
+    });
     fetchBuyers();
     setIsEditModalVisible(false);
   };
@@ -76,6 +88,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       title: "House Type",
       dataIndex: "house_type",
       key: "house_type",
+      render: (_, record) => record?.house_type + " Bed"
     },
     {
       title: "Action",
@@ -101,6 +114,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         </Space>
       ),
     },
+    Table.EXPAND_COLUMN
   ];
 
   const deleteBuyer = async (id) => {
@@ -109,8 +123,15 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         .from("buyers")
         .delete()
         .match({ buyer_id: id });
-
+      messageApi.open({
+        type: 'success',
+        content: 'Buyer Deleted',
+      });
       if (error) {
+        messageApi.open({
+          type: 'error',
+          content: 'Error deleting buyer',
+        });
         console.error("Error deleting buyer:", error);
         return { error };
       }
@@ -126,7 +147,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         `/buyers?venture_id=${ventureIdParam || ventureId}`
       );
       if (response?.data?.length > 0) {
-        console.log("Buyers fetched:", response.data);
+        // setFeatures(response.data.features);
         setBuyers(response.data);
       } else {
         console.log("No Buyers found");
@@ -138,9 +159,95 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   };
 
   useEffect(() => {
-    console.log("ventureId changed fetching buyers");
     fetchBuyers();
+    fetchFeatures();
   }, [ventureIdParam, ventureId]);
+
+  const fetchFeatures = async () => {
+    try {
+      const response = await axiosInstance.get("/features");
+      const _featuresMap = response?.data?.reduce((acc, feature) => {
+        acc[feature.feature_id] = feature;
+        return acc;
+      }, {});
+      setAllFeatures(_featuresMap);
+    } catch (error) {
+      console.log("Error fetching features:", error);
+    }
+  };
+
+  // Custom expand icon function
+  const expandIcon = ({ expanded, onExpand, record }) => {
+    const isExpanded = expandedRowId === record.buyer_id;
+    const canExpand = record.features !== null; // Check if features are not null
+
+    return canExpand && (
+      isExpanded ? (
+        <span onClick={e => onExpand(record, e)} style={{ cursor: 'pointer', color: 'blue' }}>
+          Collapse
+        </span>
+      ) : (
+        <span onClick={e => onExpand(record, e)} style={{ cursor: 'pointer', color: 'blue' }}>
+          Expand
+        </span>
+      )
+    );
+  };
+
+  // Custom function to handle expand changes
+  const handleExpandChange = (expanded, record) => {
+    if (expanded) {
+      setExpandedRowId(record.buyer_id);
+    } else {
+      setExpandedRowId(null);
+    }
+  };
+
+  const expandedRowRender = (record) => {
+    const expandColumns = [
+      { title: 'Name', dataIndex: 'name', key: 'name' },
+      { title: 'Details', dataIndex: 'details', key: 'details' },
+      { title: 'Price', dataIndex: 'latPrice', key: 'latPrice', render: (_, record) => "£ " + record?.latPrice },
+      { title: 'Quantity', dataIndex: 'latQuantity', key: 'latQuantity' },
+      {
+        title: 'Status',
+        key: 'state',
+        render: (status) => {
+          switch (status) {
+            case 'inprogress':
+              return <Tag color="processing">Inprogress</Tag>;
+            case 'done':
+              return <Tag color="success">Installed</Tag>;
+            default:
+              return <Tag color="default">Not Started</Tag>;
+          }
+        },
+        // render: () => <><Tag color="default">Not Started</Tag><Tag color="processing">Inprogress</Tag><Tag color="success">Installed</Tag></>
+      },
+      {
+        title: 'Action',
+        key: 'operation',
+        render: (record) => (
+          <Space size="middle">
+            <Tooltip title="Change status">
+              {record?.status === null && <a>Inprogress</a>}
+              {record?.status === "inprogress" && <a>Done</a>}
+              {record?.status === "done" && <p>-</p>}
+            </Tooltip>
+          </Space>
+        ),
+      },
+    ];
+
+    const featuresArray = Object.entries(record?.features.choices).map(([key, value]) => ({
+      key,         
+      ...value     
+    }));
+    return <Table columns={expandColumns} dataSource={featuresArray?.map((choice) => {
+      console.log({ ...allFeatures[choice.key], key: choice.key, price: choice.price, quantity: choice.quantity, status: choice.status })
+      return { ...allFeatures[choice.key], key: choice.key, latPrice: choice.price, latQuantity: choice.quantity, status: choice.status };
+    })} pagination={false} />;
+  };
 
   return (
     <div>
@@ -174,8 +281,17 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       </div>
       <div>
         {buyers.length === 0 && <p>No Buyer exist !</p>}
-        {buyers.length > 0 && <Table columns={columns} dataSource={buyers} />}
+        {buyers.length > 0 && <Table columns={columns} expandable={{
+          expandedRowRender: (record) => expandedRowRender(record),
+          rowExpandable: (record) => record.features !== null,
+          expandIcon: expandIcon,
+          expandedRowKeys: expandedRowId ? [expandedRowId] : [], // Control which row is expanded
+          onExpand: handleExpandChange, // Handle expand and collapse actions
+        }}
+        rowKey="buyer_id"
+        dataSource={buyers} />}
       </div>
+      {messageHolder}
     </div>
   );
 };

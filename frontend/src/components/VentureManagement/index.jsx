@@ -8,6 +8,7 @@ import {
   Button,
   Avatar,
   Card,
+  message
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
@@ -20,6 +21,7 @@ function VentureManagement() {
   const [selectedVenture, setSelectedVenture] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [messageApi, messageHolder] = message.useMessage();
 
   // add modal
   const showModal = () => {
@@ -27,6 +29,10 @@ function VentureManagement() {
   };
 
   const handleOk = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Venture Created',
+    });
     fetchVentures();
     setIsModalVisible(false);
   };
@@ -41,6 +47,10 @@ function VentureManagement() {
   };
 
   const handleEditOk = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Venture Updated',
+    });
     fetchVentures();
     setSelectedVenture(null);
     setIsEditModalVisible(false);
@@ -61,7 +71,15 @@ function VentureManagement() {
       .delete()
       .match({ venture_id: id });
 
+    messageApi.open({
+      type: 'success',
+      content: 'Venture Deleted',
+    });
     if (error) {
+      messageApi.open({
+        type: 'error',
+        content: 'Error deleting venture',
+      });
       console.error("Error deleting venture:", error);
       return { error };
     }
@@ -168,6 +186,7 @@ function VentureManagement() {
           </Row>
         )}
       </div>
+      {messageHolder}
     </div>
   );
 }

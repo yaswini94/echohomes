@@ -8,6 +8,7 @@ import {
   Button,
   Avatar,
   Rate,
+  message
 } from "antd";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
@@ -22,6 +23,7 @@ function SupplierManagement() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [messageApi, messageHolder] = message.useMessage();
 
   // add supplier
   const showModal = () => {
@@ -29,6 +31,10 @@ function SupplierManagement() {
   };
 
   const handleOk = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Supplier Created',
+    });
     fetchSuppliers();
     setIsModalVisible(false);
   };
@@ -44,6 +50,10 @@ function SupplierManagement() {
   };
 
   const handleEditOk = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Supplier Updated',
+    });
     fetchSuppliers();
     setIsEditModalVisible(false);
   };
@@ -118,8 +128,15 @@ function SupplierManagement() {
         .from("suppliers")
         .delete()
         .match({ supplier_id: id });
-
+      messageApi.open({
+        type: 'success',
+        content: 'Supplier Deleted',
+      });
       if (error) {
+        messageApi.open({
+          type: 'error',
+          content: 'Error deleting supplier',
+        });
         console.error("Error deleting supplier:", error);
         return { error };
       }
@@ -192,6 +209,7 @@ function SupplierManagement() {
           <Table columns={columns} dataSource={suppliers} />
         )}
       </div>
+      {messageHolder}
     </div>
   );
 }
