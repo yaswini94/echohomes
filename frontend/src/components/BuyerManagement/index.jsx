@@ -239,10 +239,15 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       },
     ];
 
-    const featuresArray = Object.entries(record?.features.choices).map(([key, value]) => ({
+    const choiceArray = Object.entries(record?.features.choices).map(([key, value]) => ({
       key,         
       ...value     
     }));
+    const extrasArray = Object.entries(record?.features.extras).map(([key, value]) => ({
+      key,         
+      ...value     
+    }));
+    const featuresArray = [...choiceArray, ...extrasArray];
     return <Table columns={expandColumns} dataSource={featuresArray?.map((choice) => {
       console.log({ ...allFeatures[choice.key], key: choice.key, price: choice.price, quantity: choice.quantity, status: choice.status })
       return { ...allFeatures[choice.key], key: choice.key, latPrice: choice.price, latQuantity: choice.quantity, status: choice.status };
