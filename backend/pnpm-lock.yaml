@@ -38,6 +38,9 @@ importers:
       pg:
         specifier: ^8.12.0
         version: 8.12.0
+      stripe:
+        specifier: ^16.6.0
+        version: 16.6.0
     devDependencies:
       nodemon:
         specifier: ^3.1.4
@@ -578,6 +581,10 @@ packages:
   statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
+
+  stripe@16.6.0:
+    resolution: {integrity: sha512-6hWEt6n7InVyP4p2MfMpyl1GwKRJA2w4VAwxJUbXA9xhT7ToWOdrTXqTz2EnyJkw4PMM03twi3eOWQAXN/+uEg==}
+    engines: {node: '>=12.*'}
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -1230,6 +1237,11 @@ snapshots:
   split2@4.2.0: {}
 
   statuses@2.0.1: {}
+
+  stripe@16.6.0:
+    dependencies:
+      '@types/node': 20.14.10
+      qs: 6.11.0
 
   supports-color@5.5.0:
     dependencies:

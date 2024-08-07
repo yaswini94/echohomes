@@ -14,9 +14,10 @@ app.use(bodyParser.json());
 // Optionally, configure CORS for specific origins
 app.use(
   cors({
-    origin: "http://localhost:5173", // URL of your React app
+    origin: "*",
   })
 );
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 sgMail.setApiKey(process.env.SENDGRIDAPI_KEY);
 
@@ -138,6 +139,55 @@ app.post("/register", async (req, res) => {
       userType === 1 ? "Builder" : "Supplier"
     } registered successfully!`,
   });
+});
+
+app.post("/create-checkout-session", async (req, res) => {
+  const { features, buyer_id } = req.body;
+
+  const line_items = Object.keys(features.choices).map((choice) => {
+    return {
+      price_data: {
+        currency: "gbp",
+        product_data: {
+          name: features.choices[choice].name,
+          metadata: {
+            feature_id: features.extras[choice].id,
+            type: "choice",
+          },
+        },
+        unit_amount: features.choices[choice].price * 100,
+      },
+      quantity: features.choices[choice].quantity,
+    };
+  });
+
+  Object.keys(features.extras).forEach((extra) => {
+    line_items.push({
+      price_data: {
+        currency: "gbp",
+        product_data: {
+          name: features.extras[extra].name,
+          metadata: {
+            feature_id: features.extras[extra].id,
+            type: "extras",
+          },
+        },
+        unit_amount: features.extras[extra].price * 100,
+      },
+      quantity: features.extras[extra].quantity,
+    });
+  });
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items,
+    mode: "payment",
+    client_reference_id: buyer_id,
+    success_url: `${process.env.FRONTEND_URL}/buyer-configuration?status=success`,
+    cancel_url: `${process.env.FRONTEND_URL}/buyer-configuration?status=cancel`,
+  });
+
+  res.json({ id: session.id });
 });
 
 app.get("/builders/:id", authenticateToken, async (req, res) => {
@@ -414,6 +464,26 @@ app.post("/invite", authenticateToken, async (req, res) => {
   res.send("Invite is sent");
 });
 
+app.post("/stripe-session", authenticateToken, async (req, res) => {
+  const { buyer_id } = req.body;
+
+  const { data, error } = await supabase
+    .from("buyers")
+    .select("stripe_session_id")
+    .eq("buyer_id", buyer_id)
+    .single();
+
+  if (!data?.stripe_session_id) {
+    return res.status(404).json({ error: "Session not" });
+  }
+
+  const session = await stripe.checkout.sessions.retrieve(
+    data.stripe_session_id
+  );
+
+  res.json(session);
+});
+
 app.post("/updateBuyer", authenticateToken, async (req, res) => {
   const {
     name,
@@ -425,6 +495,7 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
     features,
     settings,
     feedback,
+    stripe_session_id,
   } = req.body;
 
   const { data, error } = await supabase
@@ -438,6 +509,7 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
       house_type,
       settings,
       feedback,
+      stripe_session_id,
     })
     .eq("buyer_id", buyer_id);
 
@@ -482,9 +554,7 @@ app.post("/updateFeature", authenticateToken, async (req, res) => {
 
 app.get("/features", authenticateToken, async (req, res) => {
   const user = req.user;
-  const { data, error } = await supabase
-    .from("features")
-    .select("*");
+  const { data, error } = await supabase.from("features").select("*");
 
   if (error) {
     return res.status(500).json({ error: error.message });

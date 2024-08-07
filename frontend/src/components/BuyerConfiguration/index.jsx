@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Table, Button, InputNumber } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
 const BuyerConfiguration = () => {
   const { user } = useAuth();
@@ -13,6 +16,7 @@ const BuyerConfiguration = () => {
   const [selectedChoices, setSelectedChoices] = useState([]);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [quantityMap, setQuantityMap] = useState({});
+  const [paymentStatus, setPaymentStatus] = useState();
 
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
@@ -218,6 +222,24 @@ const BuyerConfiguration = () => {
       }
     };
 
+    const fetchStripeSession = async () => {
+      try {
+        const response = await axiosInstance.post(`/stripe-session`, {
+          buyer_id: buyer?.buyer_id,
+        });
+        const data = response.data;
+        console.log("Stripe Session:", data);
+        if (data.payment_status === "paid") {
+          setPaymentStatus("paid");
+        } else {
+          setPaymentStatus("unpaid");
+        }
+      } catch (error) {
+        console.log("Error fetching stripe session:", error);
+      }
+    };
+
+    fetchStripeSession();
     fetchVenture();
   }, [buyer?.buyer_id]);
 
@@ -229,6 +251,8 @@ const BuyerConfiguration = () => {
 
     selections.choices = selectedChoices.reduce((acc, choice) => {
       acc[choice] = {
+        id: choice,
+        name: allFeatures[choice].name,
         price: 0,
         quantity: 1,
         status: null,
@@ -239,6 +263,8 @@ const BuyerConfiguration = () => {
 
     selections.extras = selectedExtras.reduce((acc, extra) => {
       acc[extra] = {
+        id: extra,
+        name: allFeatures[extra].name,
         price: allFeatures[extra].price,
         quantity: quantityMap[`extras_${extra}`] || 1,
         status: null,
@@ -247,18 +273,45 @@ const BuyerConfiguration = () => {
       return acc;
     }, {});
     try {
+      const stripe = await loadStripe(stripePublishableKey);
+
+      const response = await fetch(
+        `http://localhost:3001/create-checkout-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            features: selections,
+            buyer_id: user?.id,
+          }),
+        }
+      );
+
+      const { id } = await response.json();
+
       await axiosInstance.post("/updateBuyer", {
         features: selections,
+        stripe_session_id: id,
         buyer_id: user?.id,
       });
 
-      fetchBuyer();
+      const result = await stripe.redirectToCheckout({
+        sessionId: id,
+      });
+
+      if (result.error) {
+        console.log("Error redirecting to checkout:", result.error.message);
+      }
     } catch (error) {
       console.log("Error updating buyer:", error);
     }
   };
 
   const getSelectedPrice = () => {
+    if (!allFeatures) return 0;
+
     return selectedExtras.reduce((acc, extra) => {
       return (
         acc + (allFeatures[extra]?.price || 0) * quantityMap[`extras_${extra}`]
@@ -279,7 +332,9 @@ const BuyerConfiguration = () => {
             {buyer?.house_type} Bed
           </p>
         </Col>
-        {!Boolean(buyer?.features) && (
+        {paymentStatus === "paid" ? (
+          <p>Payment Completed</p>
+        ) : (
           <Col>
             <h3>Total: £ {getSelectedPrice()}</h3>
             <Button
@@ -287,7 +342,9 @@ const BuyerConfiguration = () => {
               disabled={!selectedChoices?.length && !selectedExtras?.length}
               onClick={handleConfirmOrder}
             >
-              Confirm Order
+              {paymentStatus === "unpaid"
+                ? "Continue Payment"
+                : "Confirm Order"}
             </Button>
           </Col>
         )}
