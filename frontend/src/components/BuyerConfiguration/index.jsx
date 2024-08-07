@@ -258,6 +258,14 @@ const BuyerConfiguration = () => {
     }
   };
 
+  const getSelectedPrice = () => {
+    return selectedExtras.reduce((acc, extra) => {
+      return (
+        acc + (allFeatures[extra]?.price || 0) * quantityMap[`extras_${extra}`]
+      );
+    }, 0);
+  };
+
   return (
     <div>
       <Row justify="space-between" align="middle">
@@ -273,6 +281,7 @@ const BuyerConfiguration = () => {
         </Col>
         {!Boolean(buyer?.features) && (
           <Col>
+            <h3>Total: £ {getSelectedPrice()}</h3>
             <Button
               type="primary"
               disabled={!selectedChoices?.length && !selectedExtras?.length}
