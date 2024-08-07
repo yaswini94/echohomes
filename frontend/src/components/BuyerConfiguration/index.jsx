@@ -20,6 +20,11 @@ const BuyerConfiguration = () => {
 
   const onSelectExtrasChange = (newSelectedRowKeys) => {
     setSelectedExtras(newSelectedRowKeys);
+    const _newQty = {};
+    newSelectedRowKeys.forEach((extra) => {
+      _newQty[`extras_${extra}`] = quantityMap[`extras_${extra}`] || 1;
+    });
+    setQuantityMap(_newQty);
   };
 
   const rowChoiceSelection = {
@@ -58,10 +63,11 @@ const BuyerConfiguration = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (_, record) => 
+      render: (_, record) => (
         <div>
-          <p>£ {record.price} (inclusive)</p> 
+          <p>£ {record.price} (inclusive)</p>
         </div>
+      ),
     },
     {
       title: "Quantity",
@@ -82,13 +88,14 @@ const BuyerConfiguration = () => {
       key: "details",
     },
     {
-      title: "Price",
+      title: "Unit Price",
       dataIndex: "price",
       key: "price",
-      render: (_, record) => 
+      render: (_, record) => (
         <div>
-          <p>£ {record.price}</p> 
+          <p>£ {record.price}</p>
         </div>
+      ),
     },
     {
       title: "Quantity",
@@ -98,18 +105,33 @@ const BuyerConfiguration = () => {
         return (
           <InputNumber
             type="number"
-            disabled={Boolean(selectedFeatures)}
-            value={quantityMap[record.feature_id] || 0}
+            disabled={
+              Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
+            }
+            value={quantityMap[`extras_${record.feature_id}`] || 0}
             min={0}
             onChange={(value) => {
               setQuantityMap({
                 ...quantityMap,
-                [record.feature_id]: value,
+                [`extras_${record.feature_id}`]: value,
               });
             }}
+            required={selectedExtras.includes(record.key)}
           />
         );
       },
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      render: (_, record) => (
+        <div>
+          <p>
+            £ {record.price * (quantityMap[`extras_${record.feature_id}`] || 0)}
+          </p>
+        </div>
+      ),
     },
   ];
 
@@ -148,7 +170,7 @@ const BuyerConfiguration = () => {
 
       const _qtyMapExtras = Object.keys(_features?.extras || {}).reduce(
         (acc, extra) => {
-          acc[extra] = _features?.extras[extra].quantity;
+          acc[`extras_${extra}`] = _features?.extras[extra].quantity;
           return acc;
         },
         {}
@@ -156,7 +178,7 @@ const BuyerConfiguration = () => {
 
       const _qtyMapChoices = Object.keys(_features?.choices || {}).reduce(
         (acc, choice) => {
-          acc[choice] = _features?.choices[choice].quantity;
+          acc[`choice_${choice}`] = _features?.choices[choice].quantity;
           return acc;
         },
         {}
@@ -209,7 +231,7 @@ const BuyerConfiguration = () => {
       acc[choice] = {
         price: 0,
         quantity: 1,
-        status: null
+        status: null,
       };
 
       return acc;
@@ -218,8 +240,8 @@ const BuyerConfiguration = () => {
     selections.extras = selectedExtras.reduce((acc, extra) => {
       acc[extra] = {
         price: allFeatures[extra].price,
-        quantity: quantityMap[extra] || 1,
-        status: null
+        quantity: quantityMap[`extras_${extra}`] || 1,
+        status: null,
       };
 
       return acc;
@@ -240,27 +262,49 @@ const BuyerConfiguration = () => {
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <p><b>Venture Name: </b>{venture?.name}</p>
-          <p><b>House Type: </b>{buyer?.house_type} Bed</p>
+          <p>
+            <b>Venture Name: </b>
+            {venture?.name}
+          </p>
+          <p>
+            <b>House Type: </b>
+            {buyer?.house_type} Bed
+          </p>
         </Col>
-        <Col>
-          <Button type="primary" disabled={!selectedChoices?.length && !selectedExtras?.length} onClick={handleConfirmOrder}>Confirm Order</Button>
-        </Col>
+        {!Boolean(buyer?.features) && (
+          <Col>
+            <Button
+              type="primary"
+              disabled={!selectedChoices?.length && !selectedExtras?.length}
+              onClick={handleConfirmOrder}
+            >
+              Confirm Order
+            </Button>
+          </Col>
+        )}
       </Row>
-      
+
       {allFeatures && configuration && (
         <>
           <Row>
             <Col span={24}>
-              <h3>Choices</h3>
-              {selectedChoices?.length > 0
-                ? <p>Selected {selectedChoices.length} choices</p>
-                : null}
+              <h3>
+                Choices
+                <span className="sub-text"> (Select Upto 3 Choices)</span>
+              </h3>
+              {selectedChoices?.length > 0 ? (
+                <p>Selected {selectedChoices.length} choices</p>
+              ) : null}
               <Table
                 rowSelection={rowChoiceSelection}
                 columns={choicesColumns}
                 dataSource={configuration?.choices?.map((choice) => {
-                  return { ...allFeatures[choice], key: choice, quantity: 1, status: null };
+                  return {
+                    ...allFeatures[choice],
+                    key: choice,
+                    quantity: 1,
+                    status: null,
+                  };
                 })}
               />
             </Col>
@@ -268,14 +312,19 @@ const BuyerConfiguration = () => {
           <Row>
             <Col span={24}>
               <h3>Extras</h3>
-              {selectedExtras?.length > 0
-                ? <p>Selected {selectedExtras.length} extras</p>
-                : null}
+              {selectedExtras?.length > 0 ? (
+                <p>Selected {selectedExtras.length} extras</p>
+              ) : null}
               <Table
                 rowSelection={rowExtrasSelection}
                 columns={extrasColumns}
                 dataSource={configuration?.extras?.map((extra) => {
-                  return { ...allFeatures[extra], key: extra, quantity: 0, status: null };
+                  return {
+                    ...allFeatures[extra],
+                    key: extra,
+                    quantity: 0,
+                    status: null,
+                  };
                 })}
               />
             </Col>

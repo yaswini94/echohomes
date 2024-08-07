@@ -6,13 +6,17 @@ import { useAuth } from "../auth/useAuth";
 const BuyerDashboard = () => {
   const describeRate = ["Terrible", "Bad", "Normal", "Good", "Wonderful"];
   const [buyer, setBuyer] = useState(null);
-  const [dashboardData, setDashboardData] = useState({completed: 0, inprogress: 0, pending: 0});
+  const [dashboardData, setDashboardData] = useState({
+    completed: 0,
+    inprogress: 0,
+    pending: 0,
+  });
   const { user } = useAuth();
 
   const addFeedback = async (value) => {
     try {
       await axiosInstance.post("/updateBuyer", {
-        feedback: value ,
+        feedback: value,
         buyer_id: user?.id,
       });
       fetchBuyer();
@@ -22,30 +26,39 @@ const BuyerDashboard = () => {
   };
 
   const fetchDashboardData = (buyer) => {
-    setDashboardData({completed: 0, inprogress: 0, pending: 0});
+    setDashboardData({ completed: 0, inprogress: 0, pending: 0 });
 
-    let data = dashboardData;
-    const updateObject = (row, type) => {
-      switch(type === 'choice' ? buyer.features.choices[row].status : buyer.features.extras[row].status) {
-        case "inprogress":
-          data.inprogress++;
-          break;
-        case "completed":
-          data.completed++;
-          break;
-        default:
-          data.pending++
-          break;
-      }
-      // setDashboardData(data);
-    };
+    const _choices = buyer?.features?.choices || {};
+    const _extras = buyer?.features?.extras || {};
+    const choices = Object.values(_choices);
+    const extras = Object.values(_extras);
 
-    if (buyer.features) {
-      Object.keys(buyer.features.choices).map(row => {updateObject(row, 'choice'); setDashboardData(data);});
-      Object.keys(buyer.features.extras).map(row => {updateObject(row, 'extra'); setDashboardData(data);});
-    }
+    const completedChoices = choices.filter(
+      (choice) => choice.status === "completed"
+    );
+    const inprogressChoices = choices.filter(
+      (choice) => choice.status === "inprogress"
+    );
+    const pendingChoices = choices.filter(
+      (choice) => !choice.status || choice.status === "pending"
+    );
+
+    const completedExtras = extras.filter(
+      (extra) => extra.status === "completed"
+    );
+    const inprogressExtras = extras.filter(
+      (extra) => extra.status === "inprogress"
+    );
+    const pendingExtras = extras.filter(
+      (extra) => !extra.status || extra.status === "pending"
+    );
+
+    setDashboardData({
+      completed: completedChoices.length + completedExtras.length,
+      inprogress: inprogressChoices.length + inprogressExtras.length,
+      pending: pendingChoices.length + pendingExtras.length,
+    });
   };
-
 
   const fetchBuyer = async () => {
     try {
@@ -64,21 +77,30 @@ const BuyerDashboard = () => {
     <div>
       <Row gutter={24}>
         <Col span={12}>
-          <Card title="Status of Fittings" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
+          <Card
+            title="Status of Fittings"
+            bordered={false}
+            style={{ border: "1px solid grey", minHeight: "306px" }}
+          >
             <Statistic title="Completed" value={dashboardData.completed} />
             <Statistic title="Inprogress" value={dashboardData.inprogress} />
             <Statistic title="Pending" value={dashboardData.pending} />
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="Provide Feedback to Builder" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
+          <Card
+            title="Provide Feedback to Builder"
+            bordered={false}
+            style={{ border: "1px solid grey", minHeight: "306px" }}
+          >
             <Rate
-            style={{ margin: "24px", backgroundColor: "white" }}
-            tooltips={describeRate}
-            onChange={(value) => {
-              addFeedback(value);
-            }}
-            value={buyer?.feedback || 0} />
+              style={{ margin: "24px", backgroundColor: "white" }}
+              tooltips={describeRate}
+              onChange={(value) => {
+                addFeedback(value);
+              }}
+              value={buyer?.feedback || 0}
+            />
           </Card>
         </Col>
       </Row>
