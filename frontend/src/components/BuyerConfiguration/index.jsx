@@ -333,7 +333,7 @@ const BuyerConfiguration = () => {
           </p>
         </Col>
         {paymentStatus === "paid" ? (
-          <p>Payment Completed</p>
+          <p>Total: <b>£ {getSelectedPrice()}</b> - Payment Completed</p>
         ) : (
           <Col>
             <h3>Total: £ {getSelectedPrice()}</h3>
