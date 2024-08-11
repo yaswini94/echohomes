@@ -287,7 +287,6 @@ app.post("/addSupplier", authenticateToken, async (req, res) => {
     company_name,
     venture_id,
   } = req.body;
-  // const user = req.user;
 
   const { data, error } = await supabase.from("suppliers").insert({
     venture_id,

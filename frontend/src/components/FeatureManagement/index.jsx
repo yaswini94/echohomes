@@ -116,21 +116,20 @@ const FeatureManagement = () => {
   };
 
   // Function to load features from Supabase
-  // change to BE call
   const fetchFeatures = async () => {
-    const { data, error } = await supabase.from("features").select("*");
-    if (error) {
-      console.log("Error fetching features:", error);
-    } else {
-      setFeatures(data);
+    try {
+      const response = await axiosInstance.get("/features");
+      setFeatures(response);
       let options = [];
-      data?.forEach((feature) => {
+      response?.forEach((feature) => {
         options.push({
           value: feature?.feature_id,
           label: feature?.name,
         });
       });
       setFeatureOptions(options);
+    } catch (error) {
+      console.log("Error fetching features:", error);
     }
   };
   

@@ -147,11 +147,11 @@ function SupplierManagement() {
 
   // Function to load suppliers from Supabase
   const fetchSuppliers = async () => {
-    const { data, error } = await supabase.from("suppliers").select("*");
-    if (error) {
+    try {
+      const response = await axiosInstance.get("/suppliers");
+      setSuppliers(response);
+    } catch (error) {
       console.log("Error fetching suppliers:", error);
-    } else {
-      setSuppliers(data);
     }
   };
 
