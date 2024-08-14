@@ -13,7 +13,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./auth/useAuth";
 import VentureDetail from "./components/VentureDetail";
-import ResetPassword from "./components/ResetPassword";
+// import ResetPassword from "./components/ResetPassword";
 import { Layout, theme } from "antd";
 import HeaderLayout from "./components/HeaderLayout";
 import NavigationLayout from "./components/NavigationLayout";
@@ -173,14 +173,14 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/resetPassword"
               element={
                 <PublicRoute>
                   <ResetPassword />
                 </PublicRoute>
               }
-            />
+            /> */}
             <Route path="/" element={<Navigate to="/login" />} />
           </Routes>
         </AppLayout>

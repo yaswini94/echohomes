@@ -55,31 +55,31 @@ const Login = () => {
     }
   };
 
-  const resetLink = async (event) => {
-    setLoading(true);
-    try {
-      const response = await axios.post("http://localhost:3001/resetlink", {
-      // const response = await axiosInstance.post("/resetlink", {
-        email: email,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${serviceRoleKey}`,
-        },
-      });
-      // const responseData = response.data;
+  // const resetLink = async (event) => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.post("http://localhost:3001/resetlink", {
+  //     // const response = await axiosInstance.post("/resetlink", {
+  //       email: email,
+  //     },
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${serviceRoleKey}`,
+  //       },
+  //     });
+  //     // const responseData = response.data;
 
-      // const { session } = responseData.data;
+  //     // const { session } = responseData.data;
 
     
-      // const { access_token, refresh_token } = session;
-      setLoading(false);
-    } catch (error) {
-      setMessage("Reset password failed " + error.message);
-      setLoading(false);
-    }
-  };
+  //     // const { access_token, refresh_token } = session;
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setMessage("Reset password failed " + error.message);
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="page-background">
@@ -105,7 +105,7 @@ const Login = () => {
             required
           ></Input.Password>
         </Form.Item>
-        <div className="forgot-password">
+        {/* <div className="forgot-password">
           {email ? (<a onClick={resetLink}>
               Forgot Password?
             </a>
@@ -114,7 +114,7 @@ const Login = () => {
               Forgot Password?
             </span>
           )}
-        </div>
+        </div> */}
         <Form.Item {...tailLayout}>
           <Button block type="primary" htmlType="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
