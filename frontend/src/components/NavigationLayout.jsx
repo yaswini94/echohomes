@@ -39,13 +39,13 @@ const NavigationLayout = () => {
     [userRoles.BUYERS]: [
       { label: <Link to="/">Home</Link>, key: "/" },
       { label: <Link to="/buyer-configuration">Choices Configuration</Link>, key: "/buyerConfiguration" },
-      { label: "In-Budget Suggestions", key: "inBudgetSuggestions" },
+      { label: <Link to="/in-budget-suggestions">In-Budget Suggestions</Link>, key: "/inBudgetSuggestions" },
       { label: "Payments/ Invoice", key: "payments/invoice" },
     ],
     [userRoles.SUPPLIERS]: [
       { label: <Link to="/">Home</Link>, key: "/" },
-      { label: "Orders", key: "orders" },
-      { label: "Invoices", key: "invoices" },
+      { label: <Link to="/supplier-orders">Orders</Link>, key: "/supplierOrdersManagement" },
+      // { label: "Invoices", key: "invoices" },
     ],
   };
 

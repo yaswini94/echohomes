@@ -23,6 +23,8 @@ import VentureManagement from "./components/VentureManagement";
 import SupplierManagement from "./components/SupplierManagement";
 import FeatureManagement from "./components/FeatureManagement";
 import BuyerConfiguration from "./components/BuyerConfiguration";
+import BudgetBasedSuggestions from "./components/BudgetBasedSuggestions";
+import SupplierOrderManagement from "./components/SupplierOrderManagement";
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
@@ -156,6 +158,15 @@ function App() {
               }
             />
             <Route
+              path="/in-budget-suggestions"
+              key="inBudgetSuggestions"
+              element={
+                <PrivateRoute>
+                  <BudgetBasedSuggestions />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/features"
               key="featureManagement"
               element={
@@ -170,6 +181,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <OrdersManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/supplier-orders"
+              key="supplierOrdersManagement"
+              element={
+                <PrivateRoute>
+                  <SupplierOrderManagement />
                 </PrivateRoute>
               }
             />
