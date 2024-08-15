@@ -412,12 +412,13 @@ app.get("/orders", authenticateToken, async (req, res) => {
 });
 
 app.post("/orders", authenticateToken, async (req, res) => {
-  const { venture_id, supplier_id, orders_list } = req.body;
+  const { venture_id, supplier_id, orders_list, total } = req.body;
 
   const { data, error } = await supabase.from("purchase_orders").insert({
     supplier_id,
     venture_id,
     orders_list,
+    total
   });
 
   if (error) {

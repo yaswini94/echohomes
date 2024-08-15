@@ -37,11 +37,18 @@ const OrdersManagement = () => {
       quantity: quantityMap[order.feature_id],
     }));
 
+    const _total = _orders.reduce((accumulator, order) => {
+      if (order.quantity > 1) {
+        return accumulator + (order.price * order.quantity);
+      }
+      return accumulator;
+    }, 0)
     try {
       const response = await axiosInstance.post("/orders", {
         venture_id: ventureId,
         supplier_id: selectedSupplierId,
         orders_list: _orders,
+        total: _total
       });
       console.log("Order placed successfully:", response);
       fetchOrders();
@@ -101,6 +108,11 @@ const OrdersManagement = () => {
       key: "name",
     },
     {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
       title: "Stock Status",
       key: "stock status",
       render: (_, record) => {
@@ -125,11 +137,6 @@ const OrdersManagement = () => {
 
         return <Space direction="vertical">In Stock</Space>;
       },
-    },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
     },
   ];
   const supplierOrdersColumns = [
