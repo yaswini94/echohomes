@@ -12,7 +12,7 @@ import useLocalStorage from "../../utils/useLocalStorage";
 import axiosInstance from "../../helpers/axiosInstance";
 
 const FeatureManagement = () => {
-  const [features, setFeatures] = useState([]);
+  const [features, setFeatures] = useState({});
   const [selectedFeature, setSelectedFeature] = useState([]);
   const [featureOptions, setFeatureOptions] = useState([]);
   const [defaultValues, setDefaultValues] = useState([
@@ -35,6 +35,7 @@ const FeatureManagement = () => {
       extras: [],
     },
   ]);
+  const [linkedFeatures, setLinkedFeatures] = useState([]);
   const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -46,7 +47,8 @@ const FeatureManagement = () => {
     const fetchVenture = async () => {
       try {
         const response = await axiosInstance.get(`/ventures/${ventureId}`);
-        setDefaultValues(response.data?.properties);
+        const _properties = response.data?.properties;
+        setDefaultValues(_properties);
       } catch (error) {
         console.log("Error fetching ventures:", error);
       }
@@ -54,6 +56,19 @@ const FeatureManagement = () => {
 
     fetchVenture();
   }, [ventureId]);
+
+  useEffect(() => {
+    if (!Object.keys(features)?.length || !defaultValues?.length) return;
+
+    const _linkedFeatures = defaultValues.map((property) => {
+      return {
+        ...property,
+        choices: property.choices.map((choice) => features[choice]),
+        extras: property.extras.map((extra) => features[extra]),
+      };
+    });
+    setLinkedFeatures(_linkedFeatures);
+  }, [defaultValues, features]);
 
   // add modal
   const showModal = () => {
@@ -119,7 +134,12 @@ const FeatureManagement = () => {
   const fetchFeatures = async () => {
     try {
       const response = await axiosInstance.get("/features");
-      setFeatures(response.data);
+      const _featuresMap = response?.data?.reduce((acc, feature) => {
+        acc[feature.feature_id] = feature;
+        return acc;
+      }, {});
+      setFeatures(_featuresMap);
+
       let options = [];
       response?.forEach((feature) => {
         options.push({
@@ -138,16 +158,19 @@ const FeatureManagement = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      width: "33%",
     },
     {
       title: "Details",
       dataIndex: "details",
       key: "details",
+      width: "33%",
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      width: "33%",
       render: (_, record) => "£ " + record?.price,
     },
   ];
@@ -199,6 +222,8 @@ const FeatureManagement = () => {
   useEffect(() => {
     fetchFeatures();
   }, []);
+
+  console.log("linkedFeatures", linkedFeatures);
 
   return (
     <div>
@@ -265,11 +290,15 @@ const FeatureManagement = () => {
                     />
                   )}
                 </div>
-                {console.log({ features })}
                 <div>
-                  {features.length === 0 && <p>No Features exist !</p>}
-                  {features.length > 0 && (
-                    <Table columns={featuresColumns} dataSource={features} />
+                  {Object.keys(features).length === 0 && (
+                    <p>No Features exist !</p>
+                  )}
+                  {Object.keys(features).length > 0 && (
+                    <Table
+                      columns={featuresColumns}
+                      dataSource={Object.values(features)}
+                    />
                   )}
                 </div>
               </>
@@ -278,48 +307,18 @@ const FeatureManagement = () => {
           {
             label: "Linked Features",
             key: "2",
-            disabled: defaultValues[0].choices,
+            disabled: !Boolean(linkedFeatures.length),
             children: (
               <>
-                <p style={{ margin: "12px 0 0 0" }}>
-                  <b>1 Bed </b>
-                </p>
-                <p>Choices </p>
-                <Table
-                  columns={linkedColumns}
-                  dataSource={defaultValues[0].choices}
-                />
-                <p>Extras </p>
-                <Table
-                  columns={linkedColumns}
-                  dataSource={defaultValues[0].extras}
-                />
-                <p style={{ margin: "12px 0 0 0" }}>
-                  <b>2 Bed </b>
-                </p>
-                <p>Choices </p>
-                <Table
-                  columns={linkedColumns}
-                  dataSource={defaultValues[1].choices}
-                />
-                <p>Extras </p>
-                <Table
-                  columns={linkedColumns}
-                  dataSource={defaultValues[1].extras}
-                />
-                <p style={{ margin: "12px 0 0 0" }}>
-                  <b>3 Bed </b>
-                </p>
-                <p>Choices </p>
-                <Table
-                  columns={linkedColumns}
-                  dataSource={defaultValues[2].choices}
-                />
-                <p>Extras </p>
-                <Table
-                  columns={linkedColumns}
-                  dataSource={defaultValues[2].extras}
-                />
+                {linkedFeatures?.map((value, index) => (
+                  <div key={index}>
+                    <h3>{value.label}</h3>
+                    <h5>CHOICES</h5>
+                    <Table columns={linkedColumns} dataSource={value.choices} />
+                    <h5>EXTRAS</h5>
+                    <Table columns={linkedColumns} dataSource={value.extras} />
+                  </div>
+                ))}
               </>
             ),
           },
