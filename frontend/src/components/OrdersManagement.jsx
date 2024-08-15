@@ -1,13 +1,46 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../helpers/axiosInstance";
 import useLocalStorage from "../utils/useLocalStorage";
-import { Space, Table, Row, Col, Button, Avatar, Tabs } from "antd";
+import {
+  Space,
+  Table,
+  Row,
+  Col,
+  Button,
+  Avatar,
+  Tabs,
+  InputNumber,
+  Select,
+} from "antd";
 
 const OrdersManagement = () => {
   const [orders, setOrders] = useState([]);
   const [features, setFeatures] = useState({});
   const [ventureId] = useLocalStorage("selectedVenture", null);
+  const [quantityMap, setQuantityMap] = useState({});
   const [ordersTableData, setOrdersTableData] = useState([]);
+  const [orderSuggestionsTableData, setOrderSuggestionsTableData] = useState(
+    []
+  );
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+
+  const fetchSuppliers = async () => {
+    try {
+      const response = await axiosInstance.get("/suppliers");
+      const _suppliers = response.data;
+      _suppliers.sort((a, b) => b.feedback - a.feedback);
+      setSuppliers(_suppliers);
+    } catch (error) {
+      console.log("Error fetching suppliers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuppliers();
+  }, []);
 
   const ordersColumns = [
     {
@@ -16,42 +49,79 @@ const OrdersManagement = () => {
       key: "name",
     },
     {
-      title: "Details",
-      dataIndex: "details",
-      key: "details",
+      title: "Status",
+      // dataIndex: "details",
+      key: "status",
+      render: (_, record) => {
+        const _featureId = record.id;
+        const _quantity = record.quantity;
+        const _availableQuantity = features[_featureId]?.quantity;
+        if (_quantity > _availableQuantity) {
+          return (
+            <Space direction="vertical">
+              <p>Create Purchase Order</p>
+            </Space>
+          );
+        }
+
+        if (_quantity <= 5) {
+          return (
+            <Space direction="vertical">
+              <p>Low Stock</p>
+            </Space>
+          );
+        }
+
+        return <Space direction="vertical">In Stock</Space>;
+      },
     },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
     },
+  ];
+
+  const orderSuggestionsColumns = [
     {
-      title: "Price",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Unit Price",
       dataIndex: "price",
       key: "price",
-      render: (_, record) => "£ " + record?.price,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (_, record) => {
+        console.log({ record });
+        return (
+          <InputNumber
+            type="number"
+            value={quantityMap[record.feature_id] || 0}
+            min={0}
+            onChange={(value) => {
+              setQuantityMap({
+                ...quantityMap,
+                [record.feature_id]: value,
+              });
+            }}
+          />
+        );
+      },
     },
     {
-      title: "Action",
-      key: "action",
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
       render: (_, record) => (
-        <Space size="middle">
-          <a>
-            <Avatar
-              // src={editIcon}
-              style={{ height: "18px", width: "18px" }}
-              // onClick={() => {
-              //   showEditModal(record);
-              // }}
-            />
-            update status
-          </a>
-        </Space>
+        <div>
+          <p>£ {record.price * (quantityMap[record.feature_id] || 0)}</p>
+        </div>
       ),
     },
   ];
@@ -113,9 +183,21 @@ const OrdersManagement = () => {
     });
 
     setOrdersTableData(Object.values(_allFeatureOrders));
-  }, [orders]);
+    const _quantityMap = {};
 
-  console.log({ features, ordersTableData });
+    const _suggestions = Object.values(_allFeatureOrders)
+      .filter(
+        (order) =>
+          order.quantity < 5 || order.quantity > features[order.id].quantity
+      )
+      .map((order) => {
+        _quantityMap[order.id] = 10;
+        return features[order.id];
+      });
+
+    setQuantityMap(_quantityMap);
+    setOrderSuggestionsTableData(_suggestions);
+  }, [orders]);
 
   return (
     <div>
@@ -135,7 +217,7 @@ const OrdersManagement = () => {
                     <Button
                       type="primary"
                       style={{ margin: "6px" }}
-                      // onClick={showLinkModal}
+                      onClick={() => setShowSuggestions(true)}
                     >
                       <Avatar
                         // src={linkIcon}
@@ -150,15 +232,47 @@ const OrdersManagement = () => {
                   </Col>
                 </Row>
                 <div>
-                  {/* {Object.keys(features).length === 0 && ( */}
+                  {showSuggestions &&
+                    (orderSuggestionsTableData?.length === 0 ? (
+                      <p>No order suggestions exist !</p>
+                    ) : (
+                      <>
+                        <Table
+                          columns={orderSuggestionsColumns}
+                          dataSource={orderSuggestionsTableData}
+                        />
+                        <Select
+                          value={selectedSupplier}
+                          onChange={(value) => setSelectedSupplier(value)}
+                          options={suppliers.map((supplier) => ({
+                            label: `${supplier.name} (${supplier.feedback}*)`,
+                            value: supplier.supplier_id,
+                          }))}
+                          style={{
+                            width: "auto",
+                            minWidth: "160px",
+                            marginRight: "24px",
+                            color: "white",
+                          }}
+                        />
+                        <Button
+                          key="submit"
+                          type="primary"
+                          // loading={loading}
+                          // onClick={handleOk}
+                        >
+                          Order from Supplier
+                        </Button>
+                      </>
+                    ))}
+                  {ordersTableData?.length === 0 ? (
                     <p>No buyer orders exist !</p>
-                  {/* )} */}
-                  {/* {Object.keys(features).length > 0 && ( */}
+                  ) : (
                     <Table
                       columns={ordersColumns}
-                      dataSource={Object.values(features)}
+                      dataSource={ordersTableData}
                     />
-                  {/* )} */}
+                  )}
                 </div>
               </>
             ),
@@ -166,7 +280,6 @@ const OrdersManagement = () => {
           {
             label: "Supplier Orders",
             key: "2",
-            // disabled: !Boolean(linkedFeatures.length),
             children: (
               <>
                 <div>
