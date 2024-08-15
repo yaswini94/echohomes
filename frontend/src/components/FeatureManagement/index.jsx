@@ -223,8 +223,6 @@ const FeatureManagement = () => {
     fetchFeatures();
   }, []);
 
-  console.log("linkedFeatures", linkedFeatures);
-
   return (
     <div>
       <Tabs

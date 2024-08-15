@@ -7,10 +7,11 @@ import {
   Row,
   Col,
   Button,
-  Avatar,
+  Tag,
   Tabs,
   InputNumber,
   Select,
+  Tooltip
 } from "antd";
 
 const OrdersManagement = () => {
@@ -23,11 +24,11 @@ const OrdersManagement = () => {
     []
   );
   const [showSuggestions, setShowSuggestions] = useState(false);
-
   const [suppliers, setSuppliers] = useState([]);
   const [selectedSupplierId, setSelectedSupplierId] = useState(null);
   const [supplierOrders, setSupplierOrders] = useState([]);
-
+  const [expandedRowId, setExpandedRowId] = useState(null);
+  
   const handleSupplierOrder = async () => {
     const _orders = orderSuggestionsTableData.map((order) => ({
       feature_id: order.feature_id,
@@ -59,6 +60,12 @@ const OrdersManagement = () => {
         order.supplier = suppliers.find(
           (supplier) => supplier.supplier_id === order.supplier_id
         );
+        order.total = order.orders_list.reduce((accumulator, item) => {
+          if (item.quantity > 1) {
+            return accumulator + (item.price * item.quantity);
+          }
+          return accumulator;
+        }, 0)
         return order;
       });
       setSupplierOrders(_supplierOrders);
@@ -94,9 +101,8 @@ const OrdersManagement = () => {
       key: "name",
     },
     {
-      title: "Status",
-      // dataIndex: "details",
-      key: "status",
+      title: "Stock Status",
+      key: "stock status",
       render: (_, record) => {
         const _featureId = record.id;
         const _quantity = record.quantity;
@@ -112,7 +118,7 @@ const OrdersManagement = () => {
         if (_quantity <= 5) {
           return (
             <Space direction="vertical">
-              <p>Low Stock</p>
+              <Tag color="error">Low Stock</Tag>
             </Space>
           );
         }
@@ -126,7 +132,49 @@ const OrdersManagement = () => {
       key: "quantity",
     },
   ];
-
+  const supplierOrdersColumns = [
+    {
+      title: "Supplier Name",
+      key: "supplier name",
+      render: (_, record) => {
+        return record?.supplier?.name
+      }
+    },
+    {
+      title: "Order Total",
+      key: "order total",
+      dataIndex: "total",
+      render: (_, record) => 
+        `£ ${record.total || 0}`
+    },
+    {
+      title: "Order Status",
+      key: "order status",
+      render: (_, record) => {
+        switch (record?.status) {
+          case "inprogress":
+            return <Tag color="processing">Inprogress</Tag>;
+          case "done":
+            return <Tag color="success">Installed</Tag>;
+          default:
+            return <Tag color="default">Not Started</Tag>;
+        }
+      },
+    },
+    {
+      title: "Action",
+      key: "operation",
+      render: (record) => (
+        <Space size="middle">
+          <Tooltip title="Change status">
+            {record?.status === null && <a>Inprogress</a>}
+            {record?.status === "inprogress" && <a>Done</a>}
+            {record?.status === "done" && <p>-</p>}
+          </Tooltip>
+        </Space>
+      ),
+    },
+  ];
   const orderSuggestionsColumns = [
     {
       title: "Name",
@@ -137,13 +185,14 @@ const OrdersManagement = () => {
       title: "Unit Price",
       dataIndex: "price",
       key: "price",
+      render: (_, record) => 
+        `£ ${record.price || 0}`
     },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
       render: (_, record) => {
-        console.log({ record });
         return (
           <InputNumber
             type="number"
@@ -199,6 +248,14 @@ const OrdersManagement = () => {
     fetchFeatures();
     fetchOrders();
   }, []);
+  
+  const toggleSuggestions = () => {
+    if (showSuggestions) {
+      setShowSuggestions(false);
+    } else {
+      setShowSuggestions(true);
+    }
+  };
 
   useEffect(() => {
     if (!orders.length) return;
@@ -244,7 +301,30 @@ const OrdersManagement = () => {
     setOrderSuggestionsTableData(_suggestions);
   }, [orders]);
 
-  console.log({ supplierOrders });
+  const expandedRowRender = (record) => {
+    const expandColumns = [
+      { title: "Item Name", dataIndex: "name", key: "name" },
+      { title: "Price", dataIndex: "price", key: "price", render: (_, record) => "£ " + record?.price },
+      { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+    ];
+
+    return (
+      <Table
+        columns={expandColumns}
+        dataSource={record?.orders_list}
+        pagination={false}
+      />
+    );
+  };
+
+  // Custom function to handle expand changes
+  const handleExpandChange = (expanded, record) => {
+    if (expanded) {
+      setExpandedRowId(record.po_id);
+    } else {
+      setExpandedRowId(null);
+    }
+  };
 
   return (
     <div>
@@ -261,57 +341,69 @@ const OrdersManagement = () => {
                     <h3>Buyer Orders</h3>
                   </Col>
                   <Col>
-                    <Button
-                      type="primary"
-                      style={{ margin: "6px" }}
-                      onClick={() => setShowSuggestions(true)}
-                    >
-                      <Avatar
-                        // src={linkIcon}
-                        style={{
-                          height: "18px",
-                          width: "18px",
-                          color: "white",
-                        }}
-                      />{" "}
-                      Suggest Orders
-                    </Button>
+                    {showSuggestions ? (
+                      <Button
+                        type="primary"
+                        onClick={toggleSuggestions}
+                      >
+                        Hide Suggested Orders
+                      </Button>
+                    ) : (
+                      <Button
+                        type="primary"
+                        onClick={toggleSuggestions}
+                      >
+                        Show Suggested Orders
+                      </Button>
+                    )}
                   </Col>
                 </Row>
                 <div>
                   {showSuggestions &&
                     (orderSuggestionsTableData?.length === 0 ? (
-                      <p>No order suggestions exist !</p>
-                    ) : (
-                      <>
-                        <Table
-                          columns={orderSuggestionsColumns}
-                          dataSource={orderSuggestionsTableData}
-                        />
-                        <Select
-                          value={selectedSupplierId}
-                          onChange={(value) => setSelectedSupplierId(value)}
-                          options={suppliers.map((supplier) => ({
-                            label: `${supplier.name} (${supplier.feedback}*)`,
-                            value: supplier.supplier_id,
-                          }))}
-                          style={{
-                            width: "auto",
-                            minWidth: "160px",
-                            marginRight: "24px",
-                            color: "white",
-                          }}
-                        />
-                        <Button
-                          key="submit"
-                          type="primary"
-                          // loading={loading}
-                          onClick={handleSupplierOrder}
-                        >
-                          Order from Supplier
-                        </Button>
-                      </>
-                    ))}
+                        <p>No suggestions exist !</p>
+                      ) : (
+                        <div style={{border: "1px grey solid", margin: "8px 48px", padding: "8px"}}>
+                          <Row justify="space-between" align="middle">
+                            <Col>
+                              <h3>Suggested Orders</h3>
+                            </Col>
+                            <Col>
+                              <Select
+                                value={selectedSupplierId}
+                                placeholder="Select a supplier"
+                                onChange={(value) => setSelectedSupplierId(value)}
+                                options={suppliers.map((supplier) => ({
+                                  label: `${supplier.name} (${supplier.feedback}*)`,
+                                  value: supplier.supplier_id,
+                                }))}
+                                style={{
+                                  width: "auto",
+                                  minWidth: "200px",
+                                  marginRight: "24px",
+                                  color: "white",
+                                }}
+                              />
+                              <Button
+                                key="submit"
+                                type="primary"
+                                style={{ margin: "6px" }}
+                                disabled={!selectedSupplierId}
+                                onClick={handleSupplierOrder}
+                              >
+                                Place Order to supplier
+                              </Button>
+                            </Col>
+                          </Row>
+                          <Table
+                            columns={orderSuggestionsColumns}
+                            dataSource={orderSuggestionsTableData}
+                            pagination={false}
+                          />
+                        </div>
+                      )
+                    )
+                  }
                   {ordersTableData?.length === 0 ? (
                     <p>No buyer orders exist !</p>
                   ) : (
@@ -331,7 +423,20 @@ const OrdersManagement = () => {
               <>
                 <div>
                   <h3>Supplier Orders</h3>
-                  <Table columns={ordersColumns} dataSource={supplierOrders} />
+                  {supplierOrders.length === 0 && <p>No Supplier Orders exist !</p>}
+                  {supplierOrders.length > 0 && (
+                    <Table 
+                      columns={supplierOrdersColumns} 
+                      dataSource={supplierOrders} 
+                      expandable={{
+                        expandedRowRender: (record) => expandedRowRender(record),
+                        rowExpandable: (record) => record.orders_list !== null,
+                        expandedRowKeys: expandedRowId ? [expandedRowId] : [], // Control which row is expanded
+                        onExpand: handleExpandChange, // Handle expand and collapse actions
+                      }}  
+                      rowKey="po_id"
+                    />
+                  )}
                 </div>
               </>
             ),

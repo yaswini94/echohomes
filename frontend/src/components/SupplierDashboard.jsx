@@ -17,27 +17,27 @@ const SupplierDashboard = () => {
             <Row justify="space-between" align="middle">
               <Col><p>5 star</p></Col>
               <Col><Rate style={{marginRight: "8px"}} value={5} /></Col>
-              <Col><p>15</p></Col>
+              <Col><p>11</p></Col>
             </Row>
             <Row justify="space-between" align="middle">
               <Col><p>4 star</p></Col>
               <Col><Rate style={{marginRight: "8px"}} value={3} /></Col>
-              <Col><p>15%</p></Col>
+              <Col><p>10</p></Col>
             </Row>
             <Row justify="space-between" align="middle">
               <Col><p>3 star</p></Col>
               <Col><Rate style={{marginRight: "8px"}} value={4} /></Col>
-              <Col><p>15%</p></Col>
+              <Col><p>5</p></Col>
             </Row>
             <Row justify="space-between" align="middle">
               <Col><p>2 star</p></Col>
               <Col><Rate style={{marginRight: "8px"}} value={2} /></Col>
-              <Col><p>15</p></Col>
+              <Col><p>0</p></Col>
             </Row>
             <Row justify="space-between" align="middle">
               <Col><p>1 star</p></Col>
               <Col><Rate style={{marginRight: "8px"}} value={0} /></Col>
-              <Col><p>15</p></Col>
+              <Col><p>0</p></Col>
             </Row>
           </Card>
         </Col>
