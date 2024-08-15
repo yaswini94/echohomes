@@ -25,7 +25,47 @@ const OrdersManagement = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [suppliers, setSuppliers] = useState([]);
-  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [selectedSupplierId, setSelectedSupplierId] = useState(null);
+  const [supplierOrders, setSupplierOrders] = useState([]);
+
+  const handleSupplierOrder = async () => {
+    const _orders = orderSuggestionsTableData.map((order) => ({
+      feature_id: order.feature_id,
+      name: order.name,
+      price: order.price,
+      quantity: quantityMap[order.feature_id],
+    }));
+
+    try {
+      const response = await axiosInstance.post("/orders", {
+        venture_id: ventureId,
+        supplier_id: selectedSupplierId,
+        orders_list: _orders,
+      });
+      console.log("Order placed successfully:", response);
+      fetchOrders();
+      fetchSuppliers();
+    } catch (error) {
+      console.error("Error placing order:", error);
+    }
+  };
+
+  const fetchSupplierOrders = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/supplier-orders?venture_id=${ventureId}`
+      );
+      const _supplierOrders = response.data.map((order) => {
+        order.supplier = suppliers.find(
+          (supplier) => supplier.supplier_id === order.supplier_id
+        );
+        return order;
+      });
+      setSupplierOrders(_supplierOrders);
+    } catch (error) {
+      console.error("Error fetching supplier orders:", error);
+    }
+  };
 
   const fetchSuppliers = async () => {
     try {
@@ -40,7 +80,12 @@ const OrdersManagement = () => {
 
   useEffect(() => {
     fetchSuppliers();
+    fetchSupplierOrders();
   }, []);
+
+  useEffect(() => {
+    fetchSupplierOrders();
+  }, [suppliers]);
 
   const ordersColumns = [
     {
@@ -199,6 +244,8 @@ const OrdersManagement = () => {
     setOrderSuggestionsTableData(_suggestions);
   }, [orders]);
 
+  console.log({ supplierOrders });
+
   return (
     <div>
       <Tabs
@@ -242,8 +289,8 @@ const OrdersManagement = () => {
                           dataSource={orderSuggestionsTableData}
                         />
                         <Select
-                          value={selectedSupplier}
-                          onChange={(value) => setSelectedSupplier(value)}
+                          value={selectedSupplierId}
+                          onChange={(value) => setSelectedSupplierId(value)}
                           options={suppliers.map((supplier) => ({
                             label: `${supplier.name} (${supplier.feedback}*)`,
                             value: supplier.supplier_id,
@@ -259,7 +306,7 @@ const OrdersManagement = () => {
                           key="submit"
                           type="primary"
                           // loading={loading}
-                          // onClick={handleOk}
+                          onClick={handleSupplierOrder}
                         >
                           Order from Supplier
                         </Button>
@@ -284,7 +331,7 @@ const OrdersManagement = () => {
               <>
                 <div>
                   <h3>Supplier Orders</h3>
-                  <Table columns={ordersColumns} dataSource={orders} />
+                  <Table columns={ordersColumns} dataSource={supplierOrders} />
                 </div>
               </>
             ),
