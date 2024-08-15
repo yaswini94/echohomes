@@ -119,7 +119,7 @@ const FeatureManagement = () => {
   const fetchFeatures = async () => {
     try {
       const response = await axiosInstance.get("/features");
-      setFeatures(response);
+      setFeatures(response.data);
       let options = [];
       response?.forEach((feature) => {
         options.push({
@@ -132,7 +132,7 @@ const FeatureManagement = () => {
       console.log("Error fetching features:", error);
     }
   };
-  
+
   const linkedColumns = [
     {
       title: "Name",
@@ -148,10 +148,10 @@ const FeatureManagement = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (_, record) => "£ " + record?.price
+      render: (_, record) => "£ " + record?.price,
     },
   ];
-  
+
   const featuresColumns = [
     {
       title: "Name",
@@ -167,7 +167,7 @@ const FeatureManagement = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (_, record) => "£ " + record?.price
+      render: (_, record) => "£ " + record?.price,
     },
     {
       title: "Action",
@@ -203,100 +203,128 @@ const FeatureManagement = () => {
   return (
     <div>
       <Tabs
-      defaultActiveKey="1"
-      items={[
-        {
-          label: 'Feature Management',
-          key: '1',
-          children: 
-            <>
-              <Row justify="space-between" align="middle">
-              <Col>
-                <h3>Feature Management</h3>
-              </Col>
-              <Col>
-                <Button
-                  type="primary"
-                  style={{ margin: "6px" }}
-                  onClick={showLinkModal}
-                >
-                  <Avatar
-                    src={linkIcon}
-                    style={{ height: "18px", width: "18px", color: "white" }}
-                  />{" "}
-                  Link Features
-                </Button>
-                <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-                  Add
-                </Button>
-              </Col>
-              </Row>
-              <div>
-                {isLinkModalVisible && (
-                  <LinkFeatureModal
-                    isOpened={isLinkModalVisible}
-                    handleOk={handleLinkOk}
-                    handleCancel={handleLinkCancel}
-                    featureOptions={featureOptions}
-                    defaultValues={defaultValues}
-                  />
-                )}
-                {isModalVisible && (
-                  <AddFeatureModal
-                    isOpened={isModalVisible}
-                    handleOk={handleOk}
-                    handleCancel={handleCancel}
-                  />
-                )}
-                {isEditModalVisible && (
-                  <EditFeatureModal
-                    feature={selectedFeature}
-                    isOpened={isEditModalVisible}
-                    handleOk={handleEditOk}
-                    handleCancel={handleEditCancel}
-                  />
-                )}
-              </div>
-              <div>
-                {features.length === 0 && <p>No Features exist !</p>}
-                {features.length > 0 && (
-                  <Table columns={featuresColumns} dataSource={features} />
-                )}
-              </div>
-            </>,
-        },
-        {
-          label: 'Linked Features',
-          key: '2',
-          disabled: defaultValues[0].choices,
-          children: 
-            <>
-              <p style={{ margin: "12px 0 0 0" }}>
-                <b>1 Bed </b>
-              </p>
-              <p>Choices </p>
-              <Table columns={linkedColumns} dataSource={defaultValues[0].choices} />
-              <p>Extras </p>
-              <Table columns={linkedColumns} dataSource={defaultValues[0].extras} />
-              <p style={{ margin: "12px 0 0 0" }}>
-                <b>2 Bed </b>
-              </p>
-              <p>Choices </p>
-              <Table columns={linkedColumns} dataSource={defaultValues[1].choices} />
-              <p>Extras </p>
-              <Table columns={linkedColumns} dataSource={defaultValues[1].extras} />
-              <p style={{ margin: "12px 0 0 0" }}>
-                <b>3 Bed </b>
-              </p>
-              <p>Choices </p>
-              <Table columns={linkedColumns} dataSource={defaultValues[2].choices} />
-              <p>Extras </p>
-              <Table columns={linkedColumns} dataSource={defaultValues[2].extras} />
-            </>
-        }
-      ]}
-    />
-      
+        defaultActiveKey="1"
+        items={[
+          {
+            label: "Feature Management",
+            key: "1",
+            children: (
+              <>
+                <Row justify="space-between" align="middle">
+                  <Col>
+                    <h3>Feature Management</h3>
+                  </Col>
+                  <Col>
+                    <Button
+                      type="primary"
+                      style={{ margin: "6px" }}
+                      onClick={showLinkModal}
+                    >
+                      <Avatar
+                        src={linkIcon}
+                        style={{
+                          height: "18px",
+                          width: "18px",
+                          color: "white",
+                        }}
+                      />{" "}
+                      Link Features
+                    </Button>
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={showModal}
+                    >
+                      Add
+                    </Button>
+                  </Col>
+                </Row>
+                <div>
+                  {isLinkModalVisible && (
+                    <LinkFeatureModal
+                      isOpened={isLinkModalVisible}
+                      handleOk={handleLinkOk}
+                      handleCancel={handleLinkCancel}
+                      featureOptions={featureOptions}
+                      defaultValues={defaultValues}
+                    />
+                  )}
+                  {isModalVisible && (
+                    <AddFeatureModal
+                      isOpened={isModalVisible}
+                      handleOk={handleOk}
+                      handleCancel={handleCancel}
+                    />
+                  )}
+                  {isEditModalVisible && (
+                    <EditFeatureModal
+                      feature={selectedFeature}
+                      isOpened={isEditModalVisible}
+                      handleOk={handleEditOk}
+                      handleCancel={handleEditCancel}
+                    />
+                  )}
+                </div>
+                {console.log({ features })}
+                <div>
+                  {features.length === 0 && <p>No Features exist !</p>}
+                  {features.length > 0 && (
+                    <Table columns={featuresColumns} dataSource={features} />
+                  )}
+                </div>
+              </>
+            ),
+          },
+          {
+            label: "Linked Features",
+            key: "2",
+            disabled: defaultValues[0].choices,
+            children: (
+              <>
+                <p style={{ margin: "12px 0 0 0" }}>
+                  <b>1 Bed </b>
+                </p>
+                <p>Choices </p>
+                <Table
+                  columns={linkedColumns}
+                  dataSource={defaultValues[0].choices}
+                />
+                <p>Extras </p>
+                <Table
+                  columns={linkedColumns}
+                  dataSource={defaultValues[0].extras}
+                />
+                <p style={{ margin: "12px 0 0 0" }}>
+                  <b>2 Bed </b>
+                </p>
+                <p>Choices </p>
+                <Table
+                  columns={linkedColumns}
+                  dataSource={defaultValues[1].choices}
+                />
+                <p>Extras </p>
+                <Table
+                  columns={linkedColumns}
+                  dataSource={defaultValues[1].extras}
+                />
+                <p style={{ margin: "12px 0 0 0" }}>
+                  <b>3 Bed </b>
+                </p>
+                <p>Choices </p>
+                <Table
+                  columns={linkedColumns}
+                  dataSource={defaultValues[2].choices}
+                />
+                <p>Extras </p>
+                <Table
+                  columns={linkedColumns}
+                  dataSource={defaultValues[2].extras}
+                />
+              </>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 };
