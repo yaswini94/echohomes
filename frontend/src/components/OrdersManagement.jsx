@@ -167,20 +167,7 @@ const OrdersManagement = () => {
             return <Tag color="default">Not Started</Tag>;
         }
       },
-    },
-    {
-      title: "Action",
-      key: "operation",
-      render: (record) => (
-        <Space size="middle">
-          <Tooltip title="Change status">
-            {record?.status === null && <a>Inprogress</a>}
-            {record?.status === "inprogress" && <a>Done</a>}
-            {record?.status === "done" && <p>-</p>}
-          </Tooltip>
-        </Space>
-      ),
-    },
+    }
   ];
   const orderSuggestionsColumns = [
     {

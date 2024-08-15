@@ -47,6 +47,33 @@ const SupplierOrderManagement = () => {
     { title: "Item Name", dataIndex: "name", key: "name" },
     { title: "Price", dataIndex: "price", key: "price", render: (_, record) => "£ " + record?.price },
     { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+    {
+      title: "Order Status",
+      key: "order status",
+      render: (_, record) => {
+        switch (record?.status) {
+          case "inprogress":
+            return <Tag color="processing">Inprogress</Tag>;
+          case "done":
+            return <Tag color="success">Installed</Tag>;
+          default:
+            return <Tag color="default">Not Started</Tag>;
+        }
+      },
+    },
+    {
+      title: "Action",
+      key: "operation",
+      render: (record) => (
+        <Space size="middle">
+          <Tooltip title="Change status">
+            {record?.status === null && <a>Inprogress</a>}
+            {record?.status === "inprogress" && <a>Done</a>}
+            {record?.status === "done" && <p>-</p>}
+          </Tooltip>
+        </Space>
+      ),
+    },
   ];
 
   return (
