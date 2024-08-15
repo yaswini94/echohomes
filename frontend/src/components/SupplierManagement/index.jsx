@@ -149,7 +149,7 @@ function SupplierManagement() {
   const fetchSuppliers = async () => {
     try {
       const response = await axiosInstance.get("/suppliers");
-      setSuppliers(response);
+      setSuppliers(response.data);
     } catch (error) {
       console.log("Error fetching suppliers:", error);
     }

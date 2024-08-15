@@ -381,6 +381,22 @@ app.get("/buyers", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+app.get("/orders", authenticateToken, async (req, res) => {
+  const ventureId = req.query.venture_id;
+  const { data, error } = await supabase
+    .from("buyers")
+    .select("*")
+    .eq("venture_id", ventureId)
+    // where features are not null
+    .not("features", "is", null);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
 // To list details of the buyer
 app.get("/buyers/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
