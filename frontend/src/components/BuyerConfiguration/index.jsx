@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, Button, InputNumber } from "antd";
+import { Row, Col, Table, Button, InputNumber, Input } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
 import { loadStripe } from "@stripe/stripe-js";
@@ -78,6 +78,30 @@ const BuyerConfiguration = () => {
       dataIndex: "quantity",
       key: "quantity",
     },
+    {
+      title: "Notes",
+      dataIndex: "notes",
+      key: "notes",
+      render: (_, record) => {
+        return (
+          (Boolean(!selectedFeatures) || selectedChoices.includes(record.key)) ? (
+            <Input
+              placeholder="Add notes"
+              defaultValue={record?.notes || ""} // Place edited value or etc
+              disabled={
+                Boolean(selectedFeatures) || !selectedChoices.includes(record.key)
+              }
+              // onChange={(value) => {
+              //   setQuantityMap({
+              //     ...quantityMap,
+              //     [`extras_${record.feature_id}`]: value,
+              //   });
+              // }}
+            />
+          ) : `${record?.notes || "-"}`
+        );
+      },
+    },
   ];
 
   const extrasColumns = [
@@ -107,21 +131,47 @@ const BuyerConfiguration = () => {
       key: "quantity",
       render: (_, record) => {
         return (
-          <InputNumber
-            type="number"
-            disabled={
-              Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
-            }
-            value={quantityMap[`extras_${record.feature_id}`] || 0}
-            min={0}
-            onChange={(value) => {
-              setQuantityMap({
-                ...quantityMap,
-                [`extras_${record.feature_id}`]: value,
-              });
-            }}
-            required={selectedExtras.includes(record.key)}
-          />
+          (Boolean(selectedFeatures) || selectedExtras.includes(record.key)) ? (
+            <InputNumber
+              type="number"
+              disabled={
+                Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
+              }
+              value={quantityMap[`extras_${record.feature_id}`] || 0}
+              min={0}
+              onChange={(value) => {
+                setQuantityMap({
+                  ...quantityMap,
+                  [`extras_${record.feature_id}`]: value,
+                });
+              }}
+              required={selectedExtras.includes(record.key)}
+            />
+          ) : `${quantityMap[`extras_${record.feature_id}`] || 0}`
+        );
+      },
+    },
+    {
+      title: "Notes",
+      dataIndex: "notes",
+      key: "notes",
+      render: (_, record) => {
+        return (
+          (Boolean(!selectedFeatures) || selectedExtras.includes(record.key)) ? (
+            <Input
+              placeholder="Add notes"
+              defaultValue={record?.notes || ""} // Place edited value or etc
+              disabled={
+                Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
+              }
+              // onChange={(value) => {
+              //   setQuantityMap({
+              //     ...quantityMap,
+              //     [`extras_${record.feature_id}`]: value,
+              //   });
+              // }}
+            />
+          ) : `${record?.notes || "-"}`
         );
       },
     },
@@ -230,7 +280,7 @@ const BuyerConfiguration = () => {
         const data = response.data;
         console.log("Stripe Session:", data);
         if (data.payment_status === "paid") {
-          setPaymentStatus("paid");
+          setPaymentStatus("paid"); 
         } else {
           setPaymentStatus("unpaid");
         }
@@ -256,6 +306,7 @@ const BuyerConfiguration = () => {
         price: 0,
         quantity: 1,
         status: null,
+        notes: "try"
       };
 
       return acc;
@@ -268,6 +319,7 @@ const BuyerConfiguration = () => {
         price: allFeatures[extra].price,
         quantity: quantityMap[`extras_${extra}`] || 1,
         status: null,
+        notes: "try"
       };
 
       return acc;
@@ -370,6 +422,7 @@ const BuyerConfiguration = () => {
                     key: choice,
                     quantity: 1,
                     status: null,
+                    notes: "trying"
                   };
                 })}
               />
@@ -390,6 +443,7 @@ const BuyerConfiguration = () => {
                     key: extra,
                     quantity: 0,
                     status: null,
+                    notes: "trying"
                   };
                 })}
               />

@@ -239,6 +239,14 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
           `£ ${(record?.latQuantity || 0) * (record?.latPrice || 0)}`,
       },
       {
+        title: "Notes",
+        dataIndex: "notes",
+        key: "notes",
+        render: (_, record) => {
+          `${record?.notes || "-"}`
+        }
+      },
+      {
         title: "Status",
         key: "state",
         render: (status) => {
@@ -291,6 +299,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
             latPrice: choice.price,
             latQuantity: choice.quantity,
             status: choice.status,
+            notes: choice.notes
           };
         })}
         pagination={false}
