@@ -211,6 +211,27 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     );
   };
 
+  const changeStatusHandle = async(status, record) => {
+    console.log(record);
+    const _updatedfeature = {
+      id: record?.key,
+      name: record?.name,
+      notes: record?.notes,
+      price: record?.latPrice,
+      status: record?.status,
+      quantity: record?.latQuantity
+    };
+    // try {
+    //   await axiosInstance.post("/updateBuyer", {
+    //     status: status,
+    //     features: features,
+    //     buyer_id: record.buyer_id,
+    //   });
+    // } catch (error) {
+    //   console.log("Error updating buyer:", error);
+    // }
+  };
+
   // Custom function to handle expand changes
   const handleExpandChange = (expanded, record) => {
     if (expanded) {
@@ -243,7 +264,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         dataIndex: "notes",
         key: "notes",
         render: (_, record) => {
-          `${record?.notes || "-"}`
+          return `${record?.notes || "-"}`
         }
       },
       {
@@ -267,8 +288,8 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         render: (record) => (
           <Space size="middle">
             <Tooltip title="Change status">
-              {record?.status === null && <a>Inprogress</a>}
-              {record?.status === "inprogress" && <a>Done</a>}
+              {record?.status === null && <a onClick={() => changeStatusHandle("inprogress", record)}>Inprogress</a>}
+              {record?.status === "inprogress" && <a onClick={() => changeStatusHandle("done", record)}>Done</a>}
               {record?.status === "done" && <p>-</p>}
             </Tooltip>
           </Space>
