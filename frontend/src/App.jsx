@@ -59,7 +59,7 @@ const AppLayout = ({ children }) => {
             style={{
               padding: 24,
               margin: 0,
-              minHeight: 280,
+              minHeight: 872,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
             }}

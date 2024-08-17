@@ -59,7 +59,7 @@ const NavigationLayout = () => {
 
   return (
     <Sider
-      width={200}
+      width={240}
       style={{
         background: colorBgContainer,
       }}

@@ -73,11 +73,6 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (_, record) => (
-        <Link to={`/buyerDetails/${record?.buyer_id}`}>{record?.name}</Link>
-        // <a >{`/buyerDetails/${record?.buyer_id}`}</a>
-      ),
-      // render: (text) => <a>{`/buyerDetails/${buyer_id}`}</a>,
     },
     {
       title: "Address",

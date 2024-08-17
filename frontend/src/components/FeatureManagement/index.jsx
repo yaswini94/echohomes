@@ -310,11 +310,9 @@ const FeatureManagement = () => {
               <>
                 {linkedFeatures?.map((value, index) => (
                   <div key={index}>
-                    <h3>{value.label}</h3>
-                    <h5>CHOICES</h5>
-                    <Table columns={linkedColumns} dataSource={value.choices} />
-                    <h5>EXTRAS</h5>
-                    <Table columns={linkedColumns} dataSource={value.extras} />
+                    <h3 style={{margin: "12px 0 0 12px"}}>{value.label}</h3>
+                    <Table columns={linkedColumns} dataSource={value.choices} title={() => <b>CHOICES</b>} pagination={false} />
+                    <Table columns={linkedColumns} dataSource={value.extras} title={() => <b>EXTRAS</b>} pagination={false}/>
                   </div>
                 ))}
               </>

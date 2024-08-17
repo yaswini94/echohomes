@@ -202,6 +202,7 @@ const HeaderLayout = () => {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "0 30px",
+        height: "80px"
       }}
     >
       <div style={{ marginTop: "20px" }}>
