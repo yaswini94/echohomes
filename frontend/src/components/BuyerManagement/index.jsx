@@ -275,7 +275,6 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
               return <Tag color="default">Not Started</Tag>;
           }
         },
-        // render: () => <><Tag color="default">Not Started</Tag><Tag color="processing">Inprogress</Tag><Tag color="success">Installed</Tag></>
       },
       {
         title: "Action",
