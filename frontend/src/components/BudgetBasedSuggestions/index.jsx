@@ -27,7 +27,7 @@ const BudgetBasedSuggestions = () => {
         { name: 'Item G', price: 90, category: 'extras' }
       ];
       setShowRecommendations(true);
-      let list = suggestedItems(items, budget);
+      let list = budgetBasedSuggestions(items, budget);
       console.log(list);
       setSuggestedChoices(list.suggestedChoices);
       setSuggestedExtras(list.suggestedExtras);
@@ -35,12 +35,12 @@ const BudgetBasedSuggestions = () => {
   };
 
   const recommendationsColumns = [
-    { title: "name", dataIndex: "name", key: "name" },
+    { title: "Name", dataIndex: "name", key: "name" },
     { title: "Price", dataIndex: "price", key: "price", render: (_, record) => "£ " + record?.price },
     // { title: "Quantity", dataIndex: "quantity", key: "quantity" },
   ];
 
-  function suggestedItems(items, budget) {
+  function budgetBasedSuggestions(items, budget) {
     // Separate the items into choices and extras
     const choices = items.filter(item => item.category === 'choice');
     const extras = items.filter(item => item.category === 'extras');
@@ -56,12 +56,12 @@ const BudgetBasedSuggestions = () => {
     let bestCost = 0;
 
     // Function to find all combinations of extras
-    function getCombinations(array) {
+    function getCombinations(list) {
         let result = [[]];
-        for (let i = 0; i < array.length; i++) {
+        for (let index = 0; index < list.length; index++) {
             const currentLength = result.length;
             for (let j = 0; j < currentLength; j++) {
-                result.push(result[j].concat(array[i]));
+                result.push(result[j].concat(list[index]));
             }
         }
         return result;
@@ -101,7 +101,7 @@ const BudgetBasedSuggestions = () => {
         <Col>
           <Button
             type="primary"
-            // disabled="false"
+            disabled={!budget}
             onClick={toggleShowRecommendations}
           >
             Suggest in budget
@@ -113,13 +113,13 @@ const BudgetBasedSuggestions = () => {
           <Table
             columns={recommendationsColumns}
             dataSource={suggestedChoices}
-            title={() => <b>CHOICES</b>}
+            title={() => <b>SUGGESTED CHOICES</b>}
             pagination={false}
           />
           <Table
             columns={recommendationsColumns}
             dataSource={suggestedExtras}
-            title={() => <b>EXTRAS</b>}
+            title={() => <b>SUGGESTED EXTRAS</b>}
             pagination={false}
           />
         </>

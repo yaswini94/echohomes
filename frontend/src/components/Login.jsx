@@ -5,8 +5,8 @@ import { supabase } from "../supabase";
 import logo from "../assets/echohomes.png";
 import "./Forms.css";
 import axiosInstance from "../helpers/axiosInstance";
-import axios from "axios";
-const serviceRoleKey = import.meta.env.VITE_SERVICE_ROLE_KEY;
+// import axios from "axios";
+// const serviceRoleKey = import.meta.env.VITE_SERVICE_ROLE_KEY;
 
 const layout = {
   labelCol: {

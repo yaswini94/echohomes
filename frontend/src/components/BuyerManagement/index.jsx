@@ -12,7 +12,6 @@ import {
   message,
   Tooltip,
 } from "antd";
-import { Link } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
