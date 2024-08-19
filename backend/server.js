@@ -190,6 +190,40 @@ app.post("/create-checkout-session", async (req, res) => {
   res.json({ id: session.id });
 });
 
+app.post(
+  "/create-builder-supplier-checkout-session",
+  authenticateToken,
+  async (req, res) => {
+    const { orders = [], supplier_id } = req.body;
+    const builder = req.user;
+
+    const line_items = orders.map((order) => {
+      return {
+        price_data: {
+          currency: "gbp",
+          product_data: {
+            name: order.name,
+          },
+          unit_amount: order.price * 100,
+        },
+        quantity: order.quantity,
+      };
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items,
+      mode: "payment",
+      // client_reference_id: supplier_id,
+      client_reference_id: `builder=${builder.id}__supplier=${supplier_id}`,
+      success_url: `${process.env.FRONTEND_URL}/orders?tab=suppliers&status=success`,
+      cancel_url: `${process.env.FRONTEND_URL}/orders?tab=suppliers&status=cancel`,
+    });
+
+    res.json({ id: session.id });
+  }
+);
+
 app.get("/builders/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
@@ -412,13 +446,15 @@ app.get("/orders", authenticateToken, async (req, res) => {
 });
 
 app.post("/orders", authenticateToken, async (req, res) => {
-  const { venture_id, supplier_id, orders_list, total } = req.body;
+  const { venture_id, supplier_id, orders_list, total, stripe_session_id } =
+    req.body;
 
   const { data, error } = await supabase.from("purchase_orders").insert({
     supplier_id,
     venture_id,
     orders_list,
-    total
+    total,
+    stripe_session_id,
   });
 
   if (error) {
