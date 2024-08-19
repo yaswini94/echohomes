@@ -415,20 +415,6 @@ app.get("/buyers", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-app.get("/supplier-orders", authenticateToken, async (req, res) => {
-  const ventureId = req.query.venture_id;
-  const { data, error } = await supabase
-    .from("purchase_orders")
-    .select("*")
-    .eq("venture_id", ventureId);
-
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-
-  res.json(data);
-});
-
 app.get("/orders", authenticateToken, async (req, res) => {
   const ventureId = req.query.venture_id;
   const { data, error } = await supabase
@@ -462,6 +448,29 @@ app.post("/orders", authenticateToken, async (req, res) => {
   }
 
   res.status(201).json("Add Feature Successfull");
+});
+
+app.get("/supplier-orders", authenticateToken, async (req, res) => {
+  const supplier = req.user;
+  const { data, error } = await supabase
+  .from("purchase_orders")
+  .select(`
+    *,
+    venture:venture_id (
+      name,
+      address,
+      builder_id,
+      builder:builder_id (name)
+    )
+  `)
+  .eq("supplier_id", supplier.id);
+
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
 });
 
 // To list details of the buyer
