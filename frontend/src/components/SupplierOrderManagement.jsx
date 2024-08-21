@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
-import useLocalStorage from "../utils/useLocalStorage";
 import {
   Space,
   Table,
-  Row,
-  Col,
-  Button,
-  Avatar,
   Tag,
-  message,
   Tooltip,
 } from "antd";
 import axiosInstance from "../helpers/axiosInstance";
 
 const SupplierOrderManagement = () => {
   const [supplierOrders, setSupplierOrders] = useState([]);
-  const [ventureId] = useLocalStorage("selectedVenture", null);
 
   const fetchOrders = async () => {
     try {
@@ -78,8 +71,7 @@ const SupplierOrderManagement = () => {
         supplierOrders.map((order) => (
           <div key={order.po_id}>
             <p>
-              Order for <b>{order.venture.name}</b> by Builder{" "}
-              {order.venture.builder_id}
+              Order for <b>{order.venture.name}</b> venture
             </p>
             <Table columns={orderColumns} dataSource={order.orders_list} />
           </div>

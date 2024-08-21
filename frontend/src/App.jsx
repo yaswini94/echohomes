@@ -25,6 +25,7 @@ import FeatureManagement from "./components/FeatureManagement";
 import BuyerConfiguration from "./components/BuyerConfiguration";
 import BudgetBasedSuggestions from "./components/BudgetBasedSuggestions";
 import SupplierOrderManagement from "./components/SupplierOrderManagement";
+import ComparisionTool from "./components/ComparisionTool";
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
@@ -190,6 +191,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <SupplierOrderManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/comparision-tool"
+              key="comparisionTool"
+              element={
+                <PrivateRoute>
+                  <ComparisionTool />
                 </PrivateRoute>
               }
             />

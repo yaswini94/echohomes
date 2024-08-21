@@ -40,6 +40,7 @@ const NavigationLayout = () => {
       { label: <Link to="/">Home</Link>, key: "/" },
       { label: <Link to="/buyer-configuration">Choices Configuration</Link>, key: "/buyerConfiguration" },
       { label: <Link to="/in-budget-suggestions">In-Budget Suggestions</Link>, key: "/inBudgetSuggestions" },
+      { label: <Link to="/comparision-tool">Comparision Tool</Link>, key: "/comparisionTool" },
       { label: "Payments/ Invoice", key: "payments/invoice" },
     ],
     [userRoles.SUPPLIERS]: [

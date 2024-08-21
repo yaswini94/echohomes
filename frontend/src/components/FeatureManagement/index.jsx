@@ -141,7 +141,7 @@ const FeatureManagement = () => {
       setFeatures(_featuresMap);
 
       let options = [];
-      response?.forEach((feature) => {
+      response?.data?.forEach((feature) => {
         options.push({
           value: feature?.feature_id,
           label: feature?.name,

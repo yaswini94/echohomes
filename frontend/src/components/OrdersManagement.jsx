@@ -13,9 +13,11 @@ import {
   Select,
 } from "antd";
 import { loadStripe } from "@stripe/stripe-js";
+import { useAuth } from "../auth/useAuth";
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
 const OrdersManagement = () => {
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [features, setFeatures] = useState({});
   const [ventureId] = useLocalStorage("selectedVenture", null);
@@ -64,6 +66,7 @@ const OrdersManagement = () => {
         orders_list: _orders,
         total: _total,
         stripe_session_id: id,
+        builder_id: user?.id
       });
 
       const result = await stripe.redirectToCheckout({

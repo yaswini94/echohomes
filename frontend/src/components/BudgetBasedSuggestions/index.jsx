@@ -6,29 +6,91 @@ import {
   Button,
   InputNumber,
 } from "antd";
+import axiosInstance from "../../helpers/axiosInstance";
+import { useAuth } from "../../auth/useAuth";
 
 const BudgetBasedSuggestions = () => {
+  const { user } = useAuth();
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [budget, setBudget] = useState();
   const [suggestedChoices, setSuggestedChoices] = useState([]);
   const [suggestedExtras, setSuggestedExtras] = useState([]);
+  const [configuration, setConfiguration] = useState(null);
+  const [allFeatures, setAllFeatures] = useState(null);
+  const [buyer, setBuyer] = useState(null);
+
+  useEffect(() => {
+    if (!buyer?.buyer_id) return;
+
+    const fetchVenture = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/ventures/${buyer.venture_id}`
+        );
+        const _venture = response.data;
+        const _configuration = (_venture?.properties || []).filter(
+          (property) => property.key === buyer.house_type
+        );
+        setConfiguration(_configuration[0]);
+      } catch (error) {
+        console.log("Error fetching ventures:", error);
+      }
+    };
+    fetchVenture();
+  }, [buyer?.buyer_id]);
+
+  useEffect(() => {
+    const fetchBuyer = async () => {
+      try {
+        const response = await axiosInstance.get(`/buyers/${user.id}`);
+        const data = response.data;
+        setBuyer(data);
+      } catch (error) {
+        console.log("Error fetching buyer:", error);
+      }
+    };
+    fetchBuyer();
+  });
+
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const response = await axiosInstance.get("/features");
+        const _featuresMap = response?.data?.reduce((acc, feature) => {
+          acc[feature.feature_id] = feature;
+          return acc;
+        }, {});
+        setAllFeatures(_featuresMap);
+      } catch (error) {
+        console.log("Error fetching features:", error);
+      }
+    };
+
+    fetchFeatures();
+  }, []);
 
   const toggleShowRecommendations = () => {
     if (showRecommendations) {
       setShowRecommendations(false);
     } else {
-      const items = [
-        { name: 'Item A', price: 50, category: 'choice' },
-        { name: 'Item B', price: 30, category: 'choice' },
-        { name: 'Item C', price: 70, category: 'choice' },
-        { name: 'Item D', price: 40, category: 'extras' },
-        { name: 'Item E', price: 60, category: 'extras' },
-        { name: 'Item F', price: 20, category: 'extras' },
-        { name: 'Item G', price: 90, category: 'extras' }
-      ];
+      let items = [];
+      if (configuration?.length != 0) {
+
+        configuration?.choices?.forEach((choice) => {
+          items.push({
+            ...allFeatures[choice],
+            category: 'choice',
+          });
+        });
+        configuration?.extras?.forEach((extra) => {
+          items.push({
+            ...allFeatures[extra],
+            category: 'extras',
+          });
+        });
+      }
       setShowRecommendations(true);
       let list = budgetBasedSuggestions(items, budget);
-      console.log(list);
       setSuggestedChoices(list.suggestedChoices);
       setSuggestedExtras(list.suggestedExtras);
     }
@@ -37,7 +99,6 @@ const BudgetBasedSuggestions = () => {
   const recommendationsColumns = [
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Price", dataIndex: "price", key: "price", render: (_, record) => "£ " + record?.price },
-    // { title: "Quantity", dataIndex: "quantity", key: "quantity" },
   ];
 
   function budgetBasedSuggestions(items, budget) {
@@ -57,24 +118,24 @@ const BudgetBasedSuggestions = () => {
 
     // Function to find all combinations of extras
     function getCombinations(list) {
-        let result = [[]];
-        for (let index = 0; index < list.length; index++) {
-            const currentLength = result.length;
-            for (let j = 0; j < currentLength; j++) {
-                result.push(result[j].concat(list[index]));
-            }
-        }
-        return result;
+      let result = [[]];
+      for (let index = 0; index < list.length; index++) {
+          const currentLength = result.length;
+          for (let j = 0; j < currentLength; j++) {
+              result.push(result[j].concat(list[index]));
+          }
+      }
+      return result;
     }
 
     // Check all combinations of extras to find the best within the budget
     const allExtrasCombinations = getCombinations(extras);
     allExtrasCombinations.forEach(combo => {
-        const comboCost = combo.reduce((sum, item) => sum + item.price, 0);
-        if (comboCost <= budget && comboCost > bestCost) {
-            bestCost = comboCost;
-            bestExtras = combo;
-        }
+      const comboCost = combo.reduce((sum, item) => sum + item.price, 0);
+      if (comboCost <= budget && comboCost > bestCost) {
+          bestCost = comboCost;
+          bestExtras = combo;
+      }
     });
 
     // Return the recommended choices and extras
@@ -110,18 +171,21 @@ const BudgetBasedSuggestions = () => {
       </Row>
       {showRecommendations && ( 
         <>
+          <h3><b>SUGGESTED CHOICES</b></h3>
           <Table
             columns={recommendationsColumns}
             dataSource={suggestedChoices}
-            title={() => <b>SUGGESTED CHOICES</b>}
             pagination={false}
           />
-          <Table
-            columns={recommendationsColumns}
-            dataSource={suggestedExtras}
-            title={() => <b>SUGGESTED EXTRAS</b>}
-            pagination={false}
-          />
+          <h3><b>SUGGESTED EXTRAS</b></h3>
+          {suggestedExtras.length === 0 && <p>No Extras are in budget!</p>}
+          {suggestedExtras.length > 0 && (
+            <Table
+              columns={recommendationsColumns}
+              dataSource={suggestedExtras}
+              pagination={false}
+            />
+          )}
         </>
       )}
     </div>

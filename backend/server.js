@@ -432,7 +432,7 @@ app.get("/orders", authenticateToken, async (req, res) => {
 });
 
 app.post("/orders", authenticateToken, async (req, res) => {
-  const { venture_id, supplier_id, orders_list, total, stripe_session_id } =
+  const { venture_id, supplier_id, orders_list, total, stripe_session_id, builder_id } =
     req.body;
 
   const { data, error } = await supabase.from("purchase_orders").insert({
@@ -441,6 +441,7 @@ app.post("/orders", authenticateToken, async (req, res) => {
     orders_list,
     total,
     stripe_session_id,
+    builder_id
   });
 
   if (error) {
