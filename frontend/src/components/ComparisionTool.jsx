@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, Button, InputNumber, Input } from "antd";
+import { Row, Col, Table, InputNumber } from "antd";
 import axiosInstance from "../helpers/axiosInstance";
 import { useAuth } from "../auth/useAuth";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
 const ComparisionTool = () => {
   const { user } = useAuth();
   const [buyer, setBuyer] = useState(null);
   const [venture, setVenture] = useState(null);
   const [allFeatures, setAllFeatures] = useState(null);
-  const [selectedFeatures, setSelectedFeatures] = useState(null);
+  // const [selectedFeatures, setSelectedFeatures] = useState(null);
   const [configuration, setConfiguration] = useState(null);
   const [selectedChoices, setSelectedChoices] = useState([]);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [quantityMap, setQuantityMap] = useState({});
+  const [selectedChoices1, setSelectedChoices1] = useState([]);
+  const [selectedExtras1, setSelectedExtras1] = useState([]);
+  const [quantityMap1, setQuantityMap1] = useState({});
 
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
@@ -45,6 +45,96 @@ const ComparisionTool = () => {
     selectedRowKeys: selectedExtras,
     onChange: onSelectExtrasChange,
   };
+
+  const onSelectChoiceChange1 = (newSelectedRowKeys) => {
+    setSelectedChoices1(newSelectedRowKeys);
+  };
+
+  const onSelectExtrasChange1 = (newSelectedRowKeys) => {
+    setSelectedExtras1(newSelectedRowKeys);
+    const _newQty = {};
+    newSelectedRowKeys.forEach((extra) => {
+      _newQty[`extras_${extra}`] = quantityMap1[`extras_${extra}`] || 1;
+    });
+    setQuantityMap1(_newQty);
+  };
+
+  const rowChoiceSelection1 = {
+    selectedRowKeys: selectedChoices1,
+    onChange: onSelectChoiceChange1,
+    getCheckboxProps: (record) => ({
+      // Disable the checkbox if the selection count is 3 and the item is not selected
+      disabled:
+        (selectedChoices1.length >= 3 && !selectedChoices1.includes(record.key)),
+    }),
+    hideSelectAll: true,
+  };
+
+  const rowExtrasSelection1 = {
+    selectedRowKeys: selectedExtras1,
+    onChange: onSelectExtrasChange1,
+  };
+
+  const extrasColumns1 = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Details",
+      dataIndex: "details",
+      key: "details",
+    },
+    {
+      title: "Unit Price",
+      dataIndex: "price",
+      key: "price",
+      render: (_, record) => (
+        <div>
+          <p>£ {record.price}</p>
+        </div>
+      ),
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (_, record) => {
+        return (
+          (selectedExtras1.includes(record.key)) ? (
+            <InputNumber
+              type="number"
+              disabled={
+                !selectedExtras1.includes(record.key)
+              }
+              value={quantityMap1[`extras_${record.feature_id}`] || 0}
+              min={0}
+              onChange={(value) => {
+                setQuantityMap1({
+                  ...quantityMap1,
+                  [`extras_${record.feature_id}`]: value,
+                });
+              }}
+              required={selectedExtras1.includes(record.key)}
+            />
+          ) : `${quantityMap1[`extras_${record.feature_id}`] || 0}`
+        );
+      },
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      render: (_, record) => (
+        <div>
+          <p>
+            £ {record.price * (quantityMap1[`extras_${record.feature_id}`] || 0)}
+          </p>
+        </div>
+      ),
+    },
+  ];
 
   const choicesColumns = [
     {
@@ -101,11 +191,11 @@ const ComparisionTool = () => {
       key: "quantity",
       render: (_, record) => {
         return (
-          (Boolean(selectedFeatures) || selectedExtras.includes(record.key)) ? (
+          (selectedExtras.includes(record.key)) ? (
             <InputNumber
               type="number"
               disabled={
-                Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
+                !selectedExtras.includes(record.key)
               }
               value={quantityMap[`extras_${record.feature_id}`] || 0}
               min={0}
@@ -157,37 +247,37 @@ const ComparisionTool = () => {
       const response = await axiosInstance.get(`/buyers/${user.id}`);
       const data = response.data;
       setBuyer(data);
-      const _features = data?.features || null;
-      setSelectedFeatures(_features);
+      // const _features = data?.features || null;
+      // setSelectedFeatures(_features);
 
-      if (Object.keys(_features || {})?.length === 0) return;
+      // if (Object.keys(_features || {})?.length === 0) return;
 
-      const _selectedChoices = Object.keys(_features?.choices || {});
-      const _selectedExtras = Object.keys(_features?.extras || {});
+      // const _selectedChoices = Object.keys(_features?.choices || {});
+      // const _selectedExtras = Object.keys(_features?.extras || {});
 
-      setSelectedChoices(_selectedChoices);
-      setSelectedExtras(_selectedExtras);
+      // setSelectedChoices(_selectedChoices);
+      // setSelectedExtras(_selectedExtras);
 
-      const _qtyMapExtras = Object.keys(_features?.extras || {}).reduce(
-        (acc, extra) => {
-          acc[`extras_${extra}`] = _features?.extras[extra].quantity;
-          return acc;
-        },
-        {}
-      );
+      // const _qtyMapExtras = Object.keys(_features?.extras || {}).reduce(
+      //   (acc, extra) => {
+      //     acc[`extras_${extra}`] = _features?.extras[extra].quantity;
+      //     return acc;
+      //   },
+      //   {}
+      // );
 
-      const _qtyMapChoices = Object.keys(_features?.choices || {}).reduce(
-        (acc, choice) => {
-          acc[`choice_${choice}`] = _features?.choices[choice].quantity;
-          return acc;
-        },
-        {}
-      );
+      // const _qtyMapChoices = Object.keys(_features?.choices || {}).reduce(
+      //   (acc, choice) => {
+      //     acc[`choice_${choice}`] = _features?.choices[choice].quantity;
+      //     return acc;
+      //   },
+      //   {}
+      // );
 
-      setQuantityMap({
-        ..._qtyMapExtras,
-        ..._qtyMapChoices,
-      });
+      // setQuantityMap({
+      //   ..._qtyMapExtras,
+      //   ..._qtyMapChoices,
+      // });
     } catch (error) {
       console.log("Error fetching ventures:", error);
     }
@@ -230,27 +320,31 @@ const ComparisionTool = () => {
       );
     }, 0);
   };
+  const getSelectedPrice1 = () => {
+    if (!allFeatures) return 0;
+
+    return selectedExtras1.reduce((acc, extra) => {
+      return (
+        acc + (allFeatures[extra]?.price || 0) * quantityMap1[`extras_${extra}`]
+      );
+    }, 0);
+  };
 
   return (
     <div>
       <h3>Comparision Tool</h3>
+      <p>
+        <b>Venture Name: </b>
+        {venture?.name}
+      </p>
+      <p>
+        <b>House Type: </b>
+        {buyer?.house_type} Bed
+      </p>
       <Row justify="space-evenly" align="middle">
         <Col>
           <Row justify="space-between" align="middle">
-            <Col>
-              <p>
-                <b>Venture Name: </b>
-                {venture?.name}
-              </p>
-              <p>
-                <b>House Type: </b>
-                {buyer?.house_type} Bed
-              </p>
-            </Col>
-            
-            <Col>
-              <h3>Total: £ {getSelectedPrice()}</h3>
-            </Col>
+            <h3>Total: £ {getSelectedPrice()}</h3>
           </Row>
 
           {allFeatures && configuration && (
@@ -303,19 +397,7 @@ const ComparisionTool = () => {
         </Col>
         <Col>
           <Row justify="space-between" align="middle">
-            <Col>
-              <p>
-                <b>Venture Name: </b>
-                {venture?.name}
-              </p>
-              <p>
-                <b>House Type: </b>
-                {buyer?.house_type} Bed
-              </p>
-            </Col>
-            <Col>
-              <h3>Total: £ {getSelectedPrice()}</h3>
-            </Col>
+            <h3>Total: £ {getSelectedPrice1()}</h3>
           </Row>
 
           {allFeatures && configuration && (
@@ -326,11 +408,11 @@ const ComparisionTool = () => {
                     Choices
                     <span className="sub-text"> (Select Upto 3 Choices)</span>
                   </h3>
-                  {selectedChoices?.length > 0 ? (
-                    <p>Selected {selectedChoices.length} choices</p>
+                  {selectedChoices1?.length > 0 ? (
+                    <p>Selected {selectedChoices1.length} choices</p>
                   ) : null}
                   <Table
-                    rowSelection={rowChoiceSelection}
+                    rowSelection={rowChoiceSelection1}
                     columns={choicesColumns}
                     dataSource={configuration?.choices?.map((choice) => {
                       return {
@@ -346,12 +428,12 @@ const ComparisionTool = () => {
               <Row>
                 <Col span={24}>
                   <h3>Extras</h3>
-                  {selectedExtras?.length > 0 ? (
-                    <p>Selected {selectedExtras.length} extras</p>
+                  {selectedExtras1?.length > 0 ? (
+                    <p>Selected {selectedExtras1.length} extras</p>
                   ) : null}
                   <Table
-                    rowSelection={rowExtrasSelection}
-                    columns={extrasColumns}
+                    rowSelection={rowExtrasSelection1}
+                    columns={extrasColumns1}
                     dataSource={configuration?.extras?.map((extra) => {
                       return {
                         ...allFeatures[extra],
