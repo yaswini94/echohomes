@@ -264,8 +264,9 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       {
         title: "Status",
         key: "state",
-        render: (status) => {
-          switch (status) {
+        render: (_, record) => {
+          console.log(record?.status);
+          switch (record?.status) {
             case "inprogress":
               return <Tag color="processing">Inprogress</Tag>;
             case "done":
@@ -283,8 +284,8 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
             <Tooltip title="Change status">
               {record?.status === null && <a onClick={() => changeStatusHandle("inprogress", record)}>Inprogress</a>}
               {record?.status === "inprogress" && <a onClick={() => changeStatusHandle("done", record)}>Done</a>}
-              {record?.status === "done" && <p>-</p>}
             </Tooltip>
+              {record?.status === "done" && <a>-</a>}
           </Space>
         ),
       },
