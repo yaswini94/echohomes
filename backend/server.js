@@ -451,6 +451,26 @@ app.post("/orders", authenticateToken, async (req, res) => {
   res.status(201).json("Add Feature Successfull");
 });
 
+app.get("/supplier-orders/:venture_id", authenticateToken, async (req, res) => {
+  const supplier_id = req.user;
+  const { venture_id } = req.params;
+  const { data, error } = await supabase
+  .from("purchase_orders")
+  .select(`
+    *,
+    supplier:supplier_id (
+      name
+    )
+  `)
+  .eq("venture_id", venture_id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+});
+
 app.get("/supplier-orders", authenticateToken, async (req, res) => {
   const supplier = req.user;
   const { data, error } = await supabase

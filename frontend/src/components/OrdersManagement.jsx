@@ -84,7 +84,7 @@ const OrdersManagement = () => {
   const fetchSupplierOrders = async () => {
     try {
       const response = await axiosInstance.get(
-        `/supplier-orders?venture_id=${ventureId}`
+        `/supplier-orders/${ventureId}`
       );
       const _supplierOrders = response.data.map((order) => {
         order.supplier = suppliers.find(
@@ -119,10 +119,6 @@ const OrdersManagement = () => {
     fetchSuppliers();
     fetchSupplierOrders();
   }, []);
-
-  useEffect(() => {
-    fetchSupplierOrders();
-  }, [suppliers]);
 
   const ordersColumns = [
     {
@@ -167,6 +163,7 @@ const OrdersManagement = () => {
       title: "Supplier Name",
       key: "supplier name",
       render: (_, record) => {
+        console.log(record?.supplier?.name);
         return record?.supplier?.name;
       },
     },
