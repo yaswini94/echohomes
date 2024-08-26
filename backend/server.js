@@ -432,8 +432,14 @@ app.get("/orders", authenticateToken, async (req, res) => {
 });
 
 app.post("/orders", authenticateToken, async (req, res) => {
-  const { venture_id, supplier_id, orders_list, total, stripe_session_id, builder_id } =
-    req.body;
+  const {
+    venture_id,
+    supplier_id,
+    orders_list,
+    total,
+    stripe_session_id,
+    builder_id,
+  } = req.body;
 
   const { data, error } = await supabase.from("purchase_orders").insert({
     supplier_id,
@@ -441,7 +447,7 @@ app.post("/orders", authenticateToken, async (req, res) => {
     orders_list,
     total,
     stripe_session_id,
-    builder_id
+    builder_id,
   });
 
   if (error) {
@@ -455,14 +461,16 @@ app.get("/supplier-orders/:venture_id", authenticateToken, async (req, res) => {
   const supplier_id = req.user;
   const { venture_id } = req.params;
   const { data, error } = await supabase
-  .from("purchase_orders")
-  .select(`
+    .from("purchase_orders")
+    .select(
+      `
     *,
     supplier:supplier_id (
       name
     )
-  `)
-  .eq("venture_id", venture_id);
+  `
+    )
+    .eq("venture_id", venture_id);
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -474,8 +482,9 @@ app.get("/supplier-orders/:venture_id", authenticateToken, async (req, res) => {
 app.get("/supplier-orders", authenticateToken, async (req, res) => {
   const supplier = req.user;
   const { data, error } = await supabase
-  .from("purchase_orders")
-  .select(`
+    .from("purchase_orders")
+    .select(
+      `
     *,
     venture:venture_id (
       name,
@@ -483,9 +492,9 @@ app.get("/supplier-orders", authenticateToken, async (req, res) => {
       builder_id,
       builder:builder_id (name)
     )
-  `)
-  .eq("supplier_id", supplier.id);
-
+  `
+    )
+    .eq("supplier_id", supplier.id);
 
   if (error) {
     return res.status(500).json({ error: error.message });

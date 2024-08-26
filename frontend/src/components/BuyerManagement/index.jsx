@@ -19,6 +19,9 @@ import AddBuyerModal from "./AddBuyerModal";
 import EditBuyerModal from "./EditBuyerModal";
 import useLocalStorage from "../../utils/useLocalStorage";
 
+import { useAuth } from "../../auth/useAuth";
+import Chat from "../Chat/Chat";
+
 const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const [buyers, setBuyers] = useState([]);
   // const [features, setFeatures] = useState();
@@ -28,7 +31,32 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [ventureId] = useLocalStorage("selectedVenture", null);
   const [expandedRowId, setExpandedRowId] = useState(null);
+  const [selectedBuyerId, setSelectedBuyerId] = useState(null);
   const [messageApi, messageHolder] = message.useMessage();
+  const { user } = useAuth();
+  const builderId = user?.id;
+
+  // const createChatRoom = async (userIds) => {
+  //   try {
+  //     const response = await axiosInstance.post("/chat-rooms", {
+  //       userIds,
+  //     });
+  //     const data = response.data;
+  //     if (!response.ok) throw new Error(data.error || "Something went wrong");
+  //     return data.roomId;
+  //   } catch (error) {
+  //     console.error("Error creating chat room:", error);
+  //     throw error;
+  //   }
+  // };
+
+  // const startChat = (buyerId) => {
+  //   if (!builderId || !buyerId) return;
+
+  //   createChatRoom([builderId, buyerId]).then((roomId) => {
+  //     console.log("Chat room created with ID:", roomId);
+  //   });
+  // };
 
   // add modal
   const showModal = () => {
@@ -112,9 +140,27 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
             <Avatar
               src={deleteIcon}
               style={{ height: "18px", width: "18px" }}
-              onClick={() => deleteBuyer(record?.buyer_id)}
+              onClick={() => record.buyer_id && deleteBuyer(record.buyer_id)}
             />
           </a>
+        </Space>
+      ),
+    },
+    {
+      title: "",
+      dataIndex: "chat",
+      key: "chat",
+      render: (_, record) => (
+        <Space size="middle">
+          <Button
+            onClick={() =>
+              record.buyer_id
+                ? setSelectedBuyerId(record.buyer_id)
+                : setSelectedBuyerId(null)
+            }
+          >
+            Chat
+          </Button>
         </Space>
       ),
     },
@@ -205,7 +251,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     );
   };
 
-  const changeStatusHandle = async(status, record) => {
+  const changeStatusHandle = async (status, record) => {
     console.log(record);
     const _updatedfeature = {
       id: record?.key,
@@ -213,7 +259,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       notes: record?.notes,
       price: record?.latPrice,
       status: record?.status,
-      quantity: record?.latQuantity
+      quantity: record?.latQuantity,
     };
     // try {
     //   await axiosInstance.post("/updateBuyer", {
@@ -258,8 +304,8 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         dataIndex: "notes",
         key: "notes",
         render: (_, record) => {
-          return `${record?.notes || "-"}`
-        }
+          return `${record?.notes || "-"}`;
+        },
       },
       {
         title: "Status",
@@ -282,10 +328,16 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         render: (record) => (
           <Space size="middle">
             <Tooltip title="Change status">
-              {record?.status === null && <a onClick={() => changeStatusHandle("inprogress", record)}>Inprogress</a>}
-              {record?.status === "inprogress" && <a onClick={() => changeStatusHandle("done", record)}>Done</a>}
+              {record?.status === null && (
+                <a onClick={() => changeStatusHandle("inprogress", record)}>
+                  Inprogress
+                </a>
+              )}
+              {record?.status === "inprogress" && (
+                <a onClick={() => changeStatusHandle("done", record)}>Done</a>
+              )}
             </Tooltip>
-              {record?.status === "done" && <a>-</a>}
+            {record?.status === "done" && <a>-</a>}
           </Space>
         ),
       },
@@ -314,7 +366,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
             latPrice: choice.price,
             latQuantity: choice.quantity,
             status: choice.status,
-            notes: choice.notes
+            notes: choice.notes,
           };
         })}
         pagination={false}
@@ -369,6 +421,11 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
           />
         )}
       </div>
+      {builderId && selectedBuyerId && (
+        <div>
+          <Chat builderId={builderId} buyerId={selectedBuyerId} />
+        </div>
+      )}
       {messageHolder}
     </div>
   );

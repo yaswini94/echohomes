@@ -2,16 +2,27 @@ import React, { useState, useEffect } from "react";
 import { Col, Row, Statistic, Card, Rate } from "antd";
 import axiosInstance from "../helpers/axiosInstance";
 import { useAuth } from "../auth/useAuth";
+import Chat from "./Chat/Chat";
 
 const BuyerDashboard = () => {
   const describeRate = ["Terrible", "Bad", "Normal", "Good", "Wonderful"];
   const [buyer, setBuyer] = useState(null);
+  const [venture, setVenture] = useState(null);
   const [dashboardData, setDashboardData] = useState({
     completed: 0,
     inprogress: 0,
     pending: 0,
   });
   const { user } = useAuth();
+
+  const fetchVenture = async (id) => {
+    try {
+      const response = await axiosInstance.get(`/ventures/${id}`);
+      setVenture(response.data);
+    } catch (error) {
+      console.log("Error fetching ventures:", error);
+    }
+  };
 
   const addFeedback = async (value) => {
     try {
@@ -66,6 +77,7 @@ const BuyerDashboard = () => {
       const data = response.data;
       fetchDashboardData(data);
       setBuyer(data);
+      fetchVenture(data.venture_id);
     } catch (error) {
       console.log("Error fetching ventures:", error);
     }
@@ -104,6 +116,9 @@ const BuyerDashboard = () => {
           </Card>
         </Col>
       </Row>
+      {venture?.builder_id && (
+        <Chat buyerId={user.id} builderId={venture.builder_id} />
+      )}
     </div>
   );
 };
