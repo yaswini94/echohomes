@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../auth/useAuth";
+
+import "./chat.css";
 
 function Chat({ builderId, buyerId }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
+  const messagesEndRef = useRef(null);
+
   const { user } = useAuth();
 
   useEffect(() => {
     async function fetchOrCreateConversation() {
       try {
-        // Check if the conversation already exists
         const { data: conversations, error: fetchError } = await supabase
           .from("conversations")
           .select("id")
@@ -24,10 +27,8 @@ function Chat({ builderId, buyerId }) {
         }
 
         if (conversations.length > 0) {
-          // If conversation exists, use its ID
           setConversationId(conversations[0].id);
         } else {
-          // Create a new conversation
           const { data: newConversation, error: insertError } = await supabase
             .from("conversations")
             .insert([{ builder_id: builderId, buyer_id: buyerId }])
@@ -37,11 +38,6 @@ function Chat({ builderId, buyerId }) {
             console.error("Error creating conversation:", insertError);
 
             if (insertError.message.includes("duplicate key value")) {
-              console.warn(
-                "Conversation already exists, fetching the existing conversation."
-              );
-
-              // Fetch the existing conversation again
               const { data: existingConversations, error: retryError } =
                 await supabase
                   .from("conversations")
@@ -62,8 +58,6 @@ function Chat({ builderId, buyerId }) {
               }
             }
           } else {
-            console.log("New conversation created:", newConversation);
-            // Set the new conversation ID
             setConversationId(newConversation.id);
           }
         }
@@ -77,7 +71,6 @@ function Chat({ builderId, buyerId }) {
 
   useEffect(() => {
     if (conversationId) {
-      // Fetch initial messages
       async function fetchMessages() {
         try {
           const { data: msgs, error: fetchMessagesError } = await supabase
@@ -98,15 +91,12 @@ function Chat({ builderId, buyerId }) {
 
       fetchMessages();
 
-      // Subscribe to new messages
       const subscription = supabase
         .channel("private-chat")
         .on(
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "messages" },
           (payload) => {
-            console.log("Change received!", payload);
-            // Ensure the message belongs to the current conversation
             if (payload.new.conversation_id === conversationId) {
               setMessages((prevMessages) => [...prevMessages, payload.new]);
             }
@@ -114,9 +104,10 @@ function Chat({ builderId, buyerId }) {
         )
         .subscribe();
 
-      // Cleanup subscription on component unmount or conversationId change
       return () => {
-        supabase.removeSubscription(subscription);
+        if (subscription) {
+          subscription.unsubscribe(); // Correctly unsubscribe from the channel
+        }
       };
     }
   }, [conversationId]);
@@ -124,15 +115,13 @@ function Chat({ builderId, buyerId }) {
   const handleSendMessage = async () => {
     if (newMessage.trim()) {
       try {
-        const { error } = await supabase
-          .from("messages")
-          .insert([
-            {
-              conversation_id: conversationId,
-              sender_id: user.id,
-              message_text: newMessage,
-            },
-          ]);
+        const { error } = await supabase.from("messages").insert([
+          {
+            conversation_id: conversationId,
+            sender_id: user.id,
+            message_text: newMessage,
+          },
+        ]);
 
         if (error) {
           console.error("Error sending message:", error);
@@ -145,19 +134,40 @@ function Chat({ builderId, buyerId }) {
     }
   };
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
-    <div>
-      <div>
+    <div className="chat-container">
+      <div className="messages-container">
         {messages.map((msg) => (
-          <div key={msg.id}>{msg.message_text}</div>
+          <div
+            key={msg.id}
+            className={`message ${
+              msg.sender_id === user.id ? "sent" : "received"
+            }`}
+          >
+            <div className="message-text">{msg.message_text}</div>
+          </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
-      <input
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        placeholder="Type your message here..."
-      />
-      <button onClick={handleSendMessage}>Send</button>
+      <div className="input-container">
+        <input
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type your message here..."
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSendMessage();
+          }}
+        />
+        <button onClick={handleSendMessage}>Send</button>
+      </div>
     </div>
   );
 }

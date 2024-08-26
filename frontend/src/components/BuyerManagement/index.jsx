@@ -421,11 +421,11 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
           />
         )}
       </div>
-      {builderId && selectedBuyerId && (
+      {builderId && selectedBuyerId ? (
         <div>
           <Chat builderId={builderId} buyerId={selectedBuyerId} />
         </div>
-      )}
+      ) : null}
       {messageHolder}
     </div>
   );
