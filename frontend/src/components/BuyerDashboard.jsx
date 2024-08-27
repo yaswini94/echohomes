@@ -7,6 +7,7 @@ import Chat from "./Chat/Chat";
 const BuyerDashboard = () => {
   const describeRate = ["Terrible", "Bad", "Normal", "Good", "Wonderful"];
   const [buyer, setBuyer] = useState(null);
+  const [builder, setBuilder] = useState(null);
   const [venture, setVenture] = useState(null);
   const [dashboardData, setDashboardData] = useState({
     completed: 0,
@@ -15,10 +16,20 @@ const BuyerDashboard = () => {
   });
   const { user } = useAuth();
 
+  const fetchBuilder = async (id) => {
+    try {
+      const response = await axiosInstance.get(`/builders/${id}`);
+      setBuilder(response.data);
+    } catch (error) {
+      console.log("Error fetching builders:", error);
+    }
+  };
+
   const fetchVenture = async (id) => {
     try {
       const response = await axiosInstance.get(`/ventures/${id}`);
       setVenture(response.data);
+      fetchBuilder(response.data.builder_id);
     } catch (error) {
       console.log("Error fetching ventures:", error);
     }
@@ -117,7 +128,11 @@ const BuyerDashboard = () => {
         </Col>
       </Row>
       {venture?.builder_id && (
-        <Chat buyerId={user.id} builderId={venture.builder_id} />
+        <Chat
+          buyerId={user.id}
+          builderId={venture.builder_id}
+          name={builder?.name ? `${builder.name} (Builder)` : "Builder"}
+        />
       )}
     </div>
   );

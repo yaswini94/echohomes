@@ -31,7 +31,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [ventureId] = useLocalStorage("selectedVenture", null);
   const [expandedRowId, setExpandedRowId] = useState(null);
-  const [selectedBuyerId, setSelectedBuyerId] = useState(null);
+  const [selectedBuyerChat, setSelectedBuyerChat] = useState(null);
   const [messageApi, messageHolder] = message.useMessage();
   const { user } = useAuth();
   const builderId = user?.id;
@@ -155,8 +155,8 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
           <Button
             onClick={() =>
               record.buyer_id
-                ? setSelectedBuyerId(record.buyer_id)
-                : setSelectedBuyerId(null)
+                ? setSelectedBuyerChat(record)
+                : setSelectedBuyerChat(null)
             }
           >
             Chat
@@ -421,9 +421,13 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
           />
         )}
       </div>
-      {builderId && selectedBuyerId ? (
+      {builderId && selectedBuyerChat ? (
         <div>
-          <Chat builderId={builderId} buyerId={selectedBuyerId} />
+          <Chat
+            builderId={builderId}
+            buyerId={selectedBuyerChat.buyer_id}
+            name={selectedBuyerChat.name}
+          />
         </div>
       ) : null}
       {messageHolder}

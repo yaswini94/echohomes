@@ -4,10 +4,12 @@ import { useAuth } from "../../auth/useAuth";
 
 import "./chat.css";
 
-function Chat({ builderId, buyerId }) {
+function Chat({ builderId, buyerId, name }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
+  const [isMinimized, setIsMinimized] = useState(false);
+
   const messagesEndRef = useRef(null);
 
   const { user } = useAuth();
@@ -142,32 +144,76 @@ function Chat({ builderId, buyerId }) {
     scrollToBottom();
   }, [messages]);
 
+  const toggleMinimize = () => {
+    setIsMinimized((prev) => !prev);
+  };
+
+  // return (
+  //   <div className="chat-container">
+  //     <h2 className="chat-header" onClick={toggleMinimize}>{name || "Chat"}</h2>
+  //     <div className="messages-container">
+  //       {messages.map((msg) => (
+  //         <div
+  //           key={msg.id}
+  //           className={`message ${
+  //             msg.sender_id === user.id ? "sent" : "received"
+  //           }`}
+  //         >
+  //           <div className="message-text">{msg.message_text}</div>
+  //         </div>
+  //       ))}
+  //       <div ref={messagesEndRef} />
+  //     </div>
+  //     <div className="input-container">
+  //       <input
+  //         value={newMessage}
+  //         onChange={(e) => setNewMessage(e.target.value)}
+  //         placeholder="Type your message here..."
+  //         onKeyDown={(e) => {
+  //           if (e.key === "Enter") handleSendMessage();
+  //         }}
+  //       />
+  //       <button onClick={handleSendMessage}>Send</button>
+  //     </div>
+  //   </div>
+  // );
+
   return (
-    <div className="chat-container">
-      <div className="messages-container">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`message ${
-              msg.sender_id === user.id ? "sent" : "received"
-            }`}
-          >
-            <div className="message-text">{msg.message_text}</div>
+    <div className={`chat-container ${isMinimized ? "minimized" : ""}`}>
+      <div className="chat-header" onClick={toggleMinimize}>
+        <h2>{name || "Chat"}</h2>
+        <button className="toggle-button">
+          {isMinimized ? "Expand" : "Minimize"}
+        </button>
+      </div>
+      {!isMinimized && (
+        <>
+          <div className="messages-container">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`message ${
+                  msg.sender_id === builderId ? "sent" : "received"
+                }`}
+              >
+                <div className="message-text">{msg.message_text}</div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
           </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="input-container">
-        <input
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type your message here..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSendMessage();
-          }}
-        />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
+          <div className="input-container">
+            <input
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your message here..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSendMessage();
+              }}
+            />
+            <button onClick={handleSendMessage}>Send</button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

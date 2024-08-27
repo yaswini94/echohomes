@@ -1,17 +1,36 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 500px;
-  max-width: 400px;
   margin: 0 auto;
   border: 1px solid #ddd;
   background-color: #f8f9fa;
-
   position: fixed;
   right: 0;
   bottom: 0;
   width: 400px;
   height: 600px;
+}
+
+.chat-container.minimized {
+  width: 400px;
+  height: 60px;
+  overflow: hidden;
+  transform: scale(0.8);
+}
+
+.chat-header {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chat-header h2 {
+  margin: 0;
+  font-size: 14px;
 }
 
 .messages-container {
