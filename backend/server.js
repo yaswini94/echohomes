@@ -19,6 +19,7 @@ app.use(
 );
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
+// Setting API key for the sendgrid mail  
 sgMail.setApiKey(process.env.SENDGRIDAPI_KEY);
 
 const supabase = createClient(
@@ -54,6 +55,7 @@ const authenticateToken = async (req, res, next) => {
   next();
 };
 
+// Post API to reset password email
 app.post("/resetlink", async (req, res) => {
   const { email } = req.body;
 
@@ -65,6 +67,7 @@ app.post("/resetlink", async (req, res) => {
   res.json({ message: "Reset password email sent successful", data });
 });
 
+// Post API for update password
 app.post("/updatePassword", async (req, res) => {
   const { data, error } = await supabase.auth.updateUser({
     email: req.body?.email,
@@ -75,6 +78,7 @@ app.post("/updatePassword", async (req, res) => {
   res.json({ message: "Update password is successful", data });
 });
 
+// Post API for login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -86,6 +90,7 @@ app.post("/login", async (req, res) => {
   res.json({ message: "Login successful", data });
 });
 
+// Post API for registerion of supplier/builder
 app.post("/register", async (req, res) => {
   const { email, password, name, companyName, phoneNumber, address, userType } =
     req.body;
@@ -141,6 +146,7 @@ app.post("/register", async (req, res) => {
   });
 });
 
+// Post API to create checkout session of stripe
 app.post("/create-checkout-session", async (req, res) => {
   const { features, buyer_id } = req.body;
 
@@ -190,6 +196,7 @@ app.post("/create-checkout-session", async (req, res) => {
   res.json({ id: session.id });
 });
 
+// Post API to create builder/supplier checkout session 
 app.post(
   "/create-builder-supplier-checkout-session",
   authenticateToken,
@@ -224,6 +231,7 @@ app.post(
   }
 );
 
+// Get API for fetching builder based on id
 app.get("/builders/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
@@ -240,6 +248,7 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Post API to update builder
 app.post("/updateBuilder", authenticateToken, async (req, res) => {
   const { settings, feedback, builder_id } = req.body;
   const { data, error } = await supabase
@@ -253,6 +262,7 @@ app.post("/updateBuilder", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+// Post API to add venture
 app.post("/addVenture", authenticateToken, async (req, res) => {
   const { name, address, description, properties } = req.body;
   const user = req.user;
@@ -272,6 +282,7 @@ app.post("/addVenture", authenticateToken, async (req, res) => {
   res.status(201).json(data);
 });
 
+// Post API for update venture
 app.post("/updateVenture", authenticateToken, async (req, res) => {
   const { name, address, description, ventureId, properties } = req.body;
 
@@ -286,6 +297,7 @@ app.post("/updateVenture", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+// Get API to fetch ventures
 app.get("/ventures", authenticateToken, async (req, res) => {
   const { data, error } = await supabase.from("ventures").select("*");
 
@@ -312,6 +324,7 @@ app.get("/ventures/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Post API to add supplier
 app.post("/addSupplier", authenticateToken, async (req, res) => {
   const {
     name,
@@ -344,6 +357,7 @@ app.post("/addSupplier", authenticateToken, async (req, res) => {
   res.status(201).json("Add Supplier Successfull");
 });
 
+// Post API to update supplier
 app.post("/updateSupplier", authenticateToken, async (req, res) => {
   const {
     name,
@@ -375,6 +389,7 @@ app.post("/updateSupplier", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+// Get API to fetch suppliers
 app.get("/suppliers", authenticateToken, async (req, res) => {
   const { data, error } = await supabase.from("suppliers").select("*");
 
@@ -385,6 +400,7 @@ app.get("/suppliers", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Get API to fetch suppliers based on id
 app.get("/suppliers/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
@@ -401,6 +417,7 @@ app.get("/suppliers/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Get API to fetch buyers 
 app.get("/buyers", authenticateToken, async (req, res) => {
   const ventureId = req.query.venture_id;
   const { data, error } = await supabase
@@ -415,6 +432,7 @@ app.get("/buyers", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Get API to fetch specific buyer configuration orders
 app.get("/orders", authenticateToken, async (req, res) => {
   const ventureId = req.query.venture_id;
   const { data, error } = await supabase
@@ -431,6 +449,7 @@ app.get("/orders", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Post API to create purchase order
 app.post("/orders", authenticateToken, async (req, res) => {
   const {
     venture_id,
@@ -457,6 +476,7 @@ app.post("/orders", authenticateToken, async (req, res) => {
   res.status(201).json("Add Feature Successfull");
 });
 
+// Get API to fetch supplier orders based on venture_id
 app.get("/supplier-orders/:venture_id", authenticateToken, async (req, res) => {
   const supplier_id = req.user;
   const { venture_id } = req.params;
@@ -479,6 +499,7 @@ app.get("/supplier-orders/:venture_id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Get API to fetch purchase orders based on supplier_id
 app.get("/supplier-orders", authenticateToken, async (req, res) => {
   const supplier = req.user;
   const { data, error } = await supabase
@@ -503,7 +524,7 @@ app.get("/supplier-orders", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-// To list details of the buyer
+// Get API to list details of the buyer based on id
 app.get("/buyers/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
@@ -520,6 +541,7 @@ app.get("/buyers/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Post API to invite the buyer to the system
 app.post("/invite", authenticateToken, async (req, res) => {
   const {
     email,
@@ -539,6 +561,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
     html: `<p>Hi ${name}, \n We would like to invite you to join echohomes as buyer.</p> <p>Please use below password <a>${password}</a> to reset password. </p> <strong>Continue to Login after reset password. Use the link <a>${password}</a></strong>`,
   };
 
+  // triggering supabase signup to allow logins
   const { data: createdUser, createdUserError } = await supabase.auth.signUp({
     email,
     password,
@@ -550,6 +573,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
 
   console.log({ createdUser: createdUser?.user?.id, builderId: user.id });
 
+  // Insert data to the buyers table
   const { data, error } = await supabase.from("buyers").insert({
     buyer_id: createdUser?.user?.id,
     name,
@@ -569,6 +593,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 
+  // To send invite mail to buyer mailid
   sgMail.send(msg).then(
     () => {
       console.log("Email sent");
@@ -585,6 +610,7 @@ app.post("/invite", authenticateToken, async (req, res) => {
   res.send("Invite is sent");
 });
 
+// Post API to create stripe session based on buyer_id
 app.post("/stripe-session", authenticateToken, async (req, res) => {
   const { buyer_id } = req.body;
 
@@ -605,6 +631,7 @@ app.post("/stripe-session", authenticateToken, async (req, res) => {
   res.json(session);
 });
 
+// Post APi to update the buyer 
 app.post("/updateBuyer", authenticateToken, async (req, res) => {
   const {
     name,
@@ -640,6 +667,7 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+// Post API to add feature
 app.post("/addFeature", authenticateToken, async (req, res) => {
   const { name, details, price, images } = req.body;
   const user = req.user;
@@ -659,6 +687,7 @@ app.post("/addFeature", authenticateToken, async (req, res) => {
   res.status(201).json("Add Feature Successfull");
 });
 
+// Post API to update the feature
 app.post("/updateFeature", authenticateToken, async (req, res) => {
   const { name, details, images, price, feature_id } = req.body;
 
@@ -673,6 +702,7 @@ app.post("/updateFeature", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+// Get API to fetch features
 app.get("/features", authenticateToken, async (req, res) => {
   const user = req.user;
   const { data, error } = await supabase.from("features").select("*");
@@ -684,10 +714,12 @@ app.get("/features", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Default landing API
 app.get("/", (req, res) => {
   res.send("Welcome to Echo homes!");
 });
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

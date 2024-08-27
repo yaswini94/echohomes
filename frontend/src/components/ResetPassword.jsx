@@ -13,14 +13,14 @@ const ResetPassword = () => {
   };
   const queryParams = useQuery();
 
+  // Triggering on update password 
   const onFinish = async (values) => {
     // const email = searchParams.get('email');
     const { password } = values;
     // const { email } = useParams();
     setLoading(true);
 
-    const email = 'yaswini.ranga+1@gmail.com';
-    // const email = queryParams.get('email');
+    const email = queryParams.get('email');
     try {
       const resp = await axios.post("http://localhost:3001/updatePassword", { email, password });
       setLoading(false);
@@ -32,6 +32,7 @@ const ResetPassword = () => {
   };
 
   return (
+    // Form template from Antdesign components
     <Form
       name="reset_password"
       onFinish={onFinish}

@@ -28,6 +28,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
     },
   ];
 
+  // To update housetype when user updates it
   const onHouseTypeChange = (value) => {
     const selectedItem = items.find((item) => item.key === value.key);
     setHouseType(selectedItem ? selectedItem.key : null);
@@ -38,6 +39,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
     return Math.random().toString(36).slice(-8); // Simple random password generator
   };
 
+  // To trigger invite buyer to system with email
   async function inviteBuyer() {
     setLoading(true);
     const tempPassword = generateRandomPassword();
@@ -64,6 +66,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   }
 
   return (
+    // Modal template from the Ant design components to add new buyer
     <Modal
       title="Add New Buyer"
       open={isOpened}
@@ -83,6 +86,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
         </Button>,
       ]}
     >
+      {/* Form template from the Ant design components to get buyer data */}
       <Form layout="vertical">
         <Form.Item label="Name">
           <Input

@@ -22,6 +22,7 @@ const BudgetBasedSuggestions = () => {
   useEffect(() => {
     if (!buyer?.buyer_id) return;
 
+    // Fetch venture based on venture_id to get configuration list
     const fetchVenture = async () => {
       try {
         const response = await axiosInstance.get(
@@ -40,6 +41,7 @@ const BudgetBasedSuggestions = () => {
   }, [buyer?.buyer_id]);
 
   useEffect(() => {
+    // Fetch buyer based on buyer_id
     const fetchBuyer = async () => {
       try {
         const response = await axiosInstance.get(`/buyers/${user.id}`);
@@ -53,6 +55,7 @@ const BudgetBasedSuggestions = () => {
   });
 
   useEffect(() => {
+    // Fetch features to get the list of features
     const fetchFeatures = async () => {
       try {
         const response = await axiosInstance.get("/features");
@@ -69,6 +72,7 @@ const BudgetBasedSuggestions = () => {
     fetchFeatures();
   }, []);
 
+  // Toggle the view of show recommendations
   const toggleShowRecommendations = () => {
     if (showRecommendations) {
       setShowRecommendations(false);
@@ -101,13 +105,14 @@ const BudgetBasedSuggestions = () => {
     { title: "Price", dataIndex: "price", key: "price", render: (_, record) => "£ " + record?.price },
   ];
 
+  // To provide budget based suggestions 
   function budgetBasedSuggestions(items, budget) {
     // Separate the items into choices and extras
     const choices = items.filter(item => item.category === 'choice');
     const extras = items.filter(item => item.category === 'extras');
 
     // Sort choices by actual price in descending order (most expensive first)
-    choices.sort((a, b) => b.price - a.price);
+    choices.sort((item1, item2) => item2.price - item1.price);
 
     // Select the top 3 most expensive items from choices
     const suggestedChoices = choices.slice(0, 3);
@@ -120,10 +125,10 @@ const BudgetBasedSuggestions = () => {
     function getCombinations(list) {
       let result = [[]];
       for (let index = 0; index < list.length; index++) {
-          const currentLength = result.length;
-          for (let j = 0; j < currentLength; j++) {
-              result.push(result[j].concat(list[index]));
-          }
+        const currentLength = result.length;
+        for (let j = 0; j < currentLength; j++) {
+          result.push(result[j].concat(list[index]));
+        }
       }
       return result;
     }
@@ -133,8 +138,8 @@ const BudgetBasedSuggestions = () => {
     allExtrasCombinations.forEach(combo => {
       const comboCost = combo.reduce((sum, item) => sum + item.price, 0);
       if (comboCost <= budget && comboCost > bestCost) {
-          bestCost = comboCost;
-          bestExtras = combo;
+        bestCost = comboCost;
+        bestExtras = combo;
       }
     });
 
@@ -148,10 +153,10 @@ const BudgetBasedSuggestions = () => {
 
   return (
     <div>
-      <h3>In-Buget Suggestions</h3>
+      <h3>In-Budget Suggestions</h3>
       <Row align="middle" style={{margin: "24px 0"}}>
         <Col style={{marginRight: "48px"}}>
-          <p style={{display: "inline", marginRight: "8px"}}>Enter your buget </p>
+          <p style={{display: "inline", marginRight: "8px"}}>Enter your budget </p>
           <InputNumber 
             addonBefore="£"
             style={{minWidth: "180px"}}

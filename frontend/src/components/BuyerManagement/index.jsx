@@ -58,11 +58,12 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   //   });
   // };
 
-  // add modal
+  // To show add modal
   const showModal = () => {
     setIsModalVisible(true);
   };
 
+  // To handle ok button in add modal
   const handleOk = () => {
     messageApi.open({
       type: "success",
@@ -72,16 +73,18 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     setIsModalVisible(false);
   };
 
+  // To handle cancel button in add modal
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  // edit modal
+  // To show edit modal
   const showEditModal = (buyer) => {
     setSelectedBuyer(buyer);
     setIsEditModalVisible(true);
   };
 
+  // To handle edit modal ok button
   const handleEditOk = () => {
     messageApi.open({
       type: "success",
@@ -91,10 +94,12 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     setIsEditModalVisible(false);
   };
 
+  // To handle edit modal cancel button
   const handleEditCancel = () => {
     setIsEditModalVisible(false);
   };
 
+  // Columns to display in the buyer management table
   const columns = [
     {
       title: "Name",
@@ -126,6 +131,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       title: "Action",
       key: "action",
       render: (_, record) => (
+        // To diaply action icons edit, delete, expand
         <Space size="middle">
           <a>
             <Avatar
@@ -167,6 +173,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     Table.EXPAND_COLUMN,
   ];
 
+  // To delete the buyer
   const deleteBuyer = async (id) => {
     if (id) {
       const { data, error } = await supabase
@@ -177,6 +184,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         type: "success",
         content: "Buyer Deleted",
       });
+
       if (error) {
         messageApi.open({
           type: "error",
@@ -213,6 +221,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     fetchFeatures();
   }, [ventureIdParam, ventureId]);
 
+  // To fetch features list
   const fetchFeatures = async () => {
     try {
       const response = await axiosInstance.get("/features");
@@ -251,7 +260,8 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     );
   };
 
-  const changeStatusHandle = async (status, record) => {
+  // To handle the status change of buyer configuration list
+  const changeStatusHandle = async(status, record) => {
     console.log(record);
     const _updatedfeature = {
       id: record?.key,
@@ -281,6 +291,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     }
   };
 
+  // To render nested table expanded row
   const expandedRowRender = (record) => {
     const expandColumns = [
       { title: "Name", dataIndex: "name", key: "name" },
@@ -356,7 +367,9 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       })
     );
     const featuresArray = [...choiceArray, ...extrasArray];
+
     return (
+      // Based on Table template from Ant design
       <Table
         columns={expandColumns}
         dataSource={featuresArray?.map((choice) => {
@@ -388,6 +401,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       </Row>
 
       <div>
+        {/* add modal visible */}
         {isModalVisible && (
           <AddBuyerModal
             isOpened={isModalVisible}
@@ -395,6 +409,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
             handleCancel={handleCancel}
           />
         )}
+        {/* edit modal visible */}
         {isEditModalVisible && (
           <EditBuyerModal
             isOpened={isEditModalVisible}

@@ -11,12 +11,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     setLoading(true);
-
+    
+    // Check supabase auth for active session to set the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       setLoading(false);
       setUser(session?.user || null);
     });
 
+    // On auth state change set the user
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -61,6 +63,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
+    // Check if the user_id exist from builder/buyer/supplier table
     async function checkIdExists(tableName, id, key) {
       const { data, error } = await supabase
         .from(tableName)

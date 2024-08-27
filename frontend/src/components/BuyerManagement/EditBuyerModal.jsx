@@ -26,6 +26,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
     },
   ];
 
+  // To update housetype when user updates it
   const onHouseTypeChange = (value) => {
     const selectedItem = items.find((item) => item.key === value.key);
     setHouseType(selectedItem ? selectedItem.label : null);
@@ -35,6 +36,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
     setLoading(true);
 
     try {
+      // Triggers updateBuyer API with payload
       await axiosInstance.post("/updateBuyer", {
         contact_email: email,
         name,
@@ -52,6 +54,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
   };
 
   return (
+    // Modal template from the Ant design components to edit buyer
     <Modal
       title="Edit Buyer"
       open={isOpened}
@@ -71,6 +74,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
         </Button>,
       ]}
     >
+      {/* Form template from the Ant design components to update details */}
       <Form layout="vertical">
         <Form.Item label="Name">
           <Input

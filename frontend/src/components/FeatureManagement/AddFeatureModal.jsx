@@ -13,6 +13,7 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
   const [details, setDetails] = useState("");
   const [price, setPrice] = useState(0);
 
+  // Add feature
   const addFeature = async () => {
     setLoading(true);
 
@@ -30,6 +31,7 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
   };
 
   return (
+    // Modal template from ant design
     <Modal
       title="Add New Feature"
       open={isOpened}
