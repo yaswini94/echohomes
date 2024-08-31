@@ -41,6 +41,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
         <Button
           key="submit"
           type="primary"
+          disabled={!(name && details && price)}
           loading={loading}
           onClick={updateFeature}
         >

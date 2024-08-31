@@ -67,6 +67,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
         <Button
           key="submit"
           type="primary"
+          disabled={!(email && name && phoneNumber && address && houseType)}
           loading={loading}
           onClick={editBuyer}
         >
