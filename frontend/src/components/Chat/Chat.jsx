@@ -9,14 +9,14 @@ function Chat({ builderId, buyerId, name }) {
   const [newMessage, setNewMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
   const [isMinimized, setIsMinimized] = useState(false);
-
   const messagesEndRef = useRef(null);
-
   const { user } = useAuth();
 
   useEffect(() => {
+    // Function to fetch or create new conversation
     async function fetchOrCreateConversation() {
       try {
+        // Fecth conversations based on builder, buyer id's
         const { data: conversations, error: fetchError } = await supabase
           .from("conversations")
           .select("id")
@@ -31,6 +31,7 @@ function Chat({ builderId, buyerId, name }) {
         if (conversations.length > 0) {
           setConversationId(conversations[0].id);
         } else {
+          // Add conversion entry into conversations table
           const { data: newConversation, error: insertError } = await supabase
             .from("conversations")
             .insert([{ builder_id: builderId, buyer_id: buyerId }])
@@ -40,6 +41,7 @@ function Chat({ builderId, buyerId, name }) {
             console.error("Error creating conversation:", insertError);
 
             if (insertError.message.includes("duplicate key value")) {
+              // Fetching new conversation based on builder, buyer id's
               const { data: existingConversations, error: retryError } =
                 await supabase
                   .from("conversations")
@@ -73,6 +75,7 @@ function Chat({ builderId, buyerId, name }) {
 
   useEffect(() => {
     if (conversationId) {
+      // Function to fetch messages
       async function fetchMessages() {
         try {
           const { data: msgs, error: fetchMessagesError } = await supabase
@@ -114,6 +117,7 @@ function Chat({ builderId, buyerId, name }) {
     }
   }, [conversationId]);
 
+  // Function to handle the send message
   const handleSendMessage = async () => {
     if (newMessage.trim()) {
       try {
@@ -179,6 +183,7 @@ function Chat({ builderId, buyerId, name }) {
   // );
 
   return (
+    // Chat view start from here with ant design templates
     <div className={`chat-container ${isMinimized ? "minimized" : ""}`}>
       <div className="chat-header" onClick={toggleMinimize}>
         <h2>{name || "Chat"}</h2>

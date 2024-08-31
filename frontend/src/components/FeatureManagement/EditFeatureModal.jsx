@@ -8,6 +8,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
   const [details, setDetails] = useState(feature.details);
   const [price, setPrice] = useState(feature.price || 0);
 
+  // Function to update the Feature
   const updateFeature = async () => {
     setLoading(true);
 
@@ -27,6 +28,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
   };
 
   return (
+    // Modal template from the ant design to create edit feature view
     <Modal
       title="Edit Feature"
       open={isOpened}
@@ -47,6 +49,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
       ]}
     >
       <Form layout="vertical">
+        {/* Form item for the feature name */}
         <Form.Item label="Name">
           <Input
             placeholder="Name"
@@ -55,6 +58,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the details */}
         <Form.Item label="Details">
           <Input
             placeholder="Details"
@@ -63,6 +67,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the price */}
         <Form.Item label="Price">
           <Input
             placeholder="Price"

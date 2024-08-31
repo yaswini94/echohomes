@@ -7,6 +7,7 @@ import { userRoles } from "../utils/constants";
 const DashboardLayout = () => {
   const { role } = useAuth();
 
+  // Function to render role based dashboard view
   const renderDashboards = () => {
     switch (role) {
       case userRoles.BUYERS:

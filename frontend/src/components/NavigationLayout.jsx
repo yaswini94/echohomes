@@ -9,6 +9,7 @@ const NavigationLayout = () => {
   const location = useLocation();
   const { role } = useAuth();
 
+  // List of navigations
   const items = {
     [userRoles.BUILDERS]: [
       {
@@ -59,12 +60,14 @@ const NavigationLayout = () => {
   }
 
   return (
+    // Sider template from ant design for the navigation options
     <Sider
       width={240}
       style={{
         background: colorBgContainer,
       }}
     >
+      {/* Menu template from ant design to display navigation oprions based on role */}
       <Menu
         mode="inline"
         defaultSelectedKeys={["home"]}

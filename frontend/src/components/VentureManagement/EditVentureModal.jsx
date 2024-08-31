@@ -16,6 +16,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
   const [address, setAddress] = useState(venture.address);
   const [description, setDescription] = useState(venture.description);
 
+  // Function to handle property count change
   const handleValueChange = (value, index) => {
     const updatedProperties = properties.map((property, i) =>
       i === index ? { ...property, value } : property
@@ -23,6 +24,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
     setProperties(updatedProperties);
   };
 
+  // Function to handle edit venture
   const editVenture = async () => {
     setLoading(true);
 
@@ -43,6 +45,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
   };
 
   return (
+    // Modal template from the ant design for view
     <Modal
       title="Edit Venture"
       open={isOpened}
@@ -57,13 +60,13 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
           type="primary"
           loading={loading}
           onClick={editVenture}
-          //   disabled={!isChanged}
         >
           {loading ? "Updating..." : "Edit Venture"}
         </Button>,
       ]}
     >
       <Form layout="vertical">
+        {/* Form item for the venture name */}
         <Form.Item label="Name">
           <Input
             placeholder="Venture Name"
@@ -72,6 +75,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the address of venture */}
         <Form.Item label="Address">
           <Input
             placeholder="Address"
@@ -80,6 +84,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the desctiption of the venture */}
         <Form.Item label="Description">
           <Input.TextArea
             value={description}
@@ -90,6 +95,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
         </Form.Item>
         <p>Select Properties</p>
         {properties?.map((property, index) => (
+          // Dynamic form item for the properties to change count
           <Form.Item name="properties" key={property.key}>
             <Select
               style={{ width: 120, marginRight: 8 }}

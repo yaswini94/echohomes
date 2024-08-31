@@ -13,7 +13,7 @@ const ResetPassword = () => {
   };
   const queryParams = useQuery();
 
-  // Triggering on update password 
+  // Function to handle update password click
   const onFinish = async (values) => {
     // const email = searchParams.get('email');
     const { password } = values;
@@ -39,6 +39,7 @@ const ResetPassword = () => {
       layout="vertical"
       style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}
     >
+      {/* Form item for the new password */}
       <Form.Item
         label="New Password"
         name="password"
@@ -50,7 +51,7 @@ const ResetPassword = () => {
       >
         <Input.Password />
       </Form.Item>
-
+      {/* Form item for the confirm password */}
       <Form.Item
         label="Confirm Password"
         name="confirm"

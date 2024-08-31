@@ -13,6 +13,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
   const [address, setAddress] = useState(null);
   const [description, setDescription] = useState(null);
 
+  // Function to handle property count changes 
   const handleValueChange = (value, index) => {
     const updatedProperties = properties.map((property, i) =>
       i === index ? { ...property, value } : property
@@ -20,6 +21,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
     setProperties(updatedProperties);
   };
 
+  // Function to handle add venture
   const handleAddVenture = async () => {
     setLoading(true);
 
@@ -38,6 +40,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
   };
 
   return (
+    // Modal template from the ant design for view
     <Modal
       title="Add New Venture"
       open={isOpened}
@@ -58,6 +61,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
       ]}
     >
       <Form layout="vertical">
+        {/* Form item for the venture name */}
         <Form.Item label="Name">
           <Input
             placeholder="Venture Name"
@@ -65,6 +69,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the address of venture */}
         <Form.Item label="Address">
           <Input
             placeholder="Address"
@@ -72,6 +77,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the desctiption of the venture */}
         <Form.Item label="Description">
           <Input.TextArea
             placeholder="Description"
@@ -81,6 +87,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
         </Form.Item>
         <p>Select Properties</p>
         {properties?.map((property, index) => (
+          // Dynamic form item for the properties to change count
           <Form.Item name={`property${property.key}`} key={property.key}>
             <Select
               style={{ width: 120, marginRight: 8 }}

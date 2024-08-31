@@ -10,6 +10,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
   const [address, setAddress] = useState(supplier.address);
   const [email, setEmail] = useState(supplier.email);
 
+  // Function to update the supplier
   const updateSupplier = async () => {
     setLoading(true);
 
@@ -31,6 +32,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
   };
 
   return (
+    // Modal template from ant design for view
     <Modal
       title="Edit Supplier"
       open={isOpened}
@@ -51,6 +53,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
       ]}
     >
       <Form layout="vertical">
+        {/* Form item for the supplier name */}
         <Form.Item label="Name">
           <Input
             placeholder="John T"
@@ -59,6 +62,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the company name */}
         <Form.Item label="Company Name">
           <Input
             placeholder="Mulberry Homes"
@@ -67,6 +71,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the phone number */}
         <Form.Item label="Phone Number">
           <Input
             placeholder="09999999999"
@@ -76,6 +81,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the contact email */}
         <Form.Item label="Contact Email">
           <Input
             type="email"
@@ -85,6 +91,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the address */}
         <Form.Item label="Address">
           <Input
             placeholder="Jarrom st, Leicester"

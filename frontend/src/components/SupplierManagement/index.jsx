@@ -25,11 +25,12 @@ function SupplierManagement() {
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [messageApi, messageHolder] = message.useMessage();
 
-  // add supplier
+  // Function to show add supplier modal
   const showModal = () => {
     setIsModalVisible(true);
   };
 
+  // Function to handle add supplier
   const handleOk = () => {
     messageApi.open({
       type: 'success',
@@ -39,16 +40,18 @@ function SupplierManagement() {
     setIsModalVisible(false);
   };
 
+  // Function to handle cancel add supplier
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  // edit modal
+  // Function to handle show edit modal
   const showEditModal = (supplier) => {
     setSelectedSupplier(supplier);
     setIsEditModalVisible(true);
   };
 
+  // Function to handle edit modal update button
   const handleEditOk = () => {
     messageApi.open({
       type: 'success',
@@ -58,6 +61,7 @@ function SupplierManagement() {
     setIsEditModalVisible(false);
   };
 
+  // Function to handle edit supplier cancel
   const handleEditCancel = () => {
     setIsEditModalVisible(false);
   };
@@ -67,7 +71,6 @@ function SupplierManagement() {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // render: (text) => <a>{`/venture/${venture.venture_id}`}</a>,
     },
     {
       title: "Company Name",
@@ -93,6 +96,7 @@ function SupplierManagement() {
       title: "Action",
       key: "action",
       render: (_, record) =>
+        // Action buttons view for edit and delete the supplier
         record?.venture_id ? (
           <Space size="middle">
             <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={(value) => {addFeedback(record?.supplier_id, value)}} value={record?.feedback} />
@@ -122,6 +126,7 @@ function SupplierManagement() {
     }
   ];
 
+  // Function to delete the supplier
   const deleteSupplier = async (id) => {
     if (id) {
       const { data, error } = await supabase
@@ -155,6 +160,7 @@ function SupplierManagement() {
     }
   };
 
+  // Function to add feedback to the supplier
   const addFeedback = async (id, feedback) => {
     if (!feedback) return;
     try {

@@ -44,6 +44,7 @@ const FeatureManagement = () => {
   useEffect(() => {
     if (!ventureId) return;
 
+    // Function to fetch venture based on venture_id
     const fetchVenture = async () => {
       try {
         const response = await axiosInstance.get(`/ventures/${ventureId}`);
@@ -60,6 +61,7 @@ const FeatureManagement = () => {
   useEffect(() => {
     if (!Object.keys(features)?.length || !defaultValues?.length) return;
 
+    // Creating linkedfeatures data by using map to link choices and extras
     const _linkedFeatures = defaultValues.map((property) => {
       return {
         ...property,
@@ -70,50 +72,56 @@ const FeatureManagement = () => {
     setLinkedFeatures(_linkedFeatures);
   }, [defaultValues, features]);
 
-  // add modal
+  // Function to show add modal
   const showModal = () => {
     setIsModalVisible(true);
   };
 
+  // Function to handle add button in add modal
   const handleOk = () => {
     fetchFeatures();
     setIsModalVisible(false);
   };
 
+  // Function to handle add modal cancel button
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  // edit modal
+  // Function to handle edit modal
   const showEditModal = (feature) => {
     setSelectedFeature(feature);
     setIsEditModalVisible(true);
   };
 
+  // Function to handle edit modal update button
   const handleEditOk = () => {
     fetchFeatures();
     setIsEditModalVisible(false);
   };
 
+  // Function to handle edit modal cancel button
   const handleEditCancel = () => {
     setIsEditModalVisible(false);
   };
 
-  // link modal
+  // Function to show link modal
   const showLinkModal = () => {
     setIsLinkModalVisible(true);
   };
 
+  // Function to handle link button in link modal
   const handleLinkOk = () => {
     fetchFeatures();
     setIsLinkModalVisible(false);
   };
 
+  // Function to handle cancel button in link modal
   const handleLinkCancel = () => {
     setIsLinkModalVisible(false);
   };
 
-  // delete modal
+  // Function to delete feature from linked items list
   const deleteFeature = async (id) => {
     if (id) {
       const { data, error } = await supabase
@@ -225,6 +233,7 @@ const FeatureManagement = () => {
 
   return (
     <div>
+      {/* Tabs template used from ant design */}
       <Tabs
         defaultActiveKey="1"
         items={[
@@ -263,6 +272,7 @@ const FeatureManagement = () => {
                   </Col>
                 </Row>
                 <div>
+                  {/* Link feaure modal  */}
                   {isLinkModalVisible && (
                     <LinkFeatureModal
                       isOpened={isLinkModalVisible}
@@ -272,6 +282,7 @@ const FeatureManagement = () => {
                       defaultValues={defaultValues}
                     />
                   )}
+                  {/* Add feature modal */}
                   {isModalVisible && (
                     <AddFeatureModal
                       isOpened={isModalVisible}
@@ -279,6 +290,7 @@ const FeatureManagement = () => {
                       handleCancel={handleCancel}
                     />
                   )}
+                  {/* Edit feature modal */}
                   {isEditModalVisible && (
                     <EditFeatureModal
                       feature={selectedFeature}
@@ -289,9 +301,11 @@ const FeatureManagement = () => {
                   )}
                 </div>
                 <div>
+                  {/* Text to diaplay when no features exist */}
                   {Object.keys(features).length === 0 && (
                     <p>No Features exist !</p>
                   )}
+                  {/* Feature will be displayed in Table template of ant design */}
                   {Object.keys(features).length > 0 && (
                     <Table
                       columns={featuresColumns}
@@ -308,6 +322,7 @@ const FeatureManagement = () => {
             disabled: !Boolean(linkedFeatures.length),
             children: (
               <>
+                {/* Display of linked features in Table template of Ant design */}
                 {linkedFeatures?.map((value, index) => (
                   <div key={index}>
                     <h3 style={{margin: "12px 0 0 12px"}}>{value.label}</h3>

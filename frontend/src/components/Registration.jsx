@@ -33,8 +33,8 @@ const Registration = () => {
 
   const navigate = useNavigate();
 
-  const handleRegister = async (event) => {
-    // event.preventDefault();
+  // Function to handle register button click
+  const handleRegister = async () => {
     setLoading(true);
 
     try {
@@ -56,12 +56,14 @@ const Registration = () => {
   };
 
   return (
+    // Register page render view with ant design Form template
     <div className="page-background">
       <Form onFinish={handleRegister} {...layout} className="form-border">
         <div className="center-align">
           <img src={logo} alt="Logo"></img>
         </div>
         <h2 className="form-title">Register</h2>
+        {/* Form item for the name with validation */}
         <Form.Item label="Name" name="name" className="minwidth">
           <Input
             type="text"
@@ -71,6 +73,7 @@ const Registration = () => {
             required
           ></Input>
         </Form.Item>
+        {/* Form item for the email address with validation */}
         <Form.Item label="Email" name="email" className="minwidth">
           <Input
             type="email"
@@ -80,6 +83,7 @@ const Registration = () => {
             required
           ></Input>
         </Form.Item>
+        {/* Form item for the password with validation to accept 6 characters minimum with alphabets and numbers */}
         <Form.Item label="Password" name="password" className="minwidth">
           <Input.Password
             placeholder="a-zA-Z0-9(Minimum 6)"
@@ -88,6 +92,7 @@ const Registration = () => {
             required
           ></Input.Password>
         </Form.Item>
+        {/* Form item for the company name with validation */}
         <Form.Item label="Company Name" name="companyName" className="minwidth">
           <Input
             type="text"
@@ -97,6 +102,7 @@ const Registration = () => {
             required
           ></Input>
         </Form.Item>
+        {/* Form item for the phone number with validation */}
         <Form.Item
           label="Phone Number"
           name="phoneNumber"
@@ -111,6 +117,7 @@ const Registration = () => {
             required
           ></Input>
         </Form.Item>
+        {/* Form item for the address with validation */}
         <Form.Item label="Address" name="address" className="minwidth">
           <Input
             type="text"
@@ -120,6 +127,7 @@ const Registration = () => {
             required
           ></Input>
         </Form.Item>
+        {/* Form item for the user type with validation */}
         <Form.Item label="User Type" name="usertype">
           <Radio.Group
             value={userType}

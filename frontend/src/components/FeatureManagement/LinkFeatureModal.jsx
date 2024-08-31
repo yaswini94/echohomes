@@ -16,6 +16,7 @@ const LinkFeatureModal = ({
 
   const [types, setTypes] = useState(defaultValues);
 
+  // Function to handle change in the linking
   const handleChange = (values, key, type) => {
     const _types = types.map((_type) => {
       if (_type.key === key) {
@@ -26,6 +27,7 @@ const LinkFeatureModal = ({
     setTypes(_types);
   };
 
+  // Function to handle link feature
   const handleLinkFeature = async () => {
     let updatedProperties = properties?.map((prop) => {
       const additional = types.find((item) => item.key === prop.key);
@@ -38,6 +40,7 @@ const LinkFeatureModal = ({
     setLoading(true);
 
     try {
+      // Post API to update venture with properties
       await axiosInstance.post("/updateVenture", {
         properties: updatedProperties,
         ventureId: ventureId,
@@ -49,6 +52,7 @@ const LinkFeatureModal = ({
     handleOk();
   };
 
+  // Function to featch venture information
   const fetchVentureInfo = async () => {
     const _ventureId = ventureId;
     try {
@@ -63,6 +67,7 @@ const LinkFeatureModal = ({
   }, [isOpened]);
 
   return (
+    // Modal template from Ant design used to link features
     <Modal
       title="Link Features"
       open={isOpened}

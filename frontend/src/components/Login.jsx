@@ -5,8 +5,6 @@ import { supabase } from "../supabase";
 import logo from "../assets/echohomes.png";
 import "./Forms.css";
 import axiosInstance from "../helpers/axiosInstance";
-// import axios from "axios";
-// const serviceRoleKey = import.meta.env.VITE_SERVICE_ROLE_KEY;
 
 const layout = {
   labelCol: {
@@ -31,6 +29,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
+  // Function to handle login 
   const handleLogin = async (event) => {
     setLoading(true);
     try {
@@ -88,6 +87,7 @@ const Login = () => {
           <img src={logo} alt="Logo"></img>
         </div>
         <h2 className="form-title">Login</h2>
+        {/* Form item for email */}
         <Form.Item label="Email" name="email" className="minwidth">
           <Input
             type="email"
@@ -97,6 +97,7 @@ const Login = () => {
             required
           ></Input>
         </Form.Item>
+        {/* Form item for password */}
         <Form.Item label="Password" name="password" className="minwidth">
           <Input.Password
             placeholder="a-zA-Z0-9(Minimum 6)"
@@ -115,6 +116,7 @@ const Login = () => {
             </span>
           )}
         </div> */}
+        {/* Form item for login button */}
         <Form.Item {...tailLayout}>
           <Button block type="primary" htmlType="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

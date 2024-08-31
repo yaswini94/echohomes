@@ -88,6 +88,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
     >
       {/* Form template from the Ant design components to get buyer data */}
       <Form layout="vertical">
+        {/* Form item for the buyer name */}
         <Form.Item label="Name">
           <Input
             placeholder="John T"
@@ -96,7 +97,8 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
-        <Form.Item label="Phone Number">
+        {/* Form item for the phone number */}
+        <Form.Item label="Phone Number" rules={[{ pattern: /^\d{10,11}$/, message: "0-9(10 to 11 digits)" }]}>
           <Input
             type="tel"
             placeholder="09999999999"
@@ -105,6 +107,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the contact email */}
         <Form.Item label="Contact Email">
           <Input
             type="email"
@@ -114,6 +117,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the address */}
         <Form.Item label="Address">
           <Input
             placeholder="Jarrom st, Leicester"
@@ -122,6 +126,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the house type */}
         <Form.Item label="House Type">
           <Dropdown
             menu={{

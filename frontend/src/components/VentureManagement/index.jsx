@@ -23,11 +23,12 @@ function VentureManagement() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [messageApi, messageHolder] = message.useMessage();
 
-  // add modal
+  // Function to show add venture modal
   const showModal = () => {
     setIsModalVisible(true);
   };
 
+  // Function to handle add venture
   const handleOk = () => {
     messageApi.open({
       type: 'success',
@@ -36,16 +37,19 @@ function VentureManagement() {
     fetchVentures();
     setIsModalVisible(false);
   };
+  
+  // Function to handle cancel add venture
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  // edit modal
+  // Function to handle show edit modal
   const showEditModal = (venture) => {
     setSelectedVenture(venture);
     setIsEditModalVisible(true);
   };
 
+  // Function to handle update venture button
   const handleEditOk = () => {
     messageApi.open({
       type: 'success',
@@ -56,11 +60,13 @@ function VentureManagement() {
     setIsEditModalVisible(false);
   };
 
+  // Function to handle cancel update venture
   const handleEditCancel = () => {
     setSelectedVenture(null);
     setIsEditModalVisible(false);
   };
 
+  // Function to handle delete venture
   const deleteVenture = async (id) => {
     if (!id) {
       return;

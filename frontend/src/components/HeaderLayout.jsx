@@ -38,14 +38,15 @@ const HeaderLayout = () => {
   const [font, setFont] = useState("");
   const [fontSize, setFontSize] = useState();
   const [theme, setTheme] = useState("");
+  const [ventureId, setVentureId] = useLocalStorage("selectedVenture", null);
 
+  // Function to handle language change for globalisation
   const onLanguageChange = (value) => {
     setLanguage(value);
     localStorage.setItem("language", value);
   };
 
-  const [ventureId, setVentureId] = useLocalStorage("selectedVenture", null);
-
+  // Function to handle fetch user settings
   const fetchUserSettings = async (role) => {
     if (role) {
       try {
@@ -61,6 +62,7 @@ const HeaderLayout = () => {
   };
 
   useEffect(() => {
+    // Function to handle fetch ventures
     const fetchVentures = async () => {
       try {
         const response = await axiosInstance.get("/ventures");
@@ -81,21 +83,28 @@ const HeaderLayout = () => {
     fetchUserSettings(role);
   }, [role]);
 
+  // Function to handle venture change
   const onSelectVenture = (value) => {
     setVentureId(value);
   };
 
+  // Function to handle show settings modal
   const showModal = () => {
     setIsModalVisible(true);
   };
+
+  // Function to handle save settings button
   const handleOk = () => {
     saveSettings(settings);
     setIsModalVisible(false);
   };
+
+  // Function to handle cancel updating settings
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
+  // Function to handle select option change dynamically
   const handleChange = (key, value) => {
     switch (key) {
       case "font":
@@ -148,6 +157,7 @@ const HeaderLayout = () => {
     },
   ];
 
+  // Function to hanlde the formating of settings object
   const fillSettings = (settings) => {
     let data = { ...settings };
     if (Object.keys(settings).length < 3) {
@@ -164,6 +174,7 @@ const HeaderLayout = () => {
     return data;
   };
 
+  // Function to handle save settings dynamically based on role
   const saveSettings = async (settings) => {
     setLoading(true);
     let _settings = fillSettings(settings);
@@ -196,6 +207,7 @@ const HeaderLayout = () => {
   };
 
   return (
+    // Header template from ant design for the header view
     <Header
       style={{
         display: "flex",
@@ -209,6 +221,7 @@ const HeaderLayout = () => {
         <img src={titleLogo} alt="Title Logo" style={{ height: "32px" }} />
       </div>
       <div>
+        {/* Modal template from ant design for the settings modal */}
         <Modal
           title="Settings"
           open={isModalVisible}
@@ -229,6 +242,7 @@ const HeaderLayout = () => {
           ]}
         >
           <Form layout="vertical">
+            {/* Form item for the font */}
             <Form.Item label="Font">
               <Select
                 defaultValue={font}
@@ -241,6 +255,7 @@ const HeaderLayout = () => {
                 <Option value="Courier New">Courier New</Option>
               </Select>
             </Form.Item>
+            {/* Form item for the theme */}
             <Form.Item label="Theme">
               <Select
                 defaultValue={theme}
@@ -251,6 +266,7 @@ const HeaderLayout = () => {
                 <Option value="dark">Dark</Option>
               </Select>
             </Form.Item>
+            {/* Form item for the font size */}
             <Form.Item label="Font Size">
               <InputNumber
                 defaultValue={fontSize}
@@ -265,6 +281,7 @@ const HeaderLayout = () => {
         </Modal>
       </div>
       <div>
+        {/* Switch venture for the builder */}
         {role === userRoles.BUILDERS && (
           <Select
             value={ventureId}
@@ -278,6 +295,7 @@ const HeaderLayout = () => {
             options={ventures}
           />
         )}
+        {/* Language change for the globalisation */}
         <Select
           key="language"
           style={{ width: "auto", minWidth: "80px", marginRight: "24px" }}

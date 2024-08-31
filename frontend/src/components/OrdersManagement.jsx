@@ -32,6 +32,7 @@ const OrdersManagement = () => {
   const [supplierOrders, setSupplierOrders] = useState([]);
   const [expandedRowId, setExpandedRowId] = useState(null);
 
+  // Function to handle builder orders to suppliers
   const handleSupplierOrder = async () => {
     const _orders = orderSuggestionsTableData.map((order) => ({
       feature_id: order.feature_id,
@@ -81,6 +82,7 @@ const OrdersManagement = () => {
     }
   };
 
+  // Function to handle fetch supplier orders
   const fetchSupplierOrders = async () => {
     try {
       const response = await axiosInstance.get(
@@ -104,6 +106,7 @@ const OrdersManagement = () => {
     }
   };
 
+  // Function to handle fetch suppliers
   const fetchSuppliers = async () => {
     try {
       const response = await axiosInstance.get("/suppliers");
@@ -120,6 +123,7 @@ const OrdersManagement = () => {
     fetchSupplierOrders();
   }, []);
 
+  // Columns to display in buyer orders table
   const ordersColumns = [
     {
       title: "Name",
@@ -158,12 +162,14 @@ const OrdersManagement = () => {
       },
     },
   ];
+  
+  // Columns to display in supplier orders table
   const supplierOrdersColumns = [
     {
       title: "Supplier Name",
       key: "supplier name",
       render: (_, record) => {
-        console.log(record?.supplier?.name);
+        `record?.supplier?.name`
         return record?.supplier?.name;
       },
     },
@@ -188,6 +194,8 @@ const OrdersManagement = () => {
       },
     },
   ];
+  
+  // Columns to display in suggested orders
   const orderSuggestionsColumns = [
     {
       title: "Name",
@@ -232,6 +240,7 @@ const OrdersManagement = () => {
     },
   ];
 
+  // Function to hanlde fetch orders
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get(
@@ -243,6 +252,7 @@ const OrdersManagement = () => {
     }
   };
 
+  // Function to handle fetch features
   const fetchFeatures = async () => {
     try {
       const response = await axiosInstance.get("/features");
@@ -261,6 +271,7 @@ const OrdersManagement = () => {
     fetchOrders();
   }, []);
 
+  // Function to handle toggle suggestions
   const toggleSuggestions = () => {
     if (showSuggestions) {
       setShowSuggestions(false);
@@ -313,6 +324,7 @@ const OrdersManagement = () => {
     setOrderSuggestionsTableData(_suggestions);
   }, [orders]);
 
+  // Function to handle expanded row rendering
   const expandedRowRender = (record) => {
     const expandColumns = [
       { title: "Item Name", dataIndex: "name", key: "name" },
@@ -336,6 +348,7 @@ const OrdersManagement = () => {
     ];
 
     return (
+      // Table template from ant design for view
       <Table
         columns={expandColumns}
         dataSource={record?.orders_list}
@@ -355,6 +368,7 @@ const OrdersManagement = () => {
 
   return (
     <div>
+      {/* Tabs template from ant design for the view */}
       <Tabs
         defaultActiveKey="1"
         items={[
@@ -363,6 +377,7 @@ const OrdersManagement = () => {
             key: "1",
             children: (
               <>
+                {/* Buyer orders view to render */}
                 <Row justify="space-between" align="middle">
                   <Col>
                     <h3>Buyer Orders</h3>
@@ -446,6 +461,7 @@ const OrdersManagement = () => {
             key: "2",
             children: (
               <>
+                {/* Supplier orders view to render */}
                 <div>
                   <h3>Supplier Orders</h3>
                   {supplierOrders.length === 0 && (

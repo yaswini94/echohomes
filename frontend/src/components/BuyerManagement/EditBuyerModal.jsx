@@ -76,6 +76,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
     >
       {/* Form template from the Ant design components to update details */}
       <Form layout="vertical">
+        {/* Form item for the buyer name */}
         <Form.Item label="Name">
           <Input
             placeholder="John T"
@@ -84,6 +85,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the phone number */}
         <Form.Item label="Phone Number">
           <Input
             type="tel"
@@ -93,6 +95,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the contact email */}
         <Form.Item label="Contact Email">
           <Input
             type="email"
@@ -102,6 +105,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the address */}
         <Form.Item label="Address">
           <Input
             placeholder="Jarrom st, Leicester"
@@ -110,6 +114,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the house type */}
         <Form.Item label="House Type">
           <Dropdown
             menu={{

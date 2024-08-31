@@ -52,6 +52,7 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
       ]}
     >
       <Form layout="vertical">
+        {/* Form item for the feature name */}
         <Form.Item label="Name">
           <Input
             placeholder="Name"
@@ -60,6 +61,7 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the details */}
         <Form.Item label="Details">
           <Input
             placeholder="Details"
@@ -68,6 +70,7 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the price */}
         <Form.Item label="Price">
           <Input
             placeholder="Price"

@@ -3,6 +3,7 @@ import { Col, Row, Statistic, Card, Rate } from "antd";
 
 const SupplierDashboard = () => {
   return (
+    // Supplier dashboard view to render using ant design templates for view
     <div>
       <Row gutter={24}>
         <Col span={12}>

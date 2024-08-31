@@ -16,6 +16,7 @@ const BuyerDashboard = () => {
   });
   const { user } = useAuth();
 
+  // Function to fetch builder based on id
   const fetchBuilder = async (id) => {
     try {
       const response = await axiosInstance.get(`/builders/${id}`);
@@ -25,6 +26,7 @@ const BuyerDashboard = () => {
     }
   };
 
+  // Function to handle fetch venture based on id
   const fetchVenture = async (id) => {
     try {
       const response = await axiosInstance.get(`/ventures/${id}`);
@@ -35,6 +37,7 @@ const BuyerDashboard = () => {
     }
   };
 
+  // Function to handle add feedback to builder
   const addFeedback = async (value) => {
     try {
       await axiosInstance.post("/updateBuyer", {
@@ -47,6 +50,7 @@ const BuyerDashboard = () => {
     }
   };
 
+  // Function to handle dashboard data
   const fetchDashboardData = (buyer) => {
     setDashboardData({ completed: 0, inprogress: 0, pending: 0 });
 
@@ -82,6 +86,7 @@ const BuyerDashboard = () => {
     });
   };
 
+  // Function to handle fetch buyer
   const fetchBuyer = async () => {
     try {
       const response = await axiosInstance.get(`/buyers/${user.id}`);
@@ -96,6 +101,7 @@ const BuyerDashboard = () => {
   useEffect(() => {
     fetchBuyer();
   }, []);
+
   return (
     <div>
       <Row gutter={24}>

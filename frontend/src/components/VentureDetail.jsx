@@ -8,7 +8,7 @@ function VentureDetail() {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
-  // Function to load ventures from Supabase
+  // Function to handle fetch ventures
   const fetchVenture = async () => {
     setLoading(true);
 

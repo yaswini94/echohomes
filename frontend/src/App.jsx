@@ -46,6 +46,7 @@ const AppLayout = ({ children }) => {
   }
 
   return (
+    // Ant design templates used to render view
     <Layout className="mainLayout">
       <HeaderLayout />
       <Layout>

@@ -12,6 +12,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
   const [email, setEmail] = useState("");
   const [ventureId] = useLocalStorage("selectedVenture", null);
 
+  // Function to add supplier
   const addSupplier = async () => {
     setLoading(true);
 
@@ -33,6 +34,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
   };
 
   return (
+    // Modal template from ant design to create view
     <Modal
       title="Add New Supplier"
       open={isOpened}
@@ -53,6 +55,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
       ]}
     >
       <Form layout="vertical">
+        {/* Form item for the supplier name */}
         <Form.Item label="Name">
           <Input
             placeholder="John T"
@@ -60,6 +63,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the company name */}
         <Form.Item label="Company Name">
           <Input
             placeholder="Mulberry Homes"
@@ -67,6 +71,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the phone number */}
         <Form.Item label="Phone Number">
           <Input
             placeholder="09999999999"
@@ -75,6 +80,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the contact email */}
         <Form.Item label="Contact Email">
           <Input
             type="email"
@@ -83,6 +89,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the address */}
         <Form.Item label="Address">
           <Input
             placeholder="Jarrom st, Leicester"

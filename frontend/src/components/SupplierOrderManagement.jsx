@@ -10,6 +10,7 @@ import axiosInstance from "../helpers/axiosInstance";
 const SupplierOrderManagement = () => {
   const [supplierOrders, setSupplierOrders] = useState([]);
 
+  // Function to handle fetch order
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get(`/supplier-orders`);
@@ -25,6 +26,7 @@ const SupplierOrderManagement = () => {
     fetchOrders();
   }, []);
 
+  // Columns to display in supplierorders table
   const orderColumns = [
     { title: "Item Name", dataIndex: "name", key: "name" },
     {
@@ -64,6 +66,7 @@ const SupplierOrderManagement = () => {
   ];
 
   return (
+    // Supplier orders view to render
     <div>
       <h3>Orders</h3>
       {supplierOrders.length === 0 && <p>No Orders exist !</p>}

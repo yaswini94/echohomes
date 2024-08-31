@@ -8,7 +8,6 @@ const ComparisionTool = () => {
   const [buyer, setBuyer] = useState(null);
   const [venture, setVenture] = useState(null);
   const [allFeatures, setAllFeatures] = useState(null);
-  // const [selectedFeatures, setSelectedFeatures] = useState(null);
   const [configuration, setConfiguration] = useState(null);
   const [selectedChoices, setSelectedChoices] = useState([]);
   const [selectedExtras, setSelectedExtras] = useState([]);
@@ -17,10 +16,12 @@ const ComparisionTool = () => {
   const [selectedExtras1, setSelectedExtras1] = useState([]);
   const [quantityMap1, setQuantityMap1] = useState({});
 
+  // Function to handle 1st set choice selection change
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
   };
 
+  // Function to handle 1st set extras selection change
   const onSelectExtrasChange = (newSelectedRowKeys) => {
     setSelectedExtras(newSelectedRowKeys);
     const _newQty = {};
@@ -46,10 +47,12 @@ const ComparisionTool = () => {
     onChange: onSelectExtrasChange,
   };
 
+  // Function to handle second set choice change
   const onSelectChoiceChange1 = (newSelectedRowKeys) => {
     setSelectedChoices1(newSelectedRowKeys);
   };
 
+  // Function to handle second set extaras change
   const onSelectExtrasChange1 = (newSelectedRowKeys) => {
     setSelectedExtras1(newSelectedRowKeys);
     const _newQty = {};
@@ -75,6 +78,7 @@ const ComparisionTool = () => {
     onChange: onSelectExtrasChange1,
   };
 
+  // Second set extras table columns list
   const extrasColumns1 = [
     {
       title: "Name",
@@ -136,6 +140,7 @@ const ComparisionTool = () => {
     },
   ];
 
+  // Choice table columns list
   const choicesColumns = [
     {
       title: "Name",
@@ -164,6 +169,7 @@ const ComparisionTool = () => {
     },
   ];
 
+  // 1st set extras table columns list
   const extrasColumns = [
     {
       title: "Name",
@@ -226,6 +232,7 @@ const ComparisionTool = () => {
   ];
 
   useEffect(() => {
+    // Function to fetch features
     const fetchFeatures = async () => {
       try {
         const response = await axiosInstance.get("/features");
@@ -242,49 +249,50 @@ const ComparisionTool = () => {
     fetchFeatures();
   }, []);
 
-  const fetchBuyer = async () => {
-    try {
-      const response = await axiosInstance.get(`/buyers/${user.id}`);
-      const data = response.data;
-      setBuyer(data);
-      // const _features = data?.features || null;
-      // setSelectedFeatures(_features);
-
-      // if (Object.keys(_features || {})?.length === 0) return;
-
-      // const _selectedChoices = Object.keys(_features?.choices || {});
-      // const _selectedExtras = Object.keys(_features?.extras || {});
-
-      // setSelectedChoices(_selectedChoices);
-      // setSelectedExtras(_selectedExtras);
-
-      // const _qtyMapExtras = Object.keys(_features?.extras || {}).reduce(
-      //   (acc, extra) => {
-      //     acc[`extras_${extra}`] = _features?.extras[extra].quantity;
-      //     return acc;
-      //   },
-      //   {}
-      // );
-
-      // const _qtyMapChoices = Object.keys(_features?.choices || {}).reduce(
-      //   (acc, choice) => {
-      //     acc[`choice_${choice}`] = _features?.choices[choice].quantity;
-      //     return acc;
-      //   },
-      //   {}
-      // );
-
-      // setQuantityMap({
-      //   ..._qtyMapExtras,
-      //   ..._qtyMapChoices,
-      // });
-    } catch (error) {
-      console.log("Error fetching ventures:", error);
-    }
-  };
-
   useEffect(() => {
     if (!user?.id) return;
+
+    // Function to fetch buyer
+    const fetchBuyer = async () => {
+      try {
+        const response = await axiosInstance.get(`/buyers/${user.id}`);
+        const data = response.data;
+        setBuyer(data);
+        // const _features = data?.features || null;
+        // setSelectedFeatures(_features);
+  
+        // if (Object.keys(_features || {})?.length === 0) return;
+  
+        // const _selectedChoices = Object.keys(_features?.choices || {});
+        // const _selectedExtras = Object.keys(_features?.extras || {});
+  
+        // setSelectedChoices(_selectedChoices);
+        // setSelectedExtras(_selectedExtras);
+  
+        // const _qtyMapExtras = Object.keys(_features?.extras || {}).reduce(
+        //   (acc, extra) => {
+        //     acc[`extras_${extra}`] = _features?.extras[extra].quantity;
+        //     return acc;
+        //   },
+        //   {}
+        // );
+  
+        // const _qtyMapChoices = Object.keys(_features?.choices || {}).reduce(
+        //   (acc, choice) => {
+        //     acc[`choice_${choice}`] = _features?.choices[choice].quantity;
+        //     return acc;
+        //   },
+        //   {}
+        // );
+  
+        // setQuantityMap({
+        //   ..._qtyMapExtras,
+        //   ..._qtyMapChoices,
+        // });
+      } catch (error) {
+        console.log("Error fetching ventures:", error);
+      }
+    };
 
     fetchBuyer();
   }, [user.id]);
@@ -292,6 +300,7 @@ const ComparisionTool = () => {
   useEffect(() => {
     if (!buyer?.buyer_id) return;
 
+    // Function to handle fetch venture
     const fetchVenture = async () => {
       try {
         const response = await axiosInstance.get(
@@ -311,6 +320,7 @@ const ComparisionTool = () => {
     fetchVenture();
   }, [buyer?.buyer_id]);
 
+  // Function to handle 1st set selected extras price
   const getSelectedPrice = () => {
     if (!allFeatures) return 0;
 
@@ -320,6 +330,8 @@ const ComparisionTool = () => {
       );
     }, 0);
   };
+  
+  // Function to handle second set selected extras price
   const getSelectedPrice1 = () => {
     if (!allFeatures) return 0;
 
