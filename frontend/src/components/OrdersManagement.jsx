@@ -31,6 +31,7 @@ const OrdersManagement = () => {
   const [selectedSupplierId, setSelectedSupplierId] = useState(null);
   const [supplierOrders, setSupplierOrders] = useState([]);
   const [expandedRowId, setExpandedRowId] = useState(null);
+  const [paymentSession, setPaymentSession] = useState(null);
 
   // Function to handle builder orders to suppliers
   const handleSupplierOrder = async () => {
@@ -67,7 +68,7 @@ const OrdersManagement = () => {
         orders_list: _orders,
         total: _total,
         stripe_session_id: id,
-        builder_id: user?.id
+        builder_id: user?.id,
       });
 
       const result = await stripe.redirectToCheckout({
@@ -85,9 +86,7 @@ const OrdersManagement = () => {
   // Function to handle fetch supplier orders
   const fetchSupplierOrders = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/supplier-orders/${ventureId}`
-      );
+      const response = await axiosInstance.get(`/supplier-orders/${ventureId}`);
       const _supplierOrders = response.data.map((order) => {
         order.supplier = suppliers.find(
           (supplier) => supplier.supplier_id === order.supplier_id
@@ -100,7 +99,7 @@ const OrdersManagement = () => {
         }, 0);
         return order;
       });
-      setSupplierOrders(_supplierOrders);
+      fetchStripeSession(_supplierOrders);
     } catch (error) {
       console.error("Error fetching supplier orders:", error);
     }
@@ -122,6 +121,19 @@ const OrdersManagement = () => {
     fetchSuppliers();
     fetchSupplierOrders();
   }, []);
+
+  // Function to handle process payment
+  const processPayment = async (id) => {
+    const stripe = await loadStripe(stripePublishableKey);
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: id,
+    });
+
+    if (result.error) {
+      console.log("Error redirecting to checkout:", result.error.message);
+    }
+  };
 
   // Columns to display in buyer orders table
   const ordersColumns = [
@@ -161,15 +173,26 @@ const OrdersManagement = () => {
         return <Space direction="vertical">In Stock</Space>;
       },
     },
+    {
+      title: "Supplier Order Status",
+      key: "supplier order status",
+      render: (_, record) => {
+        if (supplierOrders.length > 0) {
+          return <p>Ordered from supplier</p>;
+        }
+
+        return <p>Not Ordered</p>;
+      },
+    },
   ];
-  
+
   // Columns to display in supplier orders table
   const supplierOrdersColumns = [
     {
       title: "Supplier Name",
       key: "supplier name",
       render: (_, record) => {
-        `record?.supplier?.name`
+        `record?.supplier?.name`;
         return record?.supplier?.name;
       },
     },
@@ -193,8 +216,32 @@ const OrdersManagement = () => {
         }
       },
     },
+    {
+      title: "Payment Status",
+      key: "payment status",
+      render: (_, record) => {
+        switch (record?.stripe_session?.payment_status) {
+          case "paid":
+            return <Tag color="success">Paid</Tag>;
+          case "unpaid":
+            return (
+              <div>
+                <Tag color="error">Unpaid</Tag>
+                <Button
+                  type="primary"
+                  onClick={() => processPayment(record.stripe_session_id)}
+                >
+                  Pay Now
+                </Button>
+              </div>
+            );
+          default:
+            return null;
+        }
+      },
+    },
   ];
-  
+
   // Columns to display in suggested orders
   const orderSuggestionsColumns = [
     {
@@ -264,6 +311,26 @@ const OrdersManagement = () => {
     } catch (error) {
       console.log("Error fetching features:", error);
     }
+  };
+
+  const fetchStripeSession = async (orders) => {
+    // for each order make an api call to /get-stripe-session and add the session to the order and return the orders
+    const _orders = await Promise.all(
+      orders.map(async (order) => {
+        try {
+          const response = await axiosInstance.post(`/get-stripe-session`, {
+            stripe_session_id: order.stripe_session_id,
+          });
+          order.stripe_session = response.data;
+          return order;
+        } catch (error) {
+          console.error("Error fetching stripe session:", error);
+          return order;
+        }
+      })
+    );
+
+    setSupplierOrders(_orders);
   };
 
   useEffect(() => {
@@ -383,15 +450,16 @@ const OrdersManagement = () => {
                     <h3>Buyer Orders</h3>
                   </Col>
                   <Col>
-                    {showSuggestions ? (
-                      <Button type="primary" onClick={toggleSuggestions}>
-                        Hide Suggested Orders
-                      </Button>
-                    ) : (
-                      <Button type="primary" onClick={toggleSuggestions}>
-                        Show Suggested Orders
-                      </Button>
-                    )}
+                    {supplierOrders.length === 0 &&
+                      (showSuggestions ? (
+                        <Button type="primary" onClick={toggleSuggestions}>
+                          Hide Suggested Orders
+                        </Button>
+                      ) : (
+                        <Button type="primary" onClick={toggleSuggestions}>
+                          Show Suggested Orders
+                        </Button>
+                      ))}
                   </Col>
                 </Row>
                 <div>

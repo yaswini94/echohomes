@@ -19,7 +19,7 @@ app.use(
 );
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-// Setting API key for the sendgrid mail  
+// Setting API key for the sendgrid mail
 sgMail.setApiKey(process.env.SENDGRIDAPI_KEY);
 
 const supabase = createClient(
@@ -150,53 +150,115 @@ app.post("/register", async (req, res) => {
 app.post("/create-checkout-session", async (req, res) => {
   const { features, buyer_id } = req.body;
 
-  const line_items = Object.keys(features.choices).map((choice) => {
-    return {
-      price_data: {
-        currency: "gbp",
-        product_data: {
-          name: features.choices[choice].name,
-          metadata: {
-            feature_id: features.extras[choice].id,
-            type: "choice",
-          },
-        },
-        unit_amount: features.choices[choice].price * 100,
-      },
-      quantity: features.choices[choice].quantity,
-    };
-  });
+  try {
+    // Fetch the user from your database using email or user ID
+    const { data: user, error: userError } = await supabase
+      .from("buyers")
+      .select("buyer_id, contact_email, stripe_customer_id")
+      .eq("buyer_id", buyer_id)
+      .single();
 
-  Object.keys(features.extras).forEach((extra) => {
-    line_items.push({
-      price_data: {
-        currency: "gbp",
-        product_data: {
-          name: features.extras[extra].name,
-          metadata: {
-            feature_id: features.extras[extra].id,
-            type: "extras",
+    if (userError) {
+      console.error("Error fetching user:", userError.message);
+      return res.status(500).json({ error: userError.message });
+    }
+
+    let customerId;
+
+    if (user?.stripe_customer_id) {
+      // Use existing Stripe customer ID
+      customerId = user.stripe_customer_id;
+    } else {
+      // Create a new Stripe customer
+      const customer = await stripe.customers.create({
+        email: user.contact_email,
+      });
+      customerId = customer.id;
+
+      // Update your database with the new Stripe customer ID
+      const { error: updateError } = await supabase
+        .from("buyers")
+        .update({ stripe_customer_id: customerId })
+        .eq("buyer_id", buyer_id);
+
+      if (updateError) {
+        console.error(
+          "Error updating user with Stripe customer ID:",
+          updateError.message
+        );
+        return res.status(500).json({ error: updateError.message });
+      }
+    }
+
+    const line_items = Object.keys(features.choices).map((choice) => {
+      return {
+        price_data: {
+          currency: "gbp",
+          product_data: {
+            name: features.choices[choice].name,
+            metadata: {
+              feature_id: features.choices[choice].id,
+              type: "choice",
+            },
           },
+          unit_amount: features.choices[choice].price * 100,
         },
-        unit_amount: features.extras[extra].price * 100,
-      },
-      quantity: features.extras[extra].quantity,
+        quantity: features.choices[choice].quantity,
+      };
     });
-  });
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    line_items,
-    mode: "payment",
-    client_reference_id: buyer_id,
-    success_url: `${process.env.FRONTEND_URL}/buyer-configuration?status=success`,
-    cancel_url: `${process.env.FRONTEND_URL}/buyer-configuration?status=cancel`,
-  });
+    Object.keys(features.extras).forEach((extra) => {
+      line_items.push({
+        price_data: {
+          currency: "gbp",
+          product_data: {
+            name: features.extras[extra].name,
+            metadata: {
+              feature_id: features.extras[extra].id,
+              type: "extras",
+            },
+          },
+          unit_amount: features.extras[extra].price * 100,
+        },
+        quantity: features.extras[extra].quantity,
+      });
+    });
 
-  res.json({ id: session.id });
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items,
+      mode: "payment",
+      invoice_creation: {
+        enabled: true,
+      },
+      client_reference_id: buyer_id,
+      metadata: {
+        userId: buyer_id,
+      },
+      success_url: `${process.env.FRONTEND_URL}/buyer-configuration?status=success`,
+      cancel_url: `${process.env.FRONTEND_URL}/buyer-configuration?status=cancel`,
+    });
+
+    res.json({ id: session.id });
+  } catch (error) {
+    console.error("Error creating Checkout session:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// Post API to create builder/supplier checkout session 
+app.get("/get-invoice/:invoiceId", async (req, res) => {
+  const { invoiceId } = req.params;
+
+  try {
+    const invoice = await stripe.invoices.retrieve(invoiceId);
+    res.json({ pdfUrl: invoice.invoice_pdf });
+  } catch (error) {
+    console.error("Error retrieving invoice:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Post API to create builder/supplier checkout session
 app.post(
   "/create-builder-supplier-checkout-session",
   authenticateToken,
@@ -204,30 +266,80 @@ app.post(
     const { orders = [], supplier_id } = req.body;
     const builder = req.user;
 
-    const line_items = orders.map((order) => {
-      return {
-        price_data: {
-          currency: "gbp",
-          product_data: {
-            name: order.name,
+    try {
+      // Fetch the user from your database using email or user ID
+      const { data: user, error: userError } = await supabase
+        .from("builders")
+        .select("builder_id, contact_email, stripe_customer_id")
+        .eq("builder_id", builder.id)
+        .single();
+
+      if (userError) {
+        console.error("Error fetching user:", userError.message);
+        return res.status(500).json({ error: userError.message });
+      }
+
+      let customerId;
+
+      if (user?.stripe_customer_id) {
+        // Use existing Stripe customer ID
+        customerId = user.stripe_customer_id;
+      } else {
+        // Create a new Stripe customer
+        const customer = await stripe.customers.create({
+          email: user.contact_email,
+        });
+        customerId = customer.id;
+
+        // Update your database with the new Stripe customer ID
+        const { error: updateError } = await supabase
+          .from("builders")
+          .update({ stripe_customer_id: customerId })
+          .eq("builder_id", user.builder_id);
+
+        if (updateError) {
+          console.error(
+            "Error updating user with Stripe customer ID:",
+            updateError.message
+          );
+          return res.status(500).json({ error: updateError.message });
+        }
+      }
+
+      const line_items = orders.map((order) => {
+        return {
+          price_data: {
+            currency: "gbp",
+            product_data: {
+              name: order.name,
+            },
+            unit_amount: order.price * 100,
           },
-          unit_amount: order.price * 100,
+          quantity: order.quantity,
+        };
+      });
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items,
+        mode: "payment",
+        invoice_creation: {
+          enabled: true,
         },
-        quantity: order.quantity,
-      };
-    });
+        client_reference_id: `builder=${builder.id}__supplier=${supplier_id}`,
+        metadata: {
+          userId: `builder=${builder.id}__supplier=${supplier_id}`,
+        },
+        client_reference_id: `builder=${builder.id}__supplier=${supplier_id}`,
+        success_url: `${process.env.FRONTEND_URL}/orders?tab=suppliers&status=success`,
+        cancel_url: `${process.env.FRONTEND_URL}/orders?tab=suppliers&status=cancel`,
+      });
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items,
-      mode: "payment",
-      // client_reference_id: supplier_id,
-      client_reference_id: `builder=${builder.id}__supplier=${supplier_id}`,
-      success_url: `${process.env.FRONTEND_URL}/orders?tab=suppliers&status=success`,
-      cancel_url: `${process.env.FRONTEND_URL}/orders?tab=suppliers&status=cancel`,
-    });
-
-    res.json({ id: session.id });
+      res.json({ id: session.id });
+    } catch (error) {
+      console.error("Error creating Checkout session:", error);
+      res.status(500).json({ error: error.message });
+    }
   }
 );
 
@@ -417,7 +529,7 @@ app.get("/suppliers/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-// Get API to fetch buyers 
+// Get API to fetch buyers
 app.get("/buyers", authenticateToken, async (req, res) => {
   const ventureId = req.query.venture_id;
   const { data, error } = await supabase
@@ -571,8 +683,6 @@ app.post("/invite", authenticateToken, async (req, res) => {
     return res.status(400).json({ error: createdUserError.message });
   }
 
-  console.log({ createdUser: createdUser?.user?.id, builderId: user.id });
-
   // Insert data to the buyers table
   const { data, error } = await supabase.from("buyers").insert({
     buyer_id: createdUser?.user?.id,
@@ -631,7 +741,19 @@ app.post("/stripe-session", authenticateToken, async (req, res) => {
   res.json(session);
 });
 
-// Post APi to update the buyer 
+app.post("/get-stripe-session", authenticateToken, async (req, res) => {
+  const { stripe_session_id } = req.body;
+
+  if (!stripe_session_id) {
+    return res.status(404).json({ error: "Session not" });
+  }
+
+  const session = await stripe.checkout.sessions.retrieve(stripe_session_id);
+
+  res.json(session);
+});
+
+// Post API to update the buyer
 app.post("/updateBuyer", authenticateToken, async (req, res) => {
   const {
     name,

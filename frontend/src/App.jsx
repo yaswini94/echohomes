@@ -26,6 +26,7 @@ import BuyerConfiguration from "./components/BuyerConfiguration";
 import BudgetBasedSuggestions from "./components/BudgetBasedSuggestions";
 import SupplierOrderManagement from "./components/SupplierOrderManagement";
 import ComparisionTool from "./components/ComparisionTool";
+
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {

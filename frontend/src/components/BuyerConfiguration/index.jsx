@@ -3,6 +3,7 @@ import { Row, Col, Table, Button, InputNumber, Input } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
 import { loadStripe } from "@stripe/stripe-js";
+import InvoiceComponent from "../InvoiceComponent";
 
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
@@ -16,7 +17,7 @@ const BuyerConfiguration = () => {
   const [selectedChoices, setSelectedChoices] = useState([]);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [quantityMap, setQuantityMap] = useState({});
-  const [paymentStatus, setPaymentStatus] = useState();
+  const [paymentSession, setPaymentSession] = useState(null);
 
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
@@ -84,22 +85,23 @@ const BuyerConfiguration = () => {
       key: "notes",
       render: (_, record) => {
         // returns the input box for add notes
-        return (
-          (Boolean(!selectedFeatures) || selectedChoices.includes(record.key)) ? (
-            <Input
-              placeholder="Add notes"
-              defaultValue={record?.notes || ""} // Place edited value or etc
-              disabled={
-                Boolean(selectedFeatures) || !selectedChoices.includes(record.key)
-              }
-              // onChange={(value) => {
-              //   setQuantityMap({
-              //     ...quantityMap,
-              //     [`extras_${record.feature_id}`]: value,
-              //   });
-              // }}
-            />
-          ) : `${record?.notes || "-"}`
+        return Boolean(!selectedFeatures) ||
+          selectedChoices.includes(record.key) ? (
+          <Input
+            placeholder="Add notes"
+            defaultValue={record?.notes || ""} // Place edited value or etc
+            disabled={
+              Boolean(selectedFeatures) || !selectedChoices.includes(record.key)
+            }
+            // onChange={(value) => {
+            //   setQuantityMap({
+            //     ...quantityMap,
+            //     [`extras_${record.feature_id}`]: value,
+            //   });
+            // }}
+          />
+        ) : (
+          `${record?.notes || "-"}`
         );
       },
     },
@@ -132,24 +134,25 @@ const BuyerConfiguration = () => {
       key: "quantity",
       render: (_, record) => {
         // Returns the input number box for the quantity
-        return (
-          (Boolean(selectedFeatures) || selectedExtras.includes(record.key)) ? (
-            <InputNumber
-              type="number"
-              disabled={
-                Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
-              }
-              value={quantityMap[`extras_${record.feature_id}`] || 0}
-              min={0}
-              onChange={(value) => {
-                setQuantityMap({
-                  ...quantityMap,
-                  [`extras_${record.feature_id}`]: value,
-                });
-              }}
-              required={selectedExtras.includes(record.key)}
-            />
-          ) : `${quantityMap[`extras_${record.feature_id}`] || 0}`
+        return Boolean(selectedFeatures) ||
+          selectedExtras.includes(record.key) ? (
+          <InputNumber
+            type="number"
+            disabled={
+              Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
+            }
+            value={quantityMap[`extras_${record.feature_id}`] || 0}
+            min={0}
+            onChange={(value) => {
+              setQuantityMap({
+                ...quantityMap,
+                [`extras_${record.feature_id}`]: value,
+              });
+            }}
+            required={selectedExtras.includes(record.key)}
+          />
+        ) : (
+          `${quantityMap[`extras_${record.feature_id}`] || 0}`
         );
       },
     },
@@ -158,22 +161,23 @@ const BuyerConfiguration = () => {
       dataIndex: "notes",
       key: "notes",
       render: (_, record) => {
-        return (
-          (Boolean(!selectedFeatures) || selectedExtras.includes(record.key)) ? (
-            <Input
-              placeholder="Add notes"
-              defaultValue={record?.notes || ""} // Place edited value or etc
-              disabled={
-                Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
-              }
-              // onChange={(value) => {
-              //   setQuantityMap({
-              //     ...quantityMap,
-              //     [`extras_${record.feature_id}`]: value,
-              //   });
-              // }}
-            />
-          ) : `${record?.notes || "-"}`
+        return Boolean(!selectedFeatures) ||
+          selectedExtras.includes(record.key) ? (
+          <Input
+            placeholder="Add notes"
+            defaultValue={record?.notes || ""} // Place edited value or etc
+            disabled={
+              Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
+            }
+            // onChange={(value) => {
+            //   setQuantityMap({
+            //     ...quantityMap,
+            //     [`extras_${record.feature_id}`]: value,
+            //   });
+            // }}
+          />
+        ) : (
+          `${record?.notes || "-"}`
         );
       },
     },
@@ -271,7 +275,7 @@ const BuyerConfiguration = () => {
         );
         const _venture = response.data;
         setVenture(_venture);
-        
+
         // filtering the properties from ventures based on house_type of buyer
         const _configuration = (_venture?.properties || []).filter(
           (property) => property.key === buyer.house_type
@@ -290,11 +294,7 @@ const BuyerConfiguration = () => {
         });
         const data = response.data;
         console.log("Stripe Session:", data);
-        if (data.payment_status === "paid") {
-          setPaymentStatus("paid"); 
-        } else {
-          setPaymentStatus("unpaid");
-        }
+        setPaymentSession(data);
       } catch (error) {
         console.log("Error fetching stripe session:", error);
       }
@@ -318,7 +318,7 @@ const BuyerConfiguration = () => {
         price: 0,
         quantity: 1,
         status: null,
-        notes: "try"
+        notes: "try",
       };
 
       return acc;
@@ -331,7 +331,7 @@ const BuyerConfiguration = () => {
         price: allFeatures[extra].price,
         quantity: quantityMap[`extras_${extra}`] || 1,
         status: null,
-        notes: "try"
+        notes: "try",
       };
 
       return acc;
@@ -399,8 +399,15 @@ const BuyerConfiguration = () => {
             {buyer?.house_type} Bed
           </p>
         </Col>
-        {paymentStatus === "paid" ? (
-          <p>Total: <b>£ {getSelectedPrice()}</b> - Payment Completed</p>
+        {paymentSession?.payment_status === "paid" ? (
+          <div>
+            <p>
+              Total: <b>£ {getSelectedPrice()}</b> - Payment Completed
+            </p>
+            {paymentSession?.invoice && (
+              <InvoiceComponent invoiceId={paymentSession.invoice} />
+            )}
+          </div>
         ) : (
           <Col>
             <h3>Total: £ {getSelectedPrice()}</h3>
@@ -409,7 +416,7 @@ const BuyerConfiguration = () => {
               disabled={!selectedChoices?.length && !selectedExtras?.length}
               onClick={handleConfirmOrder}
             >
-              {paymentStatus === "unpaid"
+              {paymentSession?.payment_status === "unpaid"
                 ? "Continue Payment"
                 : "Confirm Order"}
             </Button>
@@ -437,7 +444,7 @@ const BuyerConfiguration = () => {
                     key: choice,
                     quantity: 1,
                     status: null,
-                    notes: "trying"
+                    notes: "trying",
                   };
                 })}
               />
@@ -458,7 +465,7 @@ const BuyerConfiguration = () => {
                     key: extra,
                     quantity: 0,
                     status: null,
-                    notes: "trying"
+                    notes: "trying",
                   };
                 })}
               />
