@@ -261,25 +261,53 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   };
 
   // To handle the status change of buyer configuration list
-  const changeStatusHandle = async(status, record) => {
-    console.log(record);
-    const _updatedfeature = {
-      id: record?.key,
-      name: record?.name,
-      notes: record?.notes,
-      price: record?.latPrice,
-      status: record?.status,
-      quantity: record?.latQuantity,
+  const changeStatusHandle = async (status, record) => {
+    console.log({ status, record });
+    const _selectedBuyer = buyers.find(
+      (buyer) => buyer.buyer_id === expandedRowId
+    );
+    const _features = _selectedBuyer.features;
+    const _updatedChoices = {};
+    Object.entries(_features.choices).forEach(([key, value]) => {
+      if (key === record.feature_id) {
+        _updatedChoices[key] = {
+          ...value,
+          status,
+        };
+      } else {
+        _updatedChoices[key] = value;
+      }
+    });
+
+    const _updatedExtras = {};
+    Object.entries(_features.extras).forEach(([key, value]) => {
+      if (key === record.feature_id) {
+        _updatedExtras[key] = {
+          ...value,
+          status,
+        };
+      } else {
+        _updatedExtras[key] = value;
+      }
+    });
+
+    const _updatedfeatures = {
+      choices: _updatedChoices,
+      extras: _updatedExtras,
     };
-    // try {
-    //   await axiosInstance.post("/updateBuyer", {
-    //     status: status,
-    //     features: features,
-    //     buyer_id: record.buyer_id,
-    //   });
-    // } catch (error) {
-    //   console.log("Error updating buyer:", error);
-    // }
+
+    console.log({ updatedfeatures: _updatedfeatures });
+
+    try {
+      await axiosInstance.post("/update-buyer-features", {
+        features: _updatedfeatures,
+        buyer_id: expandedRowId,
+      });
+
+      fetchBuyers();
+    } catch (error) {
+      console.log("Error updating buyer:", error);
+    }
   };
 
   // Custom function to handle expand changes
@@ -322,7 +350,6 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         title: "Status",
         key: "state",
         render: (_, record) => {
-          console.log(record?.status);
           switch (record?.status) {
             case "inprogress":
               return <Tag color="processing">Inprogress</Tag>;
@@ -340,12 +367,16 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
           <Space size="middle">
             <Tooltip title="Change status">
               {record?.status === null && (
-                <a onClick={() => changeStatusHandle("inprogress", record)}>
-                  Inprogress
-                </a>
+                <Button
+                  onClick={() => changeStatusHandle("inprogress", record)}
+                >
+                  Mark Inprogress
+                </Button>
               )}
               {record?.status === "inprogress" && (
-                <a onClick={() => changeStatusHandle("done", record)}>Done</a>
+                <Button onClick={() => changeStatusHandle("done", record)}>
+                  Mark Done
+                </Button>
               )}
             </Tooltip>
             {record?.status === "done" && <a>-</a>}

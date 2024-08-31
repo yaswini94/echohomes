@@ -789,6 +789,24 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+app.post("/update-buyer-features", authenticateToken, async (req, res) => {
+  const { features, buyer_id } = req.body;
+
+  console.log("features", { buyer_id, features: JSON.stringify(features) });
+
+  const { data, error } = await supabase
+    .from("buyers")
+    .update({
+      features,
+    })
+    .eq("buyer_id", buyer_id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  res.status(201).json("Update successfull");
+});
+
 // Post API to add feature
 app.post("/addFeature", authenticateToken, async (req, res) => {
   const { name, details, price, images } = req.body;

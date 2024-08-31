@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, Button, InputNumber, Input } from "antd";
+import { Row, Col, Table, Button, InputNumber, Input, Tag } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
 import { loadStripe } from "@stripe/stripe-js";
@@ -80,6 +80,25 @@ const BuyerConfiguration = () => {
       key: "quantity",
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => {
+        switch (record?.status) {
+          case "inprogress":
+            return <Tag color="processing">Inprogress</Tag>;
+          case "done":
+            return <Tag color="success">Installed</Tag>;
+          default:
+            return selectedChoices.includes(record.key) ? (
+              <Tag color="default">Not Started</Tag>
+            ) : (
+              "-"
+            );
+        }
+      },
+    },
+    {
       title: "Notes",
       dataIndex: "notes",
       key: "notes",
@@ -93,12 +112,6 @@ const BuyerConfiguration = () => {
             disabled={
               Boolean(selectedFeatures) || !selectedChoices.includes(record.key)
             }
-            // onChange={(value) => {
-            //   setQuantityMap({
-            //     ...quantityMap,
-            //     [`extras_${record.feature_id}`]: value,
-            //   });
-            // }}
           />
         ) : (
           `${record?.notes || "-"}`
@@ -154,6 +167,25 @@ const BuyerConfiguration = () => {
         ) : (
           `${quantityMap[`extras_${record.feature_id}`] || 0}`
         );
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => {
+        switch (record?.status) {
+          case "inprogress":
+            return <Tag color="processing">Inprogress</Tag>;
+          case "done":
+            return <Tag color="success">Installed</Tag>;
+          default:
+            return selectedExtras.includes(record.key) ? (
+              <Tag color="default">Not Started</Tag>
+            ) : (
+              "-"
+            );
+        }
       },
     },
     {
@@ -293,7 +325,6 @@ const BuyerConfiguration = () => {
           buyer_id: buyer?.buyer_id,
         });
         const data = response.data;
-        console.log("Stripe Session:", data);
         setPaymentSession(data);
       } catch (error) {
         console.log("Error fetching stripe session:", error);
@@ -443,8 +474,8 @@ const BuyerConfiguration = () => {
                     ...allFeatures[choice],
                     key: choice,
                     quantity: 1,
-                    status: null,
-                    notes: "trying",
+                    status: selectedFeatures?.choices?.[choice]?.status || null,
+                    notes: selectedFeatures?.choices?.[choice]?.notes || null,
                   };
                 })}
               />
@@ -464,8 +495,8 @@ const BuyerConfiguration = () => {
                     ...allFeatures[extra],
                     key: extra,
                     quantity: 0,
-                    status: null,
-                    notes: "trying",
+                    status: selectedFeatures?.extras?.[extra]?.status || null,
+                    notes: selectedFeatures?.extras?.[extra]?.notes || null,
                   };
                 })}
               />
