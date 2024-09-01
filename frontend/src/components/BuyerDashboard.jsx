@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Col, Row, Statistic, Card, Rate } from "antd";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";
 import { useAuth } from "../auth/useAuth";
 import Chat from "./Chat/Chat";
@@ -14,7 +15,9 @@ const BuyerDashboard = () => {
     inprogress: 0,
     pending: 0,
   });
+
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   // Function to fetch builder based on id
   const fetchBuilder = async (id) => {
@@ -107,7 +110,7 @@ const BuyerDashboard = () => {
       <Row gutter={24}>
         <Col span={12}>
           <Card
-            title="Status of Fittings"
+            title={t("statusOfFittings")}
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
@@ -118,7 +121,7 @@ const BuyerDashboard = () => {
         </Col>
         <Col span={12}>
           <Card
-            title="Provide Feedback to Builder"
+            title={t("provideFeedbackToBuilder")}
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >

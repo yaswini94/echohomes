@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Row, Col, Table, Button, InputNumber, Input, Tag } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
@@ -18,6 +19,8 @@ const BuyerConfiguration = () => {
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [quantityMap, setQuantityMap] = useState({});
   const [paymentSession, setPaymentSession] = useState(null);
+
+  const { t } = useTranslation();
 
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
@@ -427,7 +430,7 @@ const BuyerConfiguration = () => {
         {paymentSession?.payment_status === "paid" ? (
           <div>
             <p>
-              Total: <b>£ {getSelectedPrice()}</b> - Payment Completed
+              {t("total")}: <b>£ {getSelectedPrice()}</b> - Payment Completed
             </p>
             {paymentSession?.invoice && (
               <InvoiceComponent invoiceId={paymentSession.invoice} />
@@ -435,7 +438,9 @@ const BuyerConfiguration = () => {
           </div>
         ) : (
           <Col>
-            <h3>Total: £ {getSelectedPrice()}</h3>
+            <h3>
+              {t("total")}: £ {getSelectedPrice()}
+            </h3>
             <Button
               type="primary"
               disabled={!selectedChoices?.length && !selectedExtras?.length}

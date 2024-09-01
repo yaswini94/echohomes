@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
-import {
-  Space,
-  Table,
-  Row,
-  Col,
-  Button,
-  Avatar,
-  Rate,
-  message
-} from "antd";
+import { Space, Table, Row, Col, Button, Avatar, Rate, message } from "antd";
 import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddSupplierModal from "./AddSupplierModal";
 import EditSupplierModal from "./EditSupplierModal";
 import axiosInstance from "../../helpers/axiosInstance";
-const describeRate = ['Terrible', 'Bad', 'Normal', 'Good', 'Wonderful'];
+const describeRate = ["Terrible", "Bad", "Normal", "Good", "Wonderful"];
 
 function SupplierManagement() {
   const [suppliers, setSuppliers] = useState([]);
@@ -24,6 +16,8 @@ function SupplierManagement() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [messageApi, messageHolder] = message.useMessage();
+
+  const { t } = useTranslation();
 
   // Function to show add supplier modal
   const showModal = () => {
@@ -33,8 +27,8 @@ function SupplierManagement() {
   // Function to handle add supplier
   const handleOk = () => {
     messageApi.open({
-      type: 'success',
-      content: 'Supplier Created',
+      type: "success",
+      content: "Supplier Created",
     });
     fetchSuppliers();
     setIsModalVisible(false);
@@ -54,8 +48,8 @@ function SupplierManagement() {
   // Function to handle edit modal update button
   const handleEditOk = () => {
     messageApi.open({
-      type: 'success',
-      content: 'Supplier Updated',
+      type: "success",
+      content: "Supplier Updated",
     });
     fetchSuppliers();
     setIsEditModalVisible(false);
@@ -68,38 +62,45 @@ function SupplierManagement() {
 
   const columns = [
     {
-      title: "Name",
+      title: t("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Company Name",
+      title: t("companyName"),
       dataIndex: "company_name",
       key: "company_name",
     },
     {
-      title: "Address",
+      title: t("address"),
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "Contact Email",
+      title: t("contactEmail"),
       dataIndex: "contact_email",
       key: "contact_email",
     },
     {
-      title: "Phone Number",
+      title: t("phoneNumber"),
       dataIndex: "phone_number",
       key: "phone_number",
     },
     {
-      title: "Action",
+      title: t("action"),
       key: "action",
       render: (_, record) =>
         // Action buttons view for edit and delete the supplier
         record?.venture_id ? (
           <Space size="middle">
-            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={(value) => {addFeedback(record?.supplier_id, value)}} value={record?.feedback} />
+            <Rate
+              style={{ marginRight: "8px" }}
+              tooltips={describeRate}
+              onChange={(value) => {
+                addFeedback(record?.supplier_id, value);
+              }}
+              value={record?.feedback}
+            />
             <a>
               <Avatar
                 src={editIcon}
@@ -119,11 +120,18 @@ function SupplierManagement() {
           </Space>
         ) : (
           <>
-            <Rate style={{marginRight: "8px"}} tooltips={describeRate} onChange={(value) => {addFeedback(record?.supplier_id, value)}} value={record?.feedback} />
-            <MinusOutlined style={{marginLeft: "16px"}}/>
+            <Rate
+              style={{ marginRight: "8px" }}
+              tooltips={describeRate}
+              onChange={(value) => {
+                addFeedback(record?.supplier_id, value);
+              }}
+              value={record?.feedback}
+            />
+            <MinusOutlined style={{ marginLeft: "16px" }} />
           </>
-        )
-    }
+        ),
+    },
   ];
 
   // Function to delete the supplier
@@ -134,13 +142,13 @@ function SupplierManagement() {
         .delete()
         .match({ supplier_id: id });
       messageApi.open({
-        type: 'success',
-        content: 'Supplier Deleted',
+        type: "success",
+        content: "Supplier Deleted",
       });
       if (error) {
         messageApi.open({
-          type: 'error',
-          content: 'Error deleting supplier',
+          type: "error",
+          content: "Error deleting supplier",
         });
         console.error("Error deleting supplier:", error);
         return { error };
@@ -164,7 +172,8 @@ function SupplierManagement() {
   const addFeedback = async (id, feedback) => {
     if (!feedback) return;
     try {
-      const dbFeedback = await supabase.from("suppliers")
+      const dbFeedback = await supabase
+        .from("suppliers")
         .select("feedback")
         .eq("supplier_id", id)
         .single();
@@ -196,11 +205,11 @@ function SupplierManagement() {
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>Supplier Management</h3>
+          <h3>{t("supplierManagement")}</h3>
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Add
+            {t("add")}
           </Button>
         </Col>
       </Row>

@@ -1,15 +1,16 @@
 import { Button, Input, Form, Modal, Select, InputNumber } from "antd";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../../helpers/axiosInstance";
 
 const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
-  console.log({ venture });
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState(
     venture.properties || [
-      { key: 1, label: "1 Bed", value: 0 },
-      { key: 2, label: "2 Bed", value: 0 },
-      { key: 3, label: "3 Bed", value: 0 },
+      { key: 1, label: t("1Bed"), value: 0 },
+      { key: 2, label: t("2Bed"), value: 0 },
+      { key: 3, label: t("3Bed"), value: 0 },
     ]
   );
   const [name, setName] = useState(venture.name);
@@ -102,9 +103,9 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
               value={property.label}
               disabled
             >
-              <Option value="1">1 Bed</Option>
-              <Option value="2">2 Bed</Option>
-              <Option value="3">3 Bed</Option>
+              <Option value="1">{t("1Bed")}</Option>
+              <Option value="2">{t("2Bed")}</Option>
+              <Option value="3">{t("3Bed")}</Option>
             </Select>
             <InputNumber
               min={0}

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "antd";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";
 
 const InvoiceComponent = ({ invoiceId }) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [receiptPdfUrl, setReceiptPdfUrl] = useState("");
   const [error, setError] = useState(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchReceiptPdfUrl = async (chargeId) => {
@@ -63,14 +66,14 @@ const InvoiceComponent = ({ invoiceId }) => {
   return (
     <div>
       <Button type="primary" onClick={handleDownload} disabled={!pdfUrl}>
-        Download Invoice
+        {t("downloadInvoice")}
       </Button>
       <Button
         type="primary"
         onClick={handleReceiptDownload}
         disabled={!receiptPdfUrl}
       >
-        Download Receipt
+        {t("downloadReceipt")}
       </Button>
     </div>
   );

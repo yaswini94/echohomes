@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Table, InputNumber, Button } from "antd";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";
 import { useAuth } from "../auth/useAuth";
 
@@ -15,6 +16,8 @@ const ComparisionTool = () => {
   const [selectedChoices1, setSelectedChoices1] = useState([]);
   const [selectedExtras1, setSelectedExtras1] = useState([]);
   const [quantityMap1, setQuantityMap1] = useState({});
+
+  const { t } = useTranslation();
 
   // Function to handle 1st set choice selection change
   const onSelectChoiceChange = (newSelectedRowKeys) => {
@@ -37,7 +40,7 @@ const ComparisionTool = () => {
     getCheckboxProps: (record) => ({
       // Disable the checkbox if the selection count is 3 and the item is not selected
       disabled:
-        (selectedChoices.length >= 3 && !selectedChoices.includes(record.key)),
+        selectedChoices.length >= 3 && !selectedChoices.includes(record.key),
     }),
     hideSelectAll: true,
   };
@@ -68,7 +71,7 @@ const ComparisionTool = () => {
     getCheckboxProps: (record) => ({
       // Disable the checkbox if the selection count is 3 and the item is not selected
       disabled:
-        (selectedChoices1.length >= 3 && !selectedChoices1.includes(record.key)),
+        selectedChoices1.length >= 3 && !selectedChoices1.includes(record.key),
     }),
     hideSelectAll: true,
   };
@@ -105,24 +108,22 @@ const ComparisionTool = () => {
       dataIndex: "quantity",
       key: "quantity",
       render: (_, record) => {
-        return (
-          (selectedExtras1.includes(record.key)) ? (
-            <InputNumber
-              type="number"
-              disabled={
-                !selectedExtras1.includes(record.key)
-              }
-              value={quantityMap1[`extras_${record.feature_id}`] || 0}
-              min={0}
-              onChange={(value) => {
-                setQuantityMap1({
-                  ...quantityMap1,
-                  [`extras_${record.feature_id}`]: value,
-                });
-              }}
-              required={selectedExtras1.includes(record.key)}
-            />
-          ) : `${quantityMap1[`extras_${record.feature_id}`] || 0}`
+        return selectedExtras1.includes(record.key) ? (
+          <InputNumber
+            type="number"
+            disabled={!selectedExtras1.includes(record.key)}
+            value={quantityMap1[`extras_${record.feature_id}`] || 0}
+            min={0}
+            onChange={(value) => {
+              setQuantityMap1({
+                ...quantityMap1,
+                [`extras_${record.feature_id}`]: value,
+              });
+            }}
+            required={selectedExtras1.includes(record.key)}
+          />
+        ) : (
+          `${quantityMap1[`extras_${record.feature_id}`] || 0}`
         );
       },
     },
@@ -133,7 +134,8 @@ const ComparisionTool = () => {
       render: (_, record) => (
         <div>
           <p>
-            £ {record.price * (quantityMap1[`extras_${record.feature_id}`] || 0)}
+            £{" "}
+            {record.price * (quantityMap1[`extras_${record.feature_id}`] || 0)}
           </p>
         </div>
       ),
@@ -196,24 +198,22 @@ const ComparisionTool = () => {
       dataIndex: "quantity",
       key: "quantity",
       render: (_, record) => {
-        return (
-          (selectedExtras.includes(record.key)) ? (
-            <InputNumber
-              type="number"
-              disabled={
-                !selectedExtras.includes(record.key)
-              }
-              value={quantityMap[`extras_${record.feature_id}`] || 0}
-              min={0}
-              onChange={(value) => {
-                setQuantityMap({
-                  ...quantityMap,
-                  [`extras_${record.feature_id}`]: value,
-                });
-              }}
-              required={selectedExtras.includes(record.key)}
-            />
-          ) : `${quantityMap[`extras_${record.feature_id}`] || 0}`
+        return selectedExtras.includes(record.key) ? (
+          <InputNumber
+            type="number"
+            disabled={!selectedExtras.includes(record.key)}
+            value={quantityMap[`extras_${record.feature_id}`] || 0}
+            min={0}
+            onChange={(value) => {
+              setQuantityMap({
+                ...quantityMap,
+                [`extras_${record.feature_id}`]: value,
+              });
+            }}
+            required={selectedExtras.includes(record.key)}
+          />
+        ) : (
+          `${quantityMap[`extras_${record.feature_id}`] || 0}`
         );
       },
     },
@@ -299,7 +299,7 @@ const ComparisionTool = () => {
       );
     }, 0);
   };
-  
+
   // Function to handle second set selected extras price
   const getSelectedPrice1 = () => {
     if (!allFeatures) return 0;
@@ -325,12 +325,10 @@ const ComparisionTool = () => {
       <Row justify="space-evenly" align="middle">
         <Col>
           <Row justify="space-between" align="middle">
-            <h3>Total: £ {getSelectedPrice()}</h3>
-            <Button
-              type="primary"
-              disabled
-              style={{marginLeft: "48px"}}
-            >
+            <h3>
+              {t("total")}: £ {getSelectedPrice()}
+            </h3>
+            <Button type="primary" disabled style={{ marginLeft: "48px" }}>
               Proceed with Configuration
             </Button>
           </Row>
@@ -385,12 +383,10 @@ const ComparisionTool = () => {
         </Col>
         <Col>
           <Row justify="space-between" align="middle">
-            <h3>Total: £ {getSelectedPrice1()}</h3>
-            <Button
-              type="primary"
-              disabled
-              style={{marginLeft: "48px"}}
-            >
+            <h3>
+              {t("total")}: £ {getSelectedPrice1()}
+            </h3>
+            <Button type="primary" disabled style={{ marginLeft: "48px" }}>
               Proceed with Configuration
             </Button>
           </Row>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../../helpers/axiosInstance";
 import { Space, Button, Input, Form, Modal, Dropdown, Typography } from "antd";
 import { DownOutlined } from "@ant-design/icons";
@@ -11,18 +12,20 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
   const [address, setAddress] = useState(buyer.address);
   const [houseType, setHouseType] = useState(buyer.house_type);
 
+  const { t } = useTranslation();
+
   const items = [
     {
       key: "1",
-      label: "1 bed",
+      label: t("1bed"),
     },
     {
       key: "2",
-      label: "2 bed",
+      label: t("2bed"),
     },
     {
       key: "3",
-      label: "3 bed",
+      label: t("3bed"),
     },
   ];
 

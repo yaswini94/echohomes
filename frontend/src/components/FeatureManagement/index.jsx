@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../supabase";
 import { Space, Table, Row, Col, Button, Avatar, Tabs } from "antd";
+import { useTranslation } from "react-i18next";
+import { supabase } from "../../supabase";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
@@ -12,25 +13,27 @@ import useLocalStorage from "../../utils/useLocalStorage";
 import axiosInstance from "../../helpers/axiosInstance";
 
 const FeatureManagement = () => {
+  const { t } = useTranslation();
+
   const [features, setFeatures] = useState({});
   const [selectedFeature, setSelectedFeature] = useState([]);
   const [featureOptions, setFeatureOptions] = useState([]);
   const [defaultValues, setDefaultValues] = useState([
     {
       key: 1,
-      label: "1 Bed",
+      label: t("1Bed"),
       choices: [],
       extras: [],
     },
     {
       key: 2,
-      label: "2 Bed",
+      label: t("2Bed"),
       choices: [],
       extras: [],
     },
     {
       key: 3,
-      label: "3 Bed",
+      label: t("3Bed"),
       choices: [],
       extras: [],
     },
@@ -164,19 +167,19 @@ const FeatureManagement = () => {
   // Columns for linked features table
   const linkedColumns = [
     {
-      title: "Name",
+      title: t("name"),
       dataIndex: "name",
       key: "name",
       width: "33%",
     },
     {
-      title: "Details",
+      title: t("details"),
       dataIndex: "details",
       key: "details",
       width: "33%",
     },
     {
-      title: "Price",
+      title: t("price"),
       dataIndex: "price",
       key: "price",
       width: "33%",
@@ -186,23 +189,23 @@ const FeatureManagement = () => {
 
   const featuresColumns = [
     {
-      title: "Name",
+      title: t("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Details",
+      title: t("details"),
       dataIndex: "details",
       key: "details",
     },
     {
-      title: "Price",
+      title: t("price"),
       dataIndex: "price",
       key: "price",
       render: (_, record) => "£ " + record?.price,
     },
     {
-      title: "Action",
+      title: t("action"),
       key: "action",
       render: (_, record) => (
         <Space size="middle">
@@ -239,13 +242,13 @@ const FeatureManagement = () => {
         defaultActiveKey="1"
         items={[
           {
-            label: "Feature Management",
+            label: t("featureManagement"),
             key: "1",
             children: (
               <>
                 <Row justify="space-between" align="middle">
                   <Col>
-                    <h3>Feature Management</h3>
+                    <h3>{t("featureManagement")}</h3>
                   </Col>
                   <Col>
                     <Button
@@ -261,14 +264,14 @@ const FeatureManagement = () => {
                           color: "white",
                         }}
                       />{" "}
-                      Link Features
+                      {t("linkFeatures")}
                     </Button>
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
                       onClick={showModal}
                     >
-                      Add
+                      {t("add")}
                     </Button>
                   </Col>
                 </Row>
@@ -304,7 +307,7 @@ const FeatureManagement = () => {
                 <div>
                   {/* Text to diaplay when no features exist */}
                   {Object.keys(features).length === 0 && (
-                    <p>No Features exist !</p>
+                    <p>{t("noFeaturesExist")}</p>
                   )}
                   {/* Feature will be displayed in Table template of ant design */}
                   {Object.keys(features).length > 0 && (
@@ -318,7 +321,7 @@ const FeatureManagement = () => {
             ),
           },
           {
-            label: "Linked Features",
+            label: t("linkedFeatures"),
             key: "2",
             disabled: !Boolean(linkedFeatures.length),
             children: (
@@ -326,9 +329,21 @@ const FeatureManagement = () => {
                 {/* Display of linked features in Table template of Ant design */}
                 {linkedFeatures?.map((value, index) => (
                   <div key={index}>
-                    <h3 style={{margin: "12px 0 0 12px"}}>{value.label}</h3>
-                    <Table columns={linkedColumns} dataSource={value.choices} title={() => <b>CHOICES</b>} pagination={false} />
-                    <Table columns={linkedColumns} dataSource={value.extras} title={() => <b>EXTRAS</b>} pagination={false}/>
+                    <h3 style={{ margin: "12px 0 0 12px" }}>
+                      {t(value?.label?.replace(/\s/g, ""))}
+                    </h3>
+                    <Table
+                      columns={linkedColumns}
+                      dataSource={value.choices}
+                      title={() => <b>{t("choices")}</b>}
+                      pagination={false}
+                    />
+                    <Table
+                      columns={linkedColumns}
+                      dataSource={value.extras}
+                      title={() => <b>{t("extras")}</b>}
+                      pagination={false}
+                    />
                   </div>
                 ))}
               </>

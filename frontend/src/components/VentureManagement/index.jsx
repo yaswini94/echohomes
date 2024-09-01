@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../../helpers/axiosInstance";
 import { supabase } from "../../supabase";
-import {
-  Row,
-  Col,
-  Button,
-  Avatar,
-  Card,
-  message
-} from "antd";
+import { Row, Col, Button, Avatar, Card, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
@@ -23,6 +17,8 @@ function VentureManagement() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [messageApi, messageHolder] = message.useMessage();
 
+  const { t } = useTranslation();
+
   // Function to show add venture modal
   const showModal = () => {
     setIsModalVisible(true);
@@ -31,13 +27,13 @@ function VentureManagement() {
   // Function to handle add venture
   const handleOk = () => {
     messageApi.open({
-      type: 'success',
-      content: 'Venture Created',
+      type: "success",
+      content: "Venture Created",
     });
     fetchVentures();
     setIsModalVisible(false);
   };
-  
+
   // Function to handle cancel add venture
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -52,8 +48,8 @@ function VentureManagement() {
   // Function to handle update venture button
   const handleEditOk = () => {
     messageApi.open({
-      type: 'success',
-      content: 'Venture Updated',
+      type: "success",
+      content: "Venture Updated",
     });
     fetchVentures();
     setSelectedVenture(null);
@@ -78,13 +74,13 @@ function VentureManagement() {
       .match({ venture_id: id });
 
     messageApi.open({
-      type: 'success',
-      content: 'Venture Deleted',
+      type: "success",
+      content: "Venture Deleted",
     });
     if (error) {
       messageApi.open({
-        type: 'error',
-        content: 'Error deleting venture',
+        type: "error",
+        content: "Error deleting venture",
       });
       console.error("Error deleting venture:", error);
       return { error };
@@ -112,11 +108,11 @@ function VentureManagement() {
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>Venture Management</h3>
+          <h3>{t("ventureManagement")}</h3>
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Add
+            {t("add")}
           </Button>
         </Col>
       </Row>
@@ -175,11 +171,11 @@ function VentureManagement() {
                   bordered={false}
                 >
                   <p>
-                    <b>Description: </b>
+                    <b>{t("description")}: </b>
                     {venture?.description}
                   </p>
                   <p>
-                    <b>Properties: </b>
+                    <b>{t("properties")}: </b>
                   </p>
                   {venture?.properties?.map((property) => (
                     <p key={property.key}>

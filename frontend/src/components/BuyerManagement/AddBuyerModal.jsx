@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../../helpers/axiosInstance";
 import { Space, Button, Input, Form, Modal, Dropdown, Typography } from "antd";
 import { DownOutlined } from "@ant-design/icons";
@@ -13,18 +14,20 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   const [houseType, setHouseType] = useState();
   const [ventureId] = useLocalStorage("selectedVenture", null);
 
+  const { t } = useTranslation();
+
   const items = [
     {
       key: "1",
-      label: "1 bed",
+      label: t("1Bed"),
     },
     {
       key: "2",
-      label: "2 bed",
+      label: t("2Bed"),
     },
     {
       key: "3",
-      label: "3 bed",
+      label: t("3Bed"),
     },
   ];
 
@@ -99,7 +102,10 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the phone number */}
-        <Form.Item label="Phone Number" rules={[{ pattern: /^\d{10,11}$/, message: "0-9(10 to 11 digits)" }]}>
+        <Form.Item
+          label="Phone Number"
+          rules={[{ pattern: /^\d{10,11}$/, message: "0-9(10 to 11 digits)" }]}
+        >
           <Input
             type="tel"
             placeholder="09999999999"

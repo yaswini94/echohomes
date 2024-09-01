@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";
 import useLocalStorage from "../utils/useLocalStorage";
 import {
@@ -33,6 +34,8 @@ const OrdersManagement = () => {
   const [supplierOrders, setSupplierOrders] = useState([]);
   const [expandedRowId, setExpandedRowId] = useState(null);
   const [paymentSession, setPaymentSession] = useState(null);
+
+  const { t } = useTranslation();
 
   // Function to handle builder orders to suppliers
   const handleSupplierOrder = async () => {
@@ -140,17 +143,17 @@ const OrdersManagement = () => {
   // Columns to display in buyer orders table
   const ordersColumns = [
     {
-      title: "Name",
+      title: t("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Quantity",
+      title: t("quantity"),
       dataIndex: "quantity",
       key: "quantity",
     },
     {
-      title: "Stock Status",
+      title: t("stockStatus"),
       key: "stock status",
       render: (_, record) => {
         const _featureId = record.id;
@@ -159,7 +162,7 @@ const OrdersManagement = () => {
         if (_quantity > _availableQuantity) {
           return (
             <Space direction="vertical">
-              <p>Create Purchase Order</p>
+              <p>{t("createPurchaseOrder")}</p>
             </Space>
           );
         }
@@ -167,12 +170,12 @@ const OrdersManagement = () => {
         if (_quantity <= 5) {
           return (
             <Space direction="vertical">
-              <Tag color="error">Low Stock</Tag>
+              <Tag color="error">{t("lowStock")}</Tag>
             </Space>
           );
         }
 
-        return <Space direction="vertical">In Stock</Space>;
+        return <Space direction="vertical">{t("inStock")}</Space>;
       },
     },
     {
@@ -180,10 +183,10 @@ const OrdersManagement = () => {
       key: "supplier order status",
       render: (_, record) => {
         if (supplierOrders.length > 0) {
-          return <p>Ordered from supplier</p>;
+          return <p>{t("orderedFromSupplier")}</p>;
         }
 
-        return <p>Not Ordered</p>;
+        return <p>{t("notOrdered")}</p>;
       },
     },
   ];
@@ -191,7 +194,7 @@ const OrdersManagement = () => {
   // Columns to display in supplier orders table
   const supplierOrdersColumns = [
     {
-      title: "Supplier Name",
+      title: t("supplierName"),
       key: "supplier name",
       render: (_, record) => {
         `record?.supplier?.name`;
@@ -199,43 +202,43 @@ const OrdersManagement = () => {
       },
     },
     {
-      title: "Order Total",
+      title: t("orderTotal"),
       key: "order total",
       dataIndex: "total",
       render: (_, record) => `£ ${record.total || 0}`,
     },
     {
-      title: "Order Status",
+      title: t("orderStatus"),
       key: "order status",
       render: (_, record) => {
         switch (record?.status) {
           case "preparing":
-            return <Tag color="processing">Preparing</Tag>;
+            return <Tag color="processing">{t("preparing")}</Tag>;
           case "intransit":
-            return <Tag color="default">In-Transit</Tag>;
+            return <Tag color="default">{t("inTransit")}</Tag>;
           case "delivered":
-            return <Tag color="success">Delivered</Tag>;
+            return <Tag color="success">{t("delivered")}</Tag>;
           default:
-            return <Tag color="default">Not Started</Tag>;
+            return <Tag color="default">{t("notStarted")}</Tag>;
         }
       },
     },
     {
-      title: "Payment Status",
+      title: t("paymentStatus"),
       key: "payment status",
       render: (_, record) => {
         switch (record?.stripe_session?.payment_status) {
           case "paid":
-            return <Tag color="success">Paid</Tag>;
+            return <Tag color="success">{t("paid")}</Tag>;
           case "unpaid":
             return (
               <div>
-                <Tag color="error">Unpaid</Tag>
+                <Tag color="error">{t("unpaid")}</Tag>
                 <Button
                   type="primary"
                   onClick={() => processPayment(record.stripe_session_id)}
                 >
-                  Pay Now
+                  {t("payNow")}
                 </Button>
               </div>
             );
@@ -245,7 +248,7 @@ const OrdersManagement = () => {
       },
     },
     {
-      title: "Actions",
+      title: t("action"),
       key: "actions",
       render: (_, record) => {
         return (
@@ -262,18 +265,18 @@ const OrdersManagement = () => {
   // Columns to display in suggested orders
   const orderSuggestionsColumns = [
     {
-      title: "Name",
+      title: t("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Unit Price",
+      title: t("unitPrice"),
       dataIndex: "price",
       key: "price",
       render: (_, record) => `£ ${record.price || 0}`,
     },
     {
-      title: "Quantity",
+      title: t("quantity"),
       dataIndex: "quantity",
       key: "quantity",
       render: (_, record) => {
@@ -293,7 +296,7 @@ const OrdersManagement = () => {
       },
     },
     {
-      title: "Total",
+      title: t("total"),
       dataIndex: "total",
       key: "total",
       render: (_, record) => (
@@ -411,16 +414,16 @@ const OrdersManagement = () => {
   // Function to handle expanded row rendering
   const expandedRowRender = (record) => {
     const expandColumns = [
-      { title: "Item Name", dataIndex: "name", key: "name" },
+      { title: t("itemName"), dataIndex: "name", key: "name" },
       {
-        title: "Unit Price",
+        title: t("unitPrice"),
         dataIndex: "price",
         key: "price",
         render: (_, record) => "£ " + record?.price,
       },
-      { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+      { title: t("quantity"), dataIndex: "quantity", key: "quantity" },
       {
-        title: "Total",
+        title: t("total"),
         dataIndex: "total",
         key: "total",
         render: (_, record) => (
@@ -457,24 +460,24 @@ const OrdersManagement = () => {
         defaultActiveKey="1"
         items={[
           {
-            label: "Buyer Orders",
+            label: t("buyerOrders"),
             key: "1",
             children: (
               <>
                 {/* Buyer orders view to render */}
                 <Row justify="space-between" align="middle">
                   <Col>
-                    <h3>Buyer Orders</h3>
+                    <h3>{t("buyerOrders")}</h3>
                   </Col>
                   <Col>
                     {supplierOrders.length === 0 &&
                       (showSuggestions ? (
                         <Button type="primary" onClick={toggleSuggestions}>
-                          Hide Suggested Orders
+                          {t("hideSuggestedOrders")}
                         </Button>
                       ) : (
                         <Button type="primary" onClick={toggleSuggestions}>
-                          Show Suggested Orders
+                          {t("showSuggestedOrders")}
                         </Button>
                       ))}
                   </Col>
@@ -482,7 +485,7 @@ const OrdersManagement = () => {
                 <div>
                   {showSuggestions &&
                     (orderSuggestionsTableData?.length === 0 ? (
-                      <p>No suggestions exist !</p>
+                      <p>{t("noSuggestionsExist")}</p>
                     ) : (
                       <div
                         style={{
@@ -493,7 +496,7 @@ const OrdersManagement = () => {
                       >
                         <Row justify="space-between" align="middle">
                           <Col>
-                            <h3>Suggested Orders</h3>
+                            <h3>{t("suggestedOrders")}</h3>
                           </Col>
                           <Col>
                             <Select
@@ -518,7 +521,7 @@ const OrdersManagement = () => {
                               disabled={!selectedSupplierId}
                               onClick={handleSupplierOrder}
                             >
-                              Place Order to supplier
+                              {t("placeOrderToSupplier")}
                             </Button>
                           </Col>
                         </Row>
@@ -530,7 +533,7 @@ const OrdersManagement = () => {
                       </div>
                     ))}
                   {ordersTableData?.length === 0 ? (
-                    <p>No buyer orders exist !</p>
+                    <p>{t("noBuyerOrdersExist")}</p>
                   ) : (
                     <Table
                       columns={ordersColumns}
@@ -542,15 +545,15 @@ const OrdersManagement = () => {
             ),
           },
           {
-            label: "Supplier Orders",
+            label: t("supplierOrders"),
             key: "2",
             children: (
               <>
                 {/* Supplier orders view to render */}
                 <div>
-                  <h3>Supplier Orders</h3>
+                  <h3>{t("supplierOrders")}</h3>
                   {supplierOrders.length === 0 && (
-                    <p>No Supplier Orders exist !</p>
+                    <p>{t("noSupplierOrdersExist")}</p>
                   )}
                   {supplierOrders.length > 0 && (
                     <Table

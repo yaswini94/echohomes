@@ -12,6 +12,7 @@ import {
   message,
   Tooltip,
 } from "antd";
+import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
@@ -33,30 +34,11 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const [expandedRowId, setExpandedRowId] = useState(null);
   const [selectedBuyerChat, setSelectedBuyerChat] = useState(null);
   const [messageApi, messageHolder] = message.useMessage();
+
   const { user } = useAuth();
   const builderId = user?.id;
 
-  // const createChatRoom = async (userIds) => {
-  //   try {
-  //     const response = await axiosInstance.post("/chat-rooms", {
-  //       userIds,
-  //     });
-  //     const data = response.data;
-  //     if (!response.ok) throw new Error(data.error || "Something went wrong");
-  //     return data.roomId;
-  //   } catch (error) {
-  //     console.error("Error creating chat room:", error);
-  //     throw error;
-  //   }
-  // };
-
-  // const startChat = (buyerId) => {
-  //   if (!builderId || !buyerId) return;
-
-  //   createChatRoom([builderId, buyerId]).then((roomId) => {
-  //     console.log("Chat room created with ID:", roomId);
-  //   });
-  // };
+  const { t } = useTranslation();
 
   // To show add modal
   const showModal = () => {
@@ -322,24 +304,24 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   // To render nested table expanded row
   const expandedRowRender = (record) => {
     const expandColumns = [
-      { title: "Name", dataIndex: "name", key: "name" },
-      { title: "Details", dataIndex: "details", key: "details" },
+      { title: t("name"), dataIndex: "name", key: "name" },
+      { title: t("details"), dataIndex: "details", key: "details" },
       {
-        title: "Unit Price",
+        title: t("unitPrice"),
         dataIndex: "latPrice",
         key: "latPrice",
         render: (_, record) => "£ " + record?.latPrice,
       },
-      { title: "Quantity", dataIndex: "latQuantity", key: "latQuantity" },
+      { title: t("Quantity"), dataIndex: "latQuantity", key: "latQuantity" },
       {
-        title: "Total",
+        title: t("total"),
         dataIndex: "total",
         key: "total",
         render: (_, record) =>
           `£ ${(record?.latQuantity || 0) * (record?.latPrice || 0)}`,
       },
       {
-        title: "Notes",
+        title: t("notes"),
         dataIndex: "notes",
         key: "notes",
         render: (_, record) => {
@@ -347,21 +329,21 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         },
       },
       {
-        title: "Status",
+        title: t("status"),
         key: "state",
         render: (_, record) => {
           switch (record?.status) {
             case "inprogress":
-              return <Tag color="processing">Inprogress</Tag>;
+              return <Tag color="processing">{t("inprogress")}</Tag>;
             case "done":
-              return <Tag color="success">Installed</Tag>;
+              return <Tag color="success">{t("installed")}</Tag>;
             default:
-              return <Tag color="default">Not Started</Tag>;
+              return <Tag color="default">{t("notStarted")}</Tag>;
           }
         },
       },
       {
-        title: "Action",
+        title: t("action"),
         key: "operation",
         render: (record) => (
           <Space size="middle">
@@ -370,12 +352,12 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
                 <Button
                   onClick={() => changeStatusHandle("inprogress", record)}
                 >
-                  Mark Inprogress
+                  {t("markInprogress")}
                 </Button>
               )}
               {record?.status === "inprogress" && (
                 <Button onClick={() => changeStatusHandle("done", record)}>
-                  Mark Done
+                  {t("markDone")}
                 </Button>
               )}
             </Tooltip>
@@ -422,11 +404,11 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>Buyer Management</h3>
+          <h3>{t("buyerManagement")}</h3>
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            Add
+            {t("add")}
           </Button>
         </Col>
       </Row>
