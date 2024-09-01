@@ -14,6 +14,7 @@ import {
 } from "antd";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../auth/useAuth";
+import InvoiceComponent from "./InvoiceComponent";
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
 const OrdersManagement = () => {
@@ -212,7 +213,7 @@ const OrdersManagement = () => {
           case "intransit":
             return <Tag color="default">In-Transit</Tag>;
           case "delivered":
-            return <Tag color="success">Delivered</Tag>
+            return <Tag color="success">Delivered</Tag>;
           default:
             return <Tag color="default">Not Started</Tag>;
         }
@@ -240,6 +241,19 @@ const OrdersManagement = () => {
           default:
             return null;
         }
+      },
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => {
+        return (
+          record?.stripe_session?.invoice && (
+            <Space>
+              <InvoiceComponent invoiceId={record.stripe_session.invoice} />
+            </Space>
+          )
+        );
       },
     },
   ];
