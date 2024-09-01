@@ -45,7 +45,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
     const tempPassword = generateRandomPassword();
 
     try {
-      const resp = await axiosInstance.post("http://localhost:3001/invite", {
+      const resp = await axiosInstance.post("/invite", {
         email,
         password: tempPassword,
         name,

@@ -460,39 +460,6 @@ app.get("/ventures/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
-// Post API to add supplier
-app.post("/addSupplier", authenticateToken, async (req, res) => {
-  const {
-    name,
-    contact_email,
-    address,
-    phone_number,
-    company_name,
-    venture_id,
-  } = req.body;
-
-  const { data, error } = await supabase.from("suppliers").insert({
-    venture_id,
-    company_name,
-    name,
-    contact_email,
-    phone_number,
-    address: address,
-    settings: {
-      font: "Arial",
-      fontSize: 14,
-      theme: "light",
-    },
-    registered_date: new Date().toISOString(),
-  });
-
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-
-  res.status(201).json("Add Supplier Successfull");
-});
-
 // Post API to update supplier
 app.post("/updateSupplier", authenticateToken, async (req, res) => {
   const {
@@ -688,7 +655,6 @@ app.post("/invite", authenticateToken, async (req, res) => {
     house_type,
     venture_id,
   } = req.body;
-  const user = req.user;
   const msg = {
     to: email,
     from: "official.echohomes@gmail.com",
@@ -728,6 +694,73 @@ app.post("/invite", authenticateToken, async (req, res) => {
   }
 
   // To send invite mail to buyer mailid
+  sgMail.send(msg).then(
+    () => {
+      console.log("Email sent");
+    },
+    (error) => {
+      console.error(error);
+
+      if (error.response) {
+        console.error(error.response.body);
+      }
+    }
+  );
+
+  res.send("Invite is sent");
+});
+
+// Post API to invite the supplier to the system
+app.post("/invite/supplier", authenticateToken, async (req, res) => {
+  const {
+    email,
+    password,
+    phone_number,
+    address,
+    company_name,
+    name,
+    venture_id,
+  } = req.body;
+  const msg = {
+    to: email,
+    from: "official.echohomes@gmail.com",
+    subject: "Invitation to Echohomes as Supplier",
+    text: `Hi ${name}, \n We would like to invite you to join echohomes as supplier. \n Please use below link <b>${password}</b> to reset password. `,
+    html: `<p>Hi ${name}, \n We would like to invite you to join echohomes as supplier.</p> <p>Please use below password <b>${password}</b> to reset password. </p> <strong>Continue to Login after reset password. Use the link <a>${password}</a></strong>`,
+  };
+
+  // triggering supabase signup to allow logins
+  const { data: createdUser, createdUserError } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (createdUserError) {
+    return res.status(400).json({ error: createdUserError.message });
+  }
+
+  // Insert data to the suppliers table
+  const { data, error } = await supabase.from("suppliers").insert({
+    supplier_id: createdUser?.user?.id,
+    venture_id,
+    company_name,
+    name,
+    contact_email: email,
+    phone_number,
+    address: address,
+    settings: {
+      font: "Arial",
+      fontSize: 14,
+      theme: "light",
+    },
+    registered_date: new Date().toISOString(),
+  });
+
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }
+
+  // To send invite mail to supplier mailid
   sgMail.send(msg).then(
     () => {
       console.log("Email sent");

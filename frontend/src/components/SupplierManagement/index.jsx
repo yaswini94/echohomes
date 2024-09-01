@@ -164,10 +164,23 @@ function SupplierManagement() {
   const addFeedback = async (id, feedback) => {
     if (!feedback) return;
     try {
-      await axiosInstance.post("/updateSupplier", {
-        feedback,
-        supplier_id: id,
-      });
+      const dbFeedback = await supabase.from("suppliers")
+        .select("feedback")
+        .eq("supplier_id", id)
+        .single();
+      if (dbFeedback.data.feedback?.length) {
+        const updatedFeedback = [...dbFeedback.data.feedback, feedback];
+        console.log(updatedFeedback);
+        await axiosInstance.post("/updateSupplier", {
+          feedback: updatedFeedback,
+          supplier_id: id,
+        });
+      } else {
+        await axiosInstance.post("/updateSupplier", {
+          feedback: [feedback],
+          supplier_id: id,
+        });
+      }
       fetchSuppliers();
     } catch (error) {
       console.log("Error adding supplier:", error);

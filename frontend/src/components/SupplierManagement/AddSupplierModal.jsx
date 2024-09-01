@@ -12,19 +12,27 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
   const [email, setEmail] = useState("");
   const [ventureId] = useLocalStorage("selectedVenture", null);
 
+  // Function to generate a random password
+  const generateRandomPassword = () => {
+    return Math.random().toString(36).slice(-8); // Simple random password generator
+  };
+  
   // Function to add supplier
   const addSupplier = async () => {
     setLoading(true);
+    const tempPassword = generateRandomPassword();
 
     try {
-      const data = await axiosInstance.post("/addSupplier", {
+      const data = await axiosInstance.post("/invite/supplier", {
         company_name: companyName,
+        password: tempPassword,
         name: name,
-        contact_email: email,
+        email: email,
         phone_number: phoneNumber,
         address: address,
         venture_id: ventureId,
       });
+      console.log("email invite sent:", data.data);
     } catch (error) {
       console.log("Error adding supplier:", error);
     }

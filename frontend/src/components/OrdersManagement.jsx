@@ -111,7 +111,8 @@ const OrdersManagement = () => {
     try {
       const response = await axiosInstance.get("/suppliers");
       const _suppliers = response.data;
-      _suppliers.sort((a, b) => b.feedback - a.feedback);
+      // Sorting suppliers based on feedback in descending order
+      _suppliers.sort((item1, item2) => item2.feedback - item1.feedback);
       setSuppliers(_suppliers);
     } catch (error) {
       console.log("Error fetching suppliers:", error);
