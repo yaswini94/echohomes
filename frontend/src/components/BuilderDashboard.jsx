@@ -140,10 +140,13 @@ const BuilderDashboard = () => {
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
-            <Statistic title="Total Houses" value={houseInfo.totalHouses} />
-            <Statistic title="Pending Houses" value={houseInfo.pendingHouses} />
+            <Statistic title={t("totalHouses")} value={houseInfo.totalHouses} />
             <Statistic
-              title="Configured Houses"
+              title={t("pendingHouses")}
+              value={houseInfo.pendingHouses}
+            />
+            <Statistic
+              title={t("configuredHouses")}
               value={houseInfo.configuredHouses}
             />
           </Card>

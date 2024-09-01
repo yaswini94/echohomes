@@ -74,5 +74,8 @@
   "purchaseOrder": "Purchase Order",
   "preparing": "Preparing",
   "inTransit": "In-Transit",
-  "delivered": "Delivered"
+  "delivered": "Delivered",
+  "totalHouses": "Total Houses",
+  "pendingHouses": "Pending Houses",
+  "configuredHouses": "Configured Houses"
 }
