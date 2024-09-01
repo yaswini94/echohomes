@@ -96,7 +96,6 @@ const BuilderDashboard = () => {
     const fetchOrders = async (id) => {
       try {
         const supplierOrders = await axiosInstance.get(`/supplier-orders/${id}`);
-        console.log(supplierOrders.data);
         const _orderInfo = {
           totalOrders: 0,
           pendingOrders: 0,
