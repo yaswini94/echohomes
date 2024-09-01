@@ -669,8 +669,8 @@ app.post("/invite", authenticateToken, async (req, res) => {
     to: email,
     from: "official.echohomes@gmail.com",
     subject: "Invitation to Echohomes as Buyer",
-    text: `Hi ${name}, \n We would like to invite you to join echohomes as buyer. \n Please use below link ${password} to reset password. `,
-    html: `<p>Hi ${name}, \n We would like to invite you to join echohomes as buyer.</p> <p>Please use below password <a>${password}</a> to reset password. </p> <strong>Continue to Login after reset password. Use the link <a>${password}</a></strong>`,
+    text: `Hi ${name}, \n We would like to invite you to join echohomes as buyer. \n Please use below link <b>${password}</b> to reset password. `,
+    html: `<p>Hi ${name}, \n We would like to invite you to join echohomes as buyer.</p> <p>Please use below password <b>${password}</b> to reset password. </p> <strong>Continue to Login after reset password. Use the link <a>${password}</a></strong>`,
   };
 
   // triggering supabase signup to allow logins
@@ -741,6 +741,7 @@ app.post("/stripe-session", authenticateToken, async (req, res) => {
   res.json(session);
 });
 
+// Post API to get stripe session
 app.post("/get-stripe-session", authenticateToken, async (req, res) => {
   const { stripe_session_id } = req.body;
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, InputNumber } from "antd";
+import { Row, Col, Table, InputNumber, Button } from "antd";
 import axiosInstance from "../helpers/axiosInstance";
 import { useAuth } from "../auth/useAuth";
 
@@ -258,37 +258,6 @@ const ComparisionTool = () => {
         const response = await axiosInstance.get(`/buyers/${user.id}`);
         const data = response.data;
         setBuyer(data);
-        // const _features = data?.features || null;
-        // setSelectedFeatures(_features);
-  
-        // if (Object.keys(_features || {})?.length === 0) return;
-  
-        // const _selectedChoices = Object.keys(_features?.choices || {});
-        // const _selectedExtras = Object.keys(_features?.extras || {});
-  
-        // setSelectedChoices(_selectedChoices);
-        // setSelectedExtras(_selectedExtras);
-  
-        // const _qtyMapExtras = Object.keys(_features?.extras || {}).reduce(
-        //   (acc, extra) => {
-        //     acc[`extras_${extra}`] = _features?.extras[extra].quantity;
-        //     return acc;
-        //   },
-        //   {}
-        // );
-  
-        // const _qtyMapChoices = Object.keys(_features?.choices || {}).reduce(
-        //   (acc, choice) => {
-        //     acc[`choice_${choice}`] = _features?.choices[choice].quantity;
-        //     return acc;
-        //   },
-        //   {}
-        // );
-  
-        // setQuantityMap({
-        //   ..._qtyMapExtras,
-        //   ..._qtyMapChoices,
-        // });
       } catch (error) {
         console.log("Error fetching ventures:", error);
       }
@@ -357,6 +326,13 @@ const ComparisionTool = () => {
         <Col>
           <Row justify="space-between" align="middle">
             <h3>Total: £ {getSelectedPrice()}</h3>
+            <Button
+              type="primary"
+              disabled
+              style={{marginLeft: "48px"}}
+            >
+              Proceed with Configuration
+            </Button>
           </Row>
 
           {allFeatures && configuration && (
@@ -410,6 +386,13 @@ const ComparisionTool = () => {
         <Col>
           <Row justify="space-between" align="middle">
             <h3>Total: £ {getSelectedPrice1()}</h3>
+            <Button
+              type="primary"
+              disabled
+              style={{marginLeft: "48px"}}
+            >
+              Proceed with Configuration
+            </Button>
           </Row>
 
           {allFeatures && configuration && (

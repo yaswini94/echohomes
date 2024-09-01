@@ -138,7 +138,7 @@ const FeatureManagement = () => {
     }
   };
 
-  // Function to load features from Supabase
+  // Function to handle fetch features
   const fetchFeatures = async () => {
     try {
       const response = await axiosInstance.get("/features");
@@ -161,6 +161,7 @@ const FeatureManagement = () => {
     }
   };
 
+  // Columns for linked features table
   const linkedColumns = [
     {
       title: "Name",

@@ -207,10 +207,12 @@ const OrdersManagement = () => {
       key: "order status",
       render: (_, record) => {
         switch (record?.status) {
-          case "inprogress":
-            return <Tag color="processing">Inprogress</Tag>;
-          case "done":
-            return <Tag color="success">Installed</Tag>;
+          case "preparing":
+            return <Tag color="processing">Preparing</Tag>;
+          case "intransit":
+            return <Tag color="default">In-Transit</Tag>;
+          case "delivered":
+            return <Tag color="success">Delivered</Tag>
           default:
             return <Tag color="default">Not Started</Tag>;
         }

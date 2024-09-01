@@ -307,16 +307,18 @@ const HeaderLayout = () => {
           <Option value="en-us">EN-US</Option>
           <Option value="en-gb">EN-GB</Option>
         </Select>
-        <MessageOutlined
-          style={{
-            color: "white",
-            fontSize: "24px",
-            width: "24px",
-            height: "24px",
-            marginRight: "24px",
-          }}
-          onClick={(event) => event.preventDefault()}
-        />
+        {role !== userRoles.BUILDERS && (
+          <MessageOutlined
+            style={{
+              color: "white",
+              fontSize: "24px",
+              width: "24px",
+              height: "24px",
+              marginRight: "24px",
+            }}
+            onClick={(event) => event.preventDefault()}
+          />
+        )}
         <Dropdown menu={{ items: user_items }}>
           <a
             style={{ color: "white" }}

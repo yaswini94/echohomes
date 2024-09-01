@@ -173,6 +173,15 @@ const BudgetBasedSuggestions = () => {
             Suggest in budget
           </Button>
         </Col>
+        <Col>
+          <Button
+            type="primary"
+            disabled
+            style={{marginLeft: "48px"}}
+          >
+            Proceed with Configuration
+          </Button>
+        </Col>
       </Row>
       {showRecommendations && ( 
         <>
