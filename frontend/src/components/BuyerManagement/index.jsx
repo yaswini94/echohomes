@@ -473,6 +473,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
             builderId={builderId}
             buyerId={selectedBuyerChat.buyer_id}
             name={selectedBuyerChat.name}
+            onClose={() => setSelectedBuyerChat(null)}
           />
         </div>
       ) : null}

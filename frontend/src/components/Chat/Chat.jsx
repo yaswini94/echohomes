@@ -3,13 +3,21 @@ import { supabase } from "../../supabase";
 import { useAuth } from "../../auth/useAuth";
 
 import "./chat.css";
+import { Button } from "antd";
+import {
+  CloseOutlined,
+  DownSquareOutlined,
+  UpSquareOutlined,
+} from "@ant-design/icons";
+import Icon from "@ant-design/icons/lib/components/Icon";
 
-function Chat({ builderId, buyerId, name }) {
+function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [conversationId, setConversationId] = useState(null);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(defaultIsMinimized || false);
   const messagesEndRef = useRef(null);
+
   const { user } = useAuth();
 
   useEffect(() => {
@@ -152,44 +160,26 @@ function Chat({ builderId, buyerId, name }) {
     setIsMinimized((prev) => !prev);
   };
 
-  // return (
-  //   <div className="chat-container">
-  //     <h2 className="chat-header" onClick={toggleMinimize}>{name || "Chat"}</h2>
-  //     <div className="messages-container">
-  //       {messages.map((msg) => (
-  //         <div
-  //           key={msg.id}
-  //           className={`message ${
-  //             msg.sender_id === user.id ? "sent" : "received"
-  //           }`}
-  //         >
-  //           <div className="message-text">{msg.message_text}</div>
-  //         </div>
-  //       ))}
-  //       <div ref={messagesEndRef} />
-  //     </div>
-  //     <div className="input-container">
-  //       <input
-  //         value={newMessage}
-  //         onChange={(e) => setNewMessage(e.target.value)}
-  //         placeholder="Type your message here..."
-  //         onKeyDown={(e) => {
-  //           if (e.key === "Enter") handleSendMessage();
-  //         }}
-  //       />
-  //       <button onClick={handleSendMessage}>Send</button>
-  //     </div>
-  //   </div>
-  // );
-
   return (
     // Chat view start from here with ant design templates
     <div className={`chat-container ${isMinimized ? "minimized" : ""}`}>
       <div className="chat-header" onClick={toggleMinimize}>
         <h2>{name || "Chat"}</h2>
-        <button className="toggle-button">
-          {isMinimized ? "Expand" : "Minimize"}
-        </button>
+        <div>
+          <Icon
+            component={isMinimized ? UpSquareOutlined : DownSquareOutlined}
+          />
+          <span> </span>
+          {onClose && (
+            <Icon
+              component={CloseOutlined}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+            />
+          )}
+        </div>
       </div>
       {!isMinimized && (
         <>

@@ -17,6 +17,7 @@ import {
   DownOutlined,
   MessageOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";
 import titleLogo from "../assets/echohomesTitle.png";
 import exitLogo from "../assets/exit.png";
@@ -29,7 +30,8 @@ const { Header } = Layout;
 
 const HeaderLayout = () => {
   const { role, user } = useAuth();
-  const [language, setLanguage] = useState("EN-GB");
+  const selectedLanguage = localStorage.getItem("language");
+  const [language, setLanguage] = useState(selectedLanguage || "en");
   const [ventures, setVentures] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [initialSettings, setinitialSettings] = useState({});
@@ -39,12 +41,17 @@ const HeaderLayout = () => {
   const [fontSize, setFontSize] = useState();
   const [theme, setTheme] = useState("");
   const [ventureId, setVentureId] = useLocalStorage("selectedVenture", null);
+  const { i18n } = useTranslation();
 
   // Function to handle language change for globalisation
   const onLanguageChange = (value) => {
     setLanguage(value);
     localStorage.setItem("language", value);
   };
+
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
 
   // Function to handle fetch user settings
   const fetchUserSettings = async (role) => {
@@ -148,12 +155,12 @@ const HeaderLayout = () => {
 
   const languages = [
     {
-      value: "en-gb",
-      label: "EN-GB",
+      value: "en",
+      label: "English (UK)",
     },
     {
-      value: "en-us",
-      label: "EN-US",
+      value: "es",
+      label: "Español",
     },
   ];
 
@@ -214,7 +221,7 @@ const HeaderLayout = () => {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "0 30px",
-        height: "80px"
+        height: "80px",
       }}
     >
       <div style={{ marginTop: "20px" }}>
@@ -271,9 +278,10 @@ const HeaderLayout = () => {
               <InputNumber
                 defaultValue={fontSize}
                 style={{ width: "100%" }}
-                min={10}
-                max={30}
+                min={12}
+                max={32}
                 value={fontSize}
+                step={2}
                 onChange={(value) => handleChange("fontSize", value)}
               />
             </Form.Item>

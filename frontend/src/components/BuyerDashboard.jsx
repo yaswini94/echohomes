@@ -138,6 +138,7 @@ const BuyerDashboard = () => {
           buyerId={user.id}
           builderId={venture.builder_id}
           name={builder?.name ? `${builder.name} (Builder)` : "Builder"}
+          defaultIsMinimized
         />
       )}
     </div>
