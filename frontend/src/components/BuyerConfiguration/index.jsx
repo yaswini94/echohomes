@@ -201,12 +201,6 @@ const BuyerConfiguration = () => {
             disabled={
               Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
             }
-            // onChange={(value) => {
-            //   setQuantityMap({
-            //     ...quantityMap,
-            //     [`extras_${record.feature_id}`]: value,
-            //   });
-            // }}
           />
         ) : (
           `${record?.notes || "-"}`

@@ -228,9 +228,9 @@ app.post("/create-checkout-session", async (req, res) => {
       payment_method_types: ["card"],
       line_items,
       mode: "payment",
-      invoice_creation: {
-        enabled: true,
-      },
+      // invoice_creation: {
+      //   enabled: true,
+      // },
       client_reference_id: buyer_id,
       metadata: {
         userId: buyer_id,
@@ -251,7 +251,31 @@ app.get("/get-invoice/:invoiceId", async (req, res) => {
 
   try {
     const invoice = await stripe.invoices.retrieve(invoiceId);
-    res.json({ pdfUrl: invoice.invoice_pdf });
+    res.json({ pdfUrl: invoice.invoice_pdf, charge: invoice.charge });
+  } catch (error) {
+    console.error("Error retrieving invoice:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/get-receipt/:chargeId", async (req, res) => {
+  const { chargeId } = req.params;
+
+  try {
+    const receipt = await stripe.charges.retrieve(chargeId);
+    res.json({ receiptUrl: receipt.receipt_url });
+  } catch (error) {
+    console.error("Error retrieving invoice:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/get-payment-intent/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.retrieve(id);
+    res.json({ paymentIntent });
   } catch (error) {
     console.error("Error retrieving invoice:", error);
     res.status(500).json({ error: error.message });
@@ -323,9 +347,9 @@ app.post(
         payment_method_types: ["card"],
         line_items,
         mode: "payment",
-        invoice_creation: {
-          enabled: true,
-        },
+        // invoice_creation: {
+        //   enabled: true,
+        // },
         client_reference_id: `builder=${builder.id}__supplier=${supplier_id}`,
         metadata: {
           userId: `builder=${builder.id}__supplier=${supplier_id}`,
@@ -792,8 +816,6 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
 
 app.post("/update-buyer-features", authenticateToken, async (req, res) => {
   const { features, buyer_id } = req.body;
-
-  console.log("features", { buyer_id, features: JSON.stringify(features) });
 
   const { data, error } = await supabase
     .from("buyers")

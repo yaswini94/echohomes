@@ -4,13 +4,24 @@ import axiosInstance from "../helpers/axiosInstance";
 
 const InvoiceComponent = ({ invoiceId }) => {
   const [pdfUrl, setPdfUrl] = useState("");
+  const [receiptPdfUrl, setReceiptPdfUrl] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchReceiptPdfUrl = async (chargeId) => {
+      try {
+        const response = await axiosInstance.get(`/get-receipt/${chargeId}`);
+        setReceiptPdfUrl(response.data.receiptUrl);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
     const fetchInvoicePdfUrl = async () => {
       try {
         const response = await axiosInstance.get(`/get-invoice/${invoiceId}`);
         setPdfUrl(response.data.pdfUrl);
+        fetchReceiptPdfUrl(response.data.charge);
       } catch (err) {
         setError(err.message);
       }
@@ -31,14 +42,37 @@ const InvoiceComponent = ({ invoiceId }) => {
     }
   };
 
+  const handleReceiptDownload = () => {
+    if (receiptPdfUrl) {
+      // Create a link element
+      const link = document.createElement("a");
+      // add /pdf at the end before the query string in the receiptPdfUrl
+      const pdfUrl = receiptPdfUrl.replace(/\?.*$/, "/pdf$&");
+      link.href = pdfUrl;
+      link.download = `receipt_${invoiceId}.pdf`; // Name the file as desired
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <Button type="primary" onClick={handleDownload} disabled={!pdfUrl}>
-      Download Invoice
-    </Button>
+    <div>
+      <Button type="primary" onClick={handleDownload} disabled={!pdfUrl}>
+        Download Invoice
+      </Button>
+      <Button
+        type="primary"
+        onClick={handleReceiptDownload}
+        disabled={!receiptPdfUrl}
+      >
+        Download Receipt
+      </Button>
+    </div>
   );
 };
 
