@@ -57,11 +57,13 @@ const HeaderLayout = () => {
   const fetchUserSettings = async (role) => {
     if (role) {
       try {
-        const response = await axiosInstance.get(`/${role}/${user?.id}`);
-        setFont(response?.data?.settings?.font);
-        setFontSize(response?.data?.settings?.fontSize);
-        setTheme(response?.data?.settings?.theme);
-        setinitialSettings(response?.data?.settings);
+        const response = await axiosInstance.get(`/settings/${role}`);
+        setFont(response?.data?.font);
+        setFontSize(response?.data?.fontSize);
+        setTheme(response?.data?.theme);
+        setinitialSettings(response?.data);
+        localStorage.setItem("settings", JSON.stringify(response?.data));
+        window.dispatchEvent(new Event("storage"));
       } catch (error) {
         console.log("Error fetching user settings:", error);
       }
@@ -191,20 +193,23 @@ const HeaderLayout = () => {
         case userRoles.BUILDERS:
           const data = await axiosInstance.post("/updateBuilder", {
             builder_id: user?.id,
-            _settings,
+            settings: _settings,
           });
+          fetchUserSettings(role);
           break;
         case userRoles.BUYERS:
           const dataBuyer = await axiosInstance.post("/updateBuyer", {
             buyer_id: user?.id,
-            _settings,
+            settings: _settings,
           });
+          fetchUserSettings(role);
           break;
         case userRoles.SUPPLIERS:
           const dataSupplier = await axiosInstance.post("/updateSupplier", {
             supplier_id: user?.id,
-            _settings,
+            settings: _settings,
           });
+          fetchUserSettings(role);
           break;
       }
     } catch (error) {

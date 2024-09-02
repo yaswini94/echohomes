@@ -395,7 +395,31 @@ app.post("/updateBuilder", authenticateToken, async (req, res) => {
   if (error) {
     return res.status(500).json({ error: error.message });
   }
+
   res.status(201).json("Update successfull");
+});
+
+app.get("/settings/:role", authenticateToken, async (req, res) => {
+  const { role } = req.params;
+  const user = req.user;
+  const column =
+    role === "builders"
+      ? "builder_id"
+      : role === "suppliers"
+      ? "supplier_id"
+      : "buyer_id";
+
+  const { data, error } = await supabase
+    .from(role)
+    .select("settings")
+    .eq(column, user.id)
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.status(201).json(data.settings);
 });
 
 // Post API to add venture
@@ -430,6 +454,7 @@ app.post("/updateVenture", authenticateToken, async (req, res) => {
   if (error) {
     return res.status(500).json({ error: error.message });
   }
+
   res.status(201).json("Update successfull");
 });
 
@@ -489,6 +514,7 @@ app.post("/updateSupplier", authenticateToken, async (req, res) => {
   if (error) {
     return res.status(500).json({ error: error.message });
   }
+
   res.status(201).json("Update successfull");
 });
 

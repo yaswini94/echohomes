@@ -12,10 +12,23 @@ function useLocalStorage(key, initialValue) {
     }
   });
 
+  useEffect(() => {
+    const handleStorage = () => {
+      const lsValue = localStorage.getItem(key);
+      if (lsValue) {
+        setStoredValue(JSON.parse(lsValue));
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
   // Set the value in localStorage whenever the storedValue changes
   useEffect(() => {
     try {
       window.localStorage.setItem(key, JSON.stringify(storedValue));
+      window.dispatchEvent(new Event("storage"));
     } catch (error) {
       console.error(error);
     }

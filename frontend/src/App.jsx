@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -11,10 +11,10 @@ import Registration from "./components/Registration";
 import DashboardLayout from "./components/DashboardLayout";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
-import { AuthProvider } from "./auth/useAuth";
+import { AuthProvider, useAuth } from "./auth/useAuth";
 import VentureDetail from "./components/VentureDetail";
 // import ResetPassword from "./components/ResetPassword";
-import { Layout, theme } from "antd";
+import { ConfigProvider, Layout, theme } from "antd";
 import HeaderLayout from "./components/HeaderLayout";
 import NavigationLayout from "./components/NavigationLayout";
 import BuyerManagement from "./components/BuyerManagement";
@@ -30,12 +30,15 @@ import ComparisionTool from "./components/ComparisionTool";
 const { Content } = Layout;
 
 const AppLayout = ({ children }) => {
+  const [userSettings, setUserSettings] = useState({});
   const location = useLocation();
   const isPublicPages =
     location.pathname === "/login" || location.pathname === "/register";
 
+  const { user, role } = useAuth();
+
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { fontFamily, fontSize, borderRadiusLG },
   } = theme.useToken();
 
   if (isPublicPages) {
@@ -46,32 +49,58 @@ const AppLayout = ({ children }) => {
     );
   }
 
+  useEffect(() => {
+    const handleStorage = () => {
+      const _settings = localStorage.getItem("settings");
+      if (_settings) {
+        setUserSettings(JSON.parse(_settings));
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
   return (
     // Ant design templates used to render view
-    <Layout className="mainLayout">
-      <HeaderLayout />
-      <Layout>
-        <NavigationLayout />
-        <Layout
-          style={{
-            padding: "0 24px 24px",
-            margin: "24px 0",
-          }}
-        >
-          <Content
+    <ConfigProvider
+      theme={{
+        algorithm:
+          userSettings?.theme === "dark"
+            ? theme.darkAlgorithm
+            : theme.defaultAlgorithm,
+        token: {
+          fontFamily: userSettings?.font || fontFamily,
+          fontSize: userSettings?.fontSize || fontSize,
+        },
+      }}
+    >
+      <Layout className="mainLayout">
+        <HeaderLayout />
+        <Layout>
+          <NavigationLayout />
+          <Layout
             style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 872,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
+              padding: "0 24px 24px",
+              margin: "24px 0",
             }}
           >
-            {children}
-          </Content>
+            <Content
+              style={{
+                padding: 24,
+                margin: 0,
+                minHeight: 872,
+                background:
+                  userSettings?.theme === "dark" ? "transparent" : "#fff",
+                borderRadius: borderRadiusLG,
+              }}
+            >
+              {children}
+            </Content>
+          </Layout>
         </Layout>
       </Layout>
-    </Layout>
+    </ConfigProvider>
   );
 };
 
