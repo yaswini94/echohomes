@@ -148,17 +148,17 @@ const OrdersManagement = () => {
   // Columns to display in buyer orders table
   const ordersColumns = [
     {
-      title: t("name"),
+      title: translate("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: t("quantity"),
+      title: translate("quantity"),
       dataIndex: "quantity",
       key: "quantity",
     },
     {
-      title: t("stockStatus"),
+      title: translate("stockStatus"),
       key: "stock status",
       render: (_, record) => {
         const _featureId = record.id;
@@ -199,7 +199,7 @@ const OrdersManagement = () => {
   // Columns to display in supplier orders table
   const supplierOrdersColumns = [
     {
-      title: t("supplierName"),
+      title: translate("supplierName"),
       key: "supplier name",
       render: (_, record) => {
         console.log("record:", record);
@@ -207,13 +207,13 @@ const OrdersManagement = () => {
       },
     },
     {
-      title: t("orderTotal"),
+      title: translate("orderTotal"),
       key: "order total",
       dataIndex: "total",
       render: (_, record) => `£ ${record.total || 0}`,
     },
     {
-      title: t("orderStatus"),
+      title: translate("orderStatus"),
       key: "order status",
       render: (_, record) => {
         switch (record?.status) {
@@ -229,7 +229,7 @@ const OrdersManagement = () => {
       },
     },
     {
-      title: t("paymentStatus"),
+      title: translate("paymentStatus"),
       key: "payment status",
       render: (_, record) => {
         switch (record?.stripe_session?.payment_status) {
@@ -253,7 +253,7 @@ const OrdersManagement = () => {
       },
     },
     {
-      title: t("action"),
+      title: translate("action"),
       key: "actions",
       render: (_, record) => {
         return (
@@ -270,18 +270,18 @@ const OrdersManagement = () => {
   // Columns to display in suggested orders
   const orderSuggestionsColumns = [
     {
-      title: t("name"),
+      title: translate("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: t("unitPrice"),
+      title: translate("unitPrice"),
       dataIndex: "price",
       key: "price",
       render: (_, record) => `£ ${record.price || 0}`,
     },
     {
-      title: t("quantity"),
+      title: translate("quantity"),
       dataIndex: "quantity",
       key: "quantity",
       render: (_, record) => {
@@ -301,7 +301,7 @@ const OrdersManagement = () => {
       },
     },
     {
-      title: t("total"),
+      title: translate("total"),
       dataIndex: "total",
       key: "total",
       render: (_, record) => (
@@ -426,16 +426,16 @@ const OrdersManagement = () => {
   // Function to handle expanded row rendering
   const expandedRowRender = (record) => {
     const expandColumns = [
-      { title: t("itemName"), dataIndex: "name", key: "name" },
+      { title: translate("itemName"), dataIndex: "name", key: "name" },
       {
-        title: t("unitPrice"),
+        title: translate("unitPrice"),
         dataIndex: "price",
         key: "price",
         render: (_, record) => "£ " + record?.price,
       },
-      { title: t("quantity"), dataIndex: "quantity", key: "quantity" },
+      { title: translate("quantity"), dataIndex: "quantity", key: "quantity" },
       {
-        title: t("total"),
+        title: translate("total"),
         dataIndex: "total",
         key: "total",
         render: (_, record) => (
@@ -472,7 +472,7 @@ const OrdersManagement = () => {
         defaultActiveKey="1"
         items={[
           {
-            label: t("buyerOrders"),
+            label: translate("buyerOrders"),
             key: "1",
             children: (
               <>
@@ -558,7 +558,7 @@ const OrdersManagement = () => {
             ),
           },
           {
-            label: t("supplierOrders"),
+            label: translate("supplierOrders"),
             key: "2",
             children: (
               <>

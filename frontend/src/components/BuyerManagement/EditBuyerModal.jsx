@@ -12,20 +12,20 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
   const [address, setAddress] = useState(buyer.address);
   const [houseType, setHouseType] = useState(buyer.house_type);
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   const items = [
     {
       key: "1",
-      label: t("1bed"),
+      label: translate("1bed"),
     },
     {
       key: "2",
-      label: t("2bed"),
+      label: translate("2bed"),
     },
     {
       key: "3",
-      label: t("3bed"),
+      label: translate("3bed"),
     },
   ];
 

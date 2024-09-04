@@ -165,13 +165,17 @@ const HeaderLayout = () => {
 
   const languages = [
     {
-      value: "en",
+      value: "en-uk",
       label: "English (UK)",
     },
     {
-      value: "es",
+      value: "es-419",
       label: "Español",
     },
+    {
+      value: "zh-cmn-Hant-HK",
+      label: "中文",
+    }
   ];
 
   // Function to hanlde the formating of settings object
@@ -335,10 +339,7 @@ const HeaderLayout = () => {
           onChange={onLanguageChange}
           value={language}
           options={languages}
-        >
-          <Option value="en-us">EN-US</Option>
-          <Option value="en-gb">EN-GB</Option>
-        </Select>
+        />
         {role !== userRoles.BUILDERS && (
           <MessageOutlined
             style={{

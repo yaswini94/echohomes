@@ -22,19 +22,19 @@ const FeatureManagement = () => {
   const [defaultValues, setDefaultValues] = useState([
     {
       key: 1,
-      label: t("1Bed"),
+      label: translate("1Bed"),
       choices: [],
       extras: [],
     },
     {
       key: 2,
-      label: t("2Bed"),
+      label: translate("2Bed"),
       choices: [],
       extras: [],
     },
     {
       key: 3,
-      label: t("3Bed"),
+      label: translate("3Bed"),
       choices: [],
       extras: [],
     },
@@ -172,19 +172,19 @@ const FeatureManagement = () => {
   // Columns for linked features table
   const linkedColumns = [
     {
-      title: t("name"),
+      title: translate("name"),
       dataIndex: "name",
       key: "name",
       width: "33%",
     },
     {
-      title: t("details"),
+      title: translate("details"),
       dataIndex: "details",
       key: "details",
       width: "33%",
     },
     {
-      title: t("price"),
+      title: translate("price"),
       dataIndex: "price",
       key: "price",
       width: "33%",
@@ -195,23 +195,23 @@ const FeatureManagement = () => {
   // Columns for features table
   const featuresColumns = [
     {
-      title: t("name"),
+      title: translate("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: t("details"),
+      title: translate("details"),
       dataIndex: "details",
       key: "details",
     },
     {
-      title: t("price"),
+      title: translate("price"),
       dataIndex: "price",
       key: "price",
       render: (_, record) => "£ " + record?.price,
     },
     {
-      title: t("action"),
+      title: translate("action"),
       key: "action",
       render: (_, record) => (
         <Space size="middle">
@@ -248,7 +248,7 @@ const FeatureManagement = () => {
         defaultActiveKey="1"
         items={[
           {
-            label: t("featureManagement"),
+            label: translate("featureManagement"),
             key: "1",
             children: (
               <>
@@ -329,7 +329,7 @@ const FeatureManagement = () => {
             ),
           },
           {
-            label: t("linkedFeatures"),
+            label: translate("linkedFeatures"),
             key: "2",
             disabled: !Boolean(linkedFeatures.length),
             children: (

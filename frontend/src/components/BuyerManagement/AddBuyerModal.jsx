@@ -14,20 +14,20 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   const [houseType, setHouseType] = useState();
   const [ventureId] = useLocalStorage("selectedVenture", null);
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   const items = [
     {
       key: "1",
-      label: t("1Bed"),
+      label: translate("1Bed"),
     },
     {
       key: "2",
-      label: t("2Bed"),
+      label: translate("2Bed"),
     },
     {
       key: "3",
-      label: t("3Bed"),
+      label: translate("3Bed"),
     },
   ];
 

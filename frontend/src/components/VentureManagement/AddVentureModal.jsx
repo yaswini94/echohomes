@@ -7,9 +7,9 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
   const { t: translate } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([
-    { key: 1, label: t("1Bed"), value: 0 },
-    { key: 2, label: t("2Bed"), value: 0 },
-    { key: 3, label: t("3Bed"), value: 0 },
+    { key: 1, label: translate("1Bed"), value: 0 },
+    { key: 2, label: translate("2Bed"), value: 0 },
+    { key: 3, label: translate("3Bed"), value: 0 },
   ]);
   const [name, setName] = useState(null);
   const [address, setAddress] = useState(null);

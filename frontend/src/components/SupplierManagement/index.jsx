@@ -65,32 +65,32 @@ function SupplierManagement() {
 
   const columns = [
     {
-      title: t("name"),
+      title: translate("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: t("companyName"),
+      title: translate("companyName"),
       dataIndex: "company_name",
       key: "company_name",
     },
     {
-      title: t("address"),
+      title: translate("address"),
       dataIndex: "address",
       key: "address",
     },
     {
-      title: t("contactEmail"),
+      title: translate("contactEmail"),
       dataIndex: "contact_email",
       key: "contact_email",
     },
     {
-      title: t("phoneNumber"),
+      title: translate("phoneNumber"),
       dataIndex: "phone_number",
       key: "phone_number",
     },
     {
-      title: t("action"),
+      title: translate("action"),
       key: "action",
       render: (_, record) =>
         // Action buttons view for edit and delete the supplier
