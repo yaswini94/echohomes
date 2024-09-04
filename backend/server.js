@@ -460,7 +460,11 @@ app.post("/updateVenture", authenticateToken, async (req, res) => {
 
 // Get API to fetch ventures
 app.get("/ventures", authenticateToken, async (req, res) => {
-  const { data, error } = await supabase.from("ventures").select("*");
+  const builder = req.user;
+  const { data, error } = await supabase
+    .from("ventures")
+    .select("*")
+    .eq("builder_id", builder.id);
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -520,7 +524,14 @@ app.post("/updateSupplier", authenticateToken, async (req, res) => {
 
 // Get API to fetch suppliers
 app.get("/suppliers", authenticateToken, async (req, res) => {
-  const { data, error } = await supabase.from("suppliers").select("*");
+  const { venture_id } = req.query;
+
+  console.log({ venture_id });
+
+  const { data, error } = await supabase
+    .from("suppliers")
+    .select("*")
+    .or(`venture_id.eq.${venture_id},venture_id.is.null`);
 
   if (error) {
     return res.status(500).json({ error: error.message });
@@ -926,8 +937,11 @@ app.post("/updateFeature", authenticateToken, async (req, res) => {
 
 // Get API to fetch features
 app.get("/features", authenticateToken, async (req, res) => {
-  const user = req.user;
-  const { data, error } = await supabase.from("features").select("*");
+  const { builder_id } = req.query;
+  const { data, error } = await supabase
+    .from("features")
+    .select("*")
+    .eq("builder_id", builder_id);
 
   if (error) {
     return res.status(500).json({ error: error.message });

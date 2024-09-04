@@ -41,14 +41,6 @@ const AppLayout = ({ children }) => {
     token: { fontFamily, fontSize, borderRadiusLG },
   } = theme.useToken();
 
-  if (isPublicPages) {
-    return (
-      <Layout className="mainLayout">
-        <Content>{children}</Content>
-      </Layout>
-    );
-  }
-
   useEffect(() => {
     const handleStorage = () => {
       const _settings = localStorage.getItem("settings");
@@ -60,6 +52,14 @@ const AppLayout = ({ children }) => {
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
+
+  if (isPublicPages) {
+    return (
+      <Layout className="mainLayout">
+        <Content>{children}</Content>
+      </Layout>
+    );
+  }
 
   return (
     // Ant design templates used to render view

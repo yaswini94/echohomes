@@ -11,6 +11,7 @@ import EditFeatureModal from "./EditFeatureModal";
 import LinkFeatureModal from "./LinkFeatureModal";
 import useLocalStorage from "../../utils/useLocalStorage";
 import axiosInstance from "../../helpers/axiosInstance";
+import { useAuth } from "../../auth/useAuth";
 
 const FeatureManagement = () => {
   const { t } = useTranslation();
@@ -43,6 +44,8 @@ const FeatureManagement = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [ventureId] = useLocalStorage("selectedVenture", null);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!ventureId) return;
@@ -144,7 +147,9 @@ const FeatureManagement = () => {
   // Function to handle fetch features
   const fetchFeatures = async () => {
     try {
-      const response = await axiosInstance.get("/features");
+      const response = await axiosInstance.get(
+        `/features?builder_id=${user?.id}`
+      );
       const _featuresMap = response?.data?.reduce((acc, feature) => {
         acc[feature.feature_id] = feature;
         return acc;

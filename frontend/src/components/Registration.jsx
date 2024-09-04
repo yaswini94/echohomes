@@ -74,7 +74,18 @@ const Registration = () => {
           ></Input>
         </Form.Item>
         {/* Form item for the email address with validation */}
-        <Form.Item label="Email" name="email" className="minwidth">
+        <Form.Item
+          label="Email"
+          name="email"
+          className="minwidth"
+          rules={[
+            {
+              // email pattern
+              pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: "Invalid email",
+            },
+          ]}
+        >
           <Input
             type="email"
             placeholder="abc@domain.com"
@@ -84,11 +95,22 @@ const Registration = () => {
           ></Input>
         </Form.Item>
         {/* Form item for the password with validation to accept 6 characters minimum with alphabets and numbers */}
-        <Form.Item label="Password" name="password" className="minwidth">
+        <Form.Item
+          label="Password"
+          name="password"
+          className="minwidth"
+          rules={[
+            {
+              pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+              message: "a-zA-Z0-9(Minimum 6)",
+            },
+          ]}
+        >
           <Input.Password
             placeholder="a-zA-Z0-9(Minimum 6)"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
+            minLength={6}
             required
           ></Input.Password>
         </Form.Item>

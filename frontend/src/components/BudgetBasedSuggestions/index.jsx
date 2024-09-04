@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Row,
-  Col,
-  Button,
-  InputNumber,
-} from "antd";
+import { Table, Row, Col, Button, InputNumber } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
 
@@ -18,6 +12,7 @@ const BudgetBasedSuggestions = () => {
   const [configuration, setConfiguration] = useState(null);
   const [allFeatures, setAllFeatures] = useState(null);
   const [buyer, setBuyer] = useState(null);
+  const [venture, setVenture] = useState(null);
 
   useEffect(() => {
     if (!buyer?.buyer_id) return;
@@ -29,6 +24,7 @@ const BudgetBasedSuggestions = () => {
           `/ventures/${buyer.venture_id}`
         );
         const _venture = response.data;
+        setVenture(_venture);
         const _configuration = (_venture?.properties || []).filter(
           (property) => property.key === buyer.house_type
         );
@@ -41,6 +37,7 @@ const BudgetBasedSuggestions = () => {
   }, [buyer?.buyer_id]);
 
   useEffect(() => {
+    if (!user.id) return;
     // Fetch buyer based on buyer_id
     const fetchBuyer = async () => {
       try {
@@ -52,13 +49,16 @@ const BudgetBasedSuggestions = () => {
       }
     };
     fetchBuyer();
-  });
+  }, [user.id]);
 
   useEffect(() => {
+    if (!venture?.builder_id) return;
     // Fetch features to get the list of features
     const fetchFeatures = async () => {
       try {
-        const response = await axiosInstance.get("/features");
+        const response = await axiosInstance.get(
+          `/features?builder_id=${venture.builder_id}`
+        );
         const _featuresMap = response?.data?.reduce((acc, feature) => {
           acc[feature.feature_id] = feature;
           return acc;
@@ -70,7 +70,7 @@ const BudgetBasedSuggestions = () => {
     };
 
     fetchFeatures();
-  }, []);
+  }, [venture?.builder_id]);
 
   // Toggle the view of show recommendations
   const toggleShowRecommendations = () => {
@@ -79,17 +79,16 @@ const BudgetBasedSuggestions = () => {
     } else {
       let items = [];
       if (configuration?.length != 0) {
-
         configuration?.choices?.forEach((choice) => {
           items.push({
             ...allFeatures[choice],
-            category: 'choice',
+            category: "choice",
           });
         });
         configuration?.extras?.forEach((extra) => {
           items.push({
             ...allFeatures[extra],
-            category: 'extras',
+            category: "extras",
           });
         });
       }
@@ -102,14 +101,19 @@ const BudgetBasedSuggestions = () => {
 
   const recommendationsColumns = [
     { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Price", dataIndex: "price", key: "price", render: (_, record) => "£ " + record?.price },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (_, record) => "£ " + record?.price,
+    },
   ];
 
-  // To provide budget based suggestions 
+  // To provide budget based suggestions
   function budgetBasedSuggestions(items, budget) {
     // Separate the items into choices and extras
-    const choices = items.filter(item => item.category === 'choice');
-    const extras = items.filter(item => item.category === 'extras');
+    const choices = items.filter((item) => item.category === "choice");
+    const extras = items.filter((item) => item.category === "extras");
 
     // Sort choices by actual price in descending order (most expensive first)
     choices.sort((item1, item2) => item2.price - item1.price);
@@ -135,7 +139,7 @@ const BudgetBasedSuggestions = () => {
 
     // Check all combinations of extras to find the best within the budget
     const allExtrasCombinations = getCombinations(extras);
-    allExtrasCombinations.forEach(combo => {
+    allExtrasCombinations.forEach((combo) => {
       const comboCost = combo.reduce((sum, item) => sum + item.price, 0);
       if (comboCost <= budget && comboCost > bestCost) {
         bestCost = comboCost;
@@ -147,19 +151,21 @@ const BudgetBasedSuggestions = () => {
     return {
       suggestedChoices,
       suggestedExtras: bestExtras,
-      totalCost: bestCost
+      totalCost: bestCost,
     };
-}
+  }
 
   return (
     <div>
       <h3>In-Budget Suggestions</h3>
-      <Row align="middle" style={{margin: "24px 0"}}>
-        <Col style={{marginRight: "48px"}}>
-          <p style={{display: "inline", marginRight: "8px"}}>Enter your budget </p>
-          <InputNumber 
+      <Row align="middle" style={{ margin: "24px 0" }}>
+        <Col style={{ marginRight: "48px" }}>
+          <p style={{ display: "inline", marginRight: "8px" }}>
+            Enter your budget{" "}
+          </p>
+          <InputNumber
             addonBefore="£"
-            style={{minWidth: "180px"}}
+            style={{ minWidth: "180px" }}
             placeholder="Enter your budget"
             onChange={(value) => setBudget(value)}
           />
@@ -174,24 +180,24 @@ const BudgetBasedSuggestions = () => {
           </Button>
         </Col>
         <Col>
-          <Button
-            type="primary"
-            disabled
-            style={{marginLeft: "48px"}}
-          >
+          <Button type="primary" disabled style={{ marginLeft: "48px" }}>
             Proceed with Configuration
           </Button>
         </Col>
       </Row>
-      {showRecommendations && ( 
+      {showRecommendations && (
         <>
-          <h3><b>SUGGESTED CHOICES</b></h3>
+          <h3>
+            <b>SUGGESTED CHOICES</b>
+          </h3>
           <Table
             columns={recommendationsColumns}
             dataSource={suggestedChoices}
             pagination={false}
           />
-          <h3><b>SUGGESTED EXTRAS</b></h3>
+          <h3>
+            <b>SUGGESTED EXTRAS</b>
+          </h3>
           {suggestedExtras.length === 0 && <p>No Extras are in budget!</p>}
           {suggestedExtras.length > 0 && (
             <Table
@@ -203,7 +209,7 @@ const BudgetBasedSuggestions = () => {
         </>
       )}
     </div>
-  )
+  );
 };
 
 export default BudgetBasedSuggestions;

@@ -112,7 +112,9 @@ const OrdersManagement = () => {
   // Function to handle fetch suppliers
   const fetchSuppliers = async () => {
     try {
-      const response = await axiosInstance.get("/suppliers");
+      const response = await axiosInstance.get(
+        `/suppliers?venture_id=${ventureId}`
+      );
       const _suppliers = response.data;
       // Sorting suppliers based on feedback in descending order
       _suppliers.sort((item1, item2) => item2.feedback - item1.feedback);
@@ -321,8 +323,12 @@ const OrdersManagement = () => {
 
   // Function to handle fetch features
   const fetchFeatures = async () => {
+    if (!user) return;
+
     try {
-      const response = await axiosInstance.get("/features");
+      const response = await axiosInstance.get(
+        `/features?builder_id=${user.id}`
+      );
       const _featuresMap = response?.data?.reduce((acc, feature) => {
         acc[feature.feature_id] = feature;
         return acc;
@@ -470,7 +476,8 @@ const OrdersManagement = () => {
                     <h3>{t("buyerOrders")}</h3>
                   </Col>
                   <Col>
-                    {supplierOrders.length === 0 &&
+                    {orderSuggestionsTableData?.length > 0 &&
+                      supplierOrders.length === 0 &&
                       (showSuggestions ? (
                         <Button type="primary" onClick={toggleSuggestions}>
                           {t("hideSuggestedOrders")}

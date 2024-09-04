@@ -235,7 +235,9 @@ const ComparisionTool = () => {
     // Function to fetch features
     const fetchFeatures = async () => {
       try {
-        const response = await axiosInstance.get("/features");
+        const response = await axiosInstance.get(
+          `/features?builder_id=${venture.builder_id}`
+        );
         const _featuresMap = response?.data?.reduce((acc, feature) => {
           acc[feature.feature_id] = feature;
           return acc;

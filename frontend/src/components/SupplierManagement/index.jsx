@@ -8,6 +8,7 @@ import editIcon from "../../assets/edit.png";
 import AddSupplierModal from "./AddSupplierModal";
 import EditSupplierModal from "./EditSupplierModal";
 import axiosInstance from "../../helpers/axiosInstance";
+import useLocalStorage from "../../utils/useLocalStorage";
 const describeRate = ["Terrible", "Bad", "Normal", "Good", "Wonderful"];
 
 function SupplierManagement() {
@@ -16,6 +17,8 @@ function SupplierManagement() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [messageApi, messageHolder] = message.useMessage();
+
+  const [selectedVentureId] = useLocalStorage("selectedVenture");
 
   const { t } = useTranslation();
 
@@ -161,7 +164,9 @@ function SupplierManagement() {
   // Function to load suppliers from Supabase
   const fetchSuppliers = async () => {
     try {
-      const response = await axiosInstance.get("/suppliers");
+      const response = await axiosInstance.get(
+        `/suppliers?venture_id=${selectedVentureId}`
+      );
       setSuppliers(response.data);
     } catch (error) {
       console.log("Error fetching suppliers:", error);

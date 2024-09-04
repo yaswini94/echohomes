@@ -71,25 +71,33 @@ const HeaderLayout = () => {
   };
 
   useEffect(() => {
-    // Function to handle fetch ventures
-    const fetchVentures = async () => {
-      try {
-        const response = await axiosInstance.get("/ventures");
-        const _ventures = (response?.data || []).map((venture) => {
-          return {
-            value: venture.venture_id,
-            label: venture.name,
-          };
-        });
-        setVentures(_ventures);
-        const _selectedVenture = _ventures?.[0]?.value;
-        setVentureId(_selectedVenture);
-      } catch (error) {
-        console.log("Error fetching ventures:", error);
-      }
-    };
-    fetchVentures();
-    fetchUserSettings(role);
+    if (role !== userRoles.BUILDERS) {
+      fetchUserSettings(role);
+      return;
+    }
+
+    if (role) {
+      // Function to handle fetch ventures
+      const fetchVentures = async () => {
+        try {
+          const response = await axiosInstance.get("/ventures");
+          const _ventures = (response?.data || []).map((venture) => {
+            return {
+              value: venture.venture_id,
+              label: venture.name,
+            };
+          });
+          setVentures(_ventures);
+          const _selectedVenture = _ventures?.[0]?.value;
+          setVentureId(_selectedVenture);
+        } catch (error) {
+          console.log("Error fetching ventures:", error);
+        }
+      };
+
+      fetchVentures();
+      fetchUserSettings(role);
+    }
   }, [role]);
 
   // Function to handle venture change
@@ -295,19 +303,30 @@ const HeaderLayout = () => {
       </div>
       <div>
         {/* Switch venture for the builder */}
-        {role === userRoles.BUILDERS && (
-          <Select
-            value={ventureId}
-            style={{
-              width: "auto",
-              minWidth: "160px",
-              marginRight: "24px",
-              color: "white",
-            }}
-            onChange={onSelectVenture}
-            options={ventures}
-          />
-        )}
+        {role === userRoles.BUILDERS &&
+          (ventures.length > 0 ? (
+            <Select
+              value={ventureId}
+              style={{
+                width: "auto",
+                minWidth: "160px",
+                marginRight: "24px",
+                color: "white",
+              }}
+              onChange={onSelectVenture}
+              options={ventures}
+            />
+          ) : (
+            <Select
+              value="No ventures available"
+              style={{
+                width: "auto",
+                minWidth: "160px",
+                marginRight: "24px",
+                color: "white",
+              }}
+            />
+          ))}
         {/* Language change for the globalisation */}
         <Select
           key="language"

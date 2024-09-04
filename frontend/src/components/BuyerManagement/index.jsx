@@ -206,7 +206,9 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   // To fetch features list
   const fetchFeatures = async () => {
     try {
-      const response = await axiosInstance.get("/features");
+      const response = await axiosInstance.get(
+        `/features?builder_id=${builderId}`
+      );
       const _featuresMap = response?.data?.reduce((acc, feature) => {
         acc[feature.feature_id] = feature;
         return acc;
