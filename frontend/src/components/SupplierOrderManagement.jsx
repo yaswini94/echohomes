@@ -14,7 +14,6 @@ const SupplierOrderManagement = () => {
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get(`/supplier-orders`);
-      console.log({ supplier: response, response: response.data });
       const _supplierOrders = response.data;
       setSupplierOrders(_supplierOrders);
     } catch (error) {
@@ -53,10 +52,10 @@ const SupplierOrderManagement = () => {
     {
       title: "Action",
       key: "operation",
-      render: (record) => (
+      render: (_, record) => (
         <Space size="middle">
           <Tooltip title="Change status">
-            {record?.status === null && <a>Inprogress</a>}
+            {!record?.status && <a>Inprogress</a>}
             {record?.status === "inprogress" && <a>Done</a>}
             {record?.status === "done" && <p>-</p>}
           </Tooltip>

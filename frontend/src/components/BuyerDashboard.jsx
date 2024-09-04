@@ -114,9 +114,9 @@ const BuyerDashboard = () => {
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
-            <Statistic title="Completed" value={dashboardData.completed} />
-            <Statistic title="Inprogress" value={dashboardData.inprogress} />
-            <Statistic title="Pending" value={dashboardData.pending} />
+            <Statistic title={t("completed")} value={dashboardData.completed} />
+            <Statistic title={t("inprogress")} value={dashboardData.inprogress} />
+            <Statistic title={t("pending")} value={dashboardData.pending} />
           </Card>
         </Col>
         <Col span={12}>

@@ -354,7 +354,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         render: (record) => (
           <Space size="middle">
             <Tooltip title="Change status">
-              {record?.status === null && (
+              {!record?.status && (
                 <Button
                   onClick={() => changeStatusHandle("inprogress", record)}
                 >

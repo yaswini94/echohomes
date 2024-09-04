@@ -192,6 +192,7 @@ const FeatureManagement = () => {
     },
   ];
 
+  // Columns for features table
   const featuresColumns = [
     {
       title: t("name"),

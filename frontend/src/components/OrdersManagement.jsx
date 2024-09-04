@@ -93,6 +93,7 @@ const OrdersManagement = () => {
 
     try {
       const response = await axiosInstance.get(`/supplier-orders/${ventureId}`);
+      console.log("responseresponse.data:", response.data);
       const _supplierOrders = response.data.map((order) => {
         order.supplier = suppliers.find(
           (supplier) => supplier.supplier_id === order.supplier_id
@@ -105,6 +106,7 @@ const OrdersManagement = () => {
         }, 0);
         return order;
       });
+      console.log("supplier orders:", _supplierOrders);
       fetchStripeSession(_supplierOrders);
     } catch (error) {
       console.error("Error fetching supplier orders:", error);
@@ -120,6 +122,7 @@ const OrdersManagement = () => {
       const _suppliers = response.data;
       // Sorting suppliers based on feedback in descending order
       _suppliers.sort((item1, item2) => item2.feedback - item1.feedback);
+      // here change
       setSuppliers(_suppliers);
     } catch (error) {
       console.log("Error fetching suppliers:", error);
@@ -201,7 +204,7 @@ const OrdersManagement = () => {
       title: t("supplierName"),
       key: "supplier name",
       render: (_, record) => {
-        `record?.supplier?.name`;
+        console.log("record:", record);
         return record?.supplier?.name;
       },
     },
@@ -345,6 +348,7 @@ const OrdersManagement = () => {
 
   const fetchStripeSession = async (orders) => {
     // for each order make an api call to /get-stripe-session and add the session to the order and return the orders
+    console.log("orders:", { orders });
     const _orders = await Promise.all(
       orders.map(async (order) => {
         try {
