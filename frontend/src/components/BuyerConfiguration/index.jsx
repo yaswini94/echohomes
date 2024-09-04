@@ -420,6 +420,7 @@ const BuyerConfiguration = () => {
 
   return (
     <div>
+      <h3>Choices Configuration</h3>
       <Row justify="space-between" align="middle">
         <Col>
           <p>
