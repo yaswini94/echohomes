@@ -84,33 +84,33 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   // Columns to display in the buyer management table
   const columns = [
     {
-      title: "Name",
+      title: translate("name"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Address",
+      title: translate("address"),
       dataIndex: "address",
       key: "address",
     },
     {
-      title: "Contact Email",
+      title: translate("contactEmail"),
       dataIndex: "contact_email",
       key: "contact_email",
     },
     {
-      title: "Phone Number",
+      title: translate("phoneNumber"),
       dataIndex: "phone_number",
       key: "phone_number",
     },
     {
-      title: "House Type",
+      title: translate("houseType"),
       dataIndex: "house_type",
       key: "house_type",
       render: (_, record) => record?.house_type + " Bed",
     },
     {
-      title: "Action",
+      title: translate("action"),
       key: "action",
       render: (_, record) => (
         // To diaply action icons edit, delete, expand
@@ -310,24 +310,28 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   // To render nested table expanded row
   const expandedRowRender = (record) => {
     const expandColumns = [
-      { title: t("name"), dataIndex: "name", key: "name" },
-      { title: t("details"), dataIndex: "details", key: "details" },
+      { title: translate("name"), dataIndex: "name", key: "name" },
+      { title: translate("details"), dataIndex: "details", key: "details" },
       {
-        title: t("unitPrice"),
+        title: translate("unitPrice"),
         dataIndex: "latPrice",
         key: "latPrice",
         render: (_, record) => "£ " + record?.latPrice,
       },
-      { title: t("Quantity"), dataIndex: "latQuantity", key: "latQuantity" },
       {
-        title: t("total"),
+        title: translate("Quantity"),
+        dataIndex: "latQuantity",
+        key: "latQuantity",
+      },
+      {
+        title: translate("total"),
         dataIndex: "total",
         key: "total",
         render: (_, record) =>
           `£ ${(record?.latQuantity || 0) * (record?.latPrice || 0)}`,
       },
       {
-        title: t("notes"),
+        title: translate("notes"),
         dataIndex: "notes",
         key: "notes",
         render: (_, record) => {
@@ -335,7 +339,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         },
       },
       {
-        title: t("status"),
+        title: translate("status"),
         key: "state",
         render: (_, record) => {
           switch (record?.status) {
@@ -349,7 +353,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         },
       },
       {
-        title: t("action"),
+        title: translate("action"),
         key: "operation",
         render: (record) => (
           <Space size="middle">

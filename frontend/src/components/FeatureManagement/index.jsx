@@ -14,7 +14,7 @@ import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
 
 const FeatureManagement = () => {
-  const { translate } = useTranslation();
+  const { t: translate } = useTranslation();
 
   const [features, setFeatures] = useState({});
   const [selectedFeature, setSelectedFeature] = useState([]);

@@ -165,15 +165,15 @@ const HeaderLayout = () => {
 
   const languages = [
     {
-      value: "en-uk",
+      value: "en",
       label: "English (UK)",
     },
     {
-      value: "es-419",
+      value: "es",
       label: "Español",
     },
     {
-      value: "zh-cmn-Hant-HK",
+      value: "zh",
       label: "中文",
     }
   ];
