@@ -420,7 +420,7 @@ const BuyerConfiguration = () => {
 
   return (
     <div>
-      <h3>Choices Configuration</h3>
+      <h3>{t("choicesConfiguration")}</h3>
       <Row justify="space-between" align="middle">
         <Col>
           <p>
