@@ -17,7 +17,7 @@ const ComparisionTool = () => {
   const [selectedExtras1, setSelectedExtras1] = useState([]);
   const [quantityMap1, setQuantityMap1] = useState({});
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   // Function to handle 1st set choice selection change
   const onSelectChoiceChange = (newSelectedRowKeys) => {
@@ -328,7 +328,7 @@ const ComparisionTool = () => {
         <Col>
           <Row justify="space-between" align="middle">
             <h3>
-              {t("total")}: £ {getSelectedPrice()}
+              {translate("total")}: £ {getSelectedPrice()}
             </h3>
             <Button type="primary" disabled style={{ marginLeft: "48px" }}>
               Proceed with Configuration
@@ -386,7 +386,7 @@ const ComparisionTool = () => {
         <Col>
           <Row justify="space-between" align="middle">
             <h3>
-              {t("total")}: £ {getSelectedPrice1()}
+              {translate("total")}: £ {getSelectedPrice1()}
             </h3>
             <Button type="primary" disabled style={{ marginLeft: "48px" }}>
               Proceed with Configuration

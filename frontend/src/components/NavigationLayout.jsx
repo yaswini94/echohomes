@@ -9,59 +9,59 @@ const { Sider } = Layout;
 const NavigationLayout = () => {
   const location = useLocation();
   const { role } = useAuth();
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   // List of navigations
   const items = {
     [userRoles.BUILDERS]: [
       {
-        label: <Link to="/dashboard">{t("home")}</Link>,
+        label: <Link to="/dashboard">{translate("home")}</Link>,
         key: "/dashboard",
       },
       {
-        label: <Link to="/ventures">{t("ventureManagement")}</Link>,
+        label: <Link to="/ventures">{translate("ventureManagement")}</Link>,
         key: "/ventures",
       },
       {
-        label: <Link to="/suppliers">{t("supplierManagement")}</Link>,
+        label: <Link to="/suppliers">{translate("supplierManagement")}</Link>,
         key: "/suppliers",
       },
       {
-        label: <Link to="/buyers">{t("buyerManagement")}</Link>,
+        label: <Link to="/buyers">{translate("buyerManagement")}</Link>,
         key: "/buyers",
       },
       {
-        label: <Link to="/features">{t("featureManagement")}</Link>,
+        label: <Link to="/features">{translate("featureManagement")}</Link>,
         key: "/features",
       },
       {
-        label: <Link to="/orders">{t("orders")}</Link>,
+        label: <Link to="/orders">{translate("orders")}</Link>,
         key: "/orders",
       },
     ],
     [userRoles.BUYERS]: [
-      { label: <Link to="/dashboard">{t("home")}</Link>, key: "/dashboard" },
+      { label: <Link to="/dashboard">{translate("home")}</Link>, key: "/dashboard" },
       {
         label: (
-          <Link to="/buyer-configuration">{t("choicesConfiguration")}</Link>
+          <Link to="/buyer-configuration">{translate("choicesConfiguration")}</Link>
         ),
         key: "/buyerConfiguration",
       },
       {
         label: (
-          <Link to="/in-budget-suggestions">{t("inBudgetSuggestions")}</Link>
+          <Link to="/in-budget-suggestions">{translate("inBudgetSuggestions")}</Link>
         ),
         key: "/inBudgetSuggestions",
       },
       {
-        label: <Link to="/comparision-tool">{t("comparisonTool")}</Link>,
+        label: <Link to="/comparision-tool">{translate("comparisonTool")}</Link>,
         key: "/comparisionTool",
       },
     ],
     [userRoles.SUPPLIERS]: [
-      { label: <Link to="/dashboard">{t("home")}</Link>, key: "/dashboard" },
+      { label: <Link to="/dashboard">{translate("home")}</Link>, key: "/dashboard" },
       {
-        label: <Link to="/supplier-orders">{t("orders")}</Link>,
+        label: <Link to="/supplier-orders">{translate("orders")}</Link>,
         key: "/supplierOrdersManagement",
       },
       // { label: "Invoices", key: "invoices" },

@@ -20,7 +20,7 @@ const BuyerConfiguration = () => {
   const [quantityMap, setQuantityMap] = useState({});
   const [paymentSession, setPaymentSession] = useState(null);
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
@@ -420,7 +420,7 @@ const BuyerConfiguration = () => {
 
   return (
     <div>
-      <h3>{t("choicesConfiguration")}</h3>
+      <h3>{translate("choicesConfiguration")}</h3>
       <Row justify="space-between" align="middle">
         <Col>
           <p>
@@ -435,7 +435,7 @@ const BuyerConfiguration = () => {
         {paymentSession?.payment_status === "paid" ? (
           <div>
             <p>
-              {t("total")}: <b>£ {getSelectedPrice()}</b> - Payment Completed
+              {translate("total")}: <b>£ {getSelectedPrice()}</b> - Payment Completed
             </p>
             {paymentSession?.invoice && (
               <InvoiceComponent invoiceId={paymentSession.invoice} />
@@ -444,7 +444,7 @@ const BuyerConfiguration = () => {
         ) : (
           <Col>
             <h3>
-              {t("total")}: £ {getSelectedPrice()}
+              {translate("total")}: £ {getSelectedPrice()}
             </h3>
             <Button
               type="primary"

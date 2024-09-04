@@ -33,9 +33,8 @@ const OrdersManagement = () => {
   const [selectedSupplierId, setSelectedSupplierId] = useState(null);
   const [supplierOrders, setSupplierOrders] = useState([]);
   const [expandedRowId, setExpandedRowId] = useState(null);
-  const [paymentSession, setPaymentSession] = useState(null);
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   // Function to handle builder orders to suppliers
   const handleSupplierOrder = async () => {
@@ -122,7 +121,6 @@ const OrdersManagement = () => {
       const _suppliers = response.data;
       // Sorting suppliers based on feedback in descending order
       _suppliers.sort((item1, item2) => item2.feedback - item1.feedback);
-      // here change
       setSuppliers(_suppliers);
     } catch (error) {
       console.log("Error fetching suppliers:", error);
@@ -169,7 +167,7 @@ const OrdersManagement = () => {
         if (_quantity > _availableQuantity) {
           return (
             <Space direction="vertical">
-              <p>{t("createPurchaseOrder")}</p>
+              <p>{translate("createPurchaseOrder")}</p>
             </Space>
           );
         }
@@ -177,12 +175,12 @@ const OrdersManagement = () => {
         if (_quantity <= 5) {
           return (
             <Space direction="vertical">
-              <Tag color="error">{t("lowStock")}</Tag>
+              <Tag color="error">{translate("lowStock")}</Tag>
             </Space>
           );
         }
 
-        return <Space direction="vertical">{t("inStock")}</Space>;
+        return <Space direction="vertical">{translate("inStock")}</Space>;
       },
     },
     {
@@ -190,10 +188,10 @@ const OrdersManagement = () => {
       key: "supplier order status",
       render: (_, record) => {
         if (supplierOrders.length > 0) {
-          return <p>{t("orderedFromSupplier")}</p>;
+          return <p>{translate("orderedFromSupplier")}</p>;
         }
 
-        return <p>{t("notOrdered")}</p>;
+        return <p>{translate("notOrdered")}</p>;
       },
     },
   ];
@@ -220,13 +218,13 @@ const OrdersManagement = () => {
       render: (_, record) => {
         switch (record?.status) {
           case "preparing":
-            return <Tag color="processing">{t("preparing")}</Tag>;
+            return <Tag color="processing">{translate("preparing")}</Tag>;
           case "intransit":
-            return <Tag color="default">{t("inTransit")}</Tag>;
+            return <Tag color="default">{translate("inTransit")}</Tag>;
           case "delivered":
-            return <Tag color="success">{t("delivered")}</Tag>;
+            return <Tag color="success">{translate("delivered")}</Tag>;
           default:
-            return <Tag color="default">{t("notStarted")}</Tag>;
+            return <Tag color="default">{translate("notStarted")}</Tag>;
         }
       },
     },
@@ -236,16 +234,16 @@ const OrdersManagement = () => {
       render: (_, record) => {
         switch (record?.stripe_session?.payment_status) {
           case "paid":
-            return <Tag color="success">{t("paid")}</Tag>;
+            return <Tag color="success">{translate("paid")}</Tag>;
           case "unpaid":
             return (
               <div>
-                <Tag color="error">{t("unpaid")}</Tag>
+                <Tag color="error">{translate("unpaid")}</Tag>
                 <Button
                   type="primary"
                   onClick={() => processPayment(record.stripe_session_id)}
                 >
-                  {t("payNow")}
+                  {translate("payNow")}
                 </Button>
               </div>
             );
@@ -481,18 +479,18 @@ const OrdersManagement = () => {
                 {/* Buyer orders view to render */}
                 <Row justify="space-between" align="middle">
                   <Col>
-                    <h3>{t("buyerOrders")}</h3>
+                    <h3>{translate("buyerOrders")}</h3>
                   </Col>
                   <Col>
                     {orderSuggestionsTableData?.length > 0 &&
                       supplierOrders.length === 0 &&
                       (showSuggestions ? (
                         <Button type="primary" onClick={toggleSuggestions}>
-                          {t("hideSuggestedOrders")}
+                          {translate("hideSuggestedOrders")}
                         </Button>
                       ) : (
                         <Button type="primary" onClick={toggleSuggestions}>
-                          {t("showSuggestedOrders")}
+                          {translate("showSuggestedOrders")}
                         </Button>
                       ))}
                   </Col>
@@ -500,7 +498,7 @@ const OrdersManagement = () => {
                 <div>
                   {showSuggestions &&
                     (orderSuggestionsTableData?.length === 0 ? (
-                      <p>{t("noSuggestionsExist")}</p>
+                      <p>{translate("noSuggestionsExist")}</p>
                     ) : (
                       <div
                         style={{
@@ -511,7 +509,7 @@ const OrdersManagement = () => {
                       >
                         <Row justify="space-between" align="middle">
                           <Col>
-                            <h3>{t("suggestedOrders")}</h3>
+                            <h3>{translate("suggestedOrders")}</h3>
                           </Col>
                           <Col>
                             <Select
@@ -536,7 +534,7 @@ const OrdersManagement = () => {
                               disabled={!selectedSupplierId}
                               onClick={handleSupplierOrder}
                             >
-                              {t("placeOrderToSupplier")}
+                              {translate("placeOrderToSupplier")}
                             </Button>
                           </Col>
                         </Row>
@@ -548,7 +546,7 @@ const OrdersManagement = () => {
                       </div>
                     ))}
                   {ordersTableData?.length === 0 ? (
-                    <p>{t("noBuyerOrdersExist")}</p>
+                    <p>{translate("noBuyerOrdersExist")}</p>
                   ) : (
                     <Table
                       columns={ordersColumns}
@@ -566,9 +564,9 @@ const OrdersManagement = () => {
               <>
                 {/* Supplier orders view to render */}
                 <div>
-                  <h3>{t("supplierOrders")}</h3>
+                  <h3>{translate("supplierOrders")}</h3>
                   {supplierOrders.length === 0 && (
-                    <p>{t("noSupplierOrdersExist")}</p>
+                    <p>{translate("noSupplierOrdersExist")}</p>
                   )}
                   {supplierOrders.length > 0 && (
                     <Table

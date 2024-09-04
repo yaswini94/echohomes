@@ -3,7 +3,6 @@ import { supabase } from "../../supabase";
 import { useAuth } from "../../auth/useAuth";
 
 import "./chat.css";
-import { Button } from "antd";
 import {
   CloseOutlined,
   DownSquareOutlined,
@@ -148,6 +147,7 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
     }
   };
 
+  // Function to handle scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -156,6 +156,7 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
     scrollToBottom();
   }, [messages]);
 
+  // Function to handle toggle minimize
   const toggleMinimize = () => {
     setIsMinimized((prev) => !prev);
   };

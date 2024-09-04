@@ -8,7 +8,7 @@ const InvoiceComponent = ({ invoiceId }) => {
   const [receiptPdfUrl, setReceiptPdfUrl] = useState("");
   const [error, setError] = useState(null);
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   useEffect(() => {
     const fetchReceiptPdfUrl = async (chargeId) => {
@@ -66,14 +66,14 @@ const InvoiceComponent = ({ invoiceId }) => {
   return (
     <div>
       <Button type="primary" onClick={handleDownload} disabled={!pdfUrl}>
-        {t("downloadInvoice")}
+        {translate("downloadInvoice")}
       </Button>
       <Button
         type="primary"
         onClick={handleReceiptDownload}
         disabled={!receiptPdfUrl}
       >
-        {t("downloadReceipt")}
+        {translate("downloadReceipt")}
       </Button>
     </div>
   );

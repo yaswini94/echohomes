@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import axiosInstance from "../../helpers/axiosInstance";
 
 const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([
     { key: 1, label: t("1Bed"), value: 0 },
@@ -121,9 +121,9 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
                 value={property.label}
                 disabled
               >
-                <Option value="1">{t("1Bed")}</Option>
-                <Option value="2">{t("2Bed")}</Option>
-                <Option value="3">{t("3Bed")}</Option>
+                <Option value="1">{translate("1Bed")}</Option>
+                <Option value="2">{translate("2Bed")}</Option>
+                <Option value="3">{translate("3Bed")}</Option>
               </Select>
               <Form.Item
                 name={`propertyValue${property.key}`}

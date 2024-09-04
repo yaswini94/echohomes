@@ -26,7 +26,7 @@ const BuilderDashboard = () => {
     invoiceAmount: 0,
   });
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   useEffect(() => {
     if (!ventureId) return;
@@ -138,34 +138,34 @@ const BuilderDashboard = () => {
       <Row gutter={24}>
         <Col span={8}>
           <Card
-            title={t("ventureInformation")}
+            title={translate("ventureInformation")}
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
-            <Statistic title={t("totalHouses")} value={houseInfo.totalHouses} />
+            <Statistic title={translate("totalHouses")} value={houseInfo.totalHouses} />
             <Statistic
-              title={t("pendingHouses")}
+              title={translate("pendingHouses")}
               value={houseInfo.pendingHouses}
             />
             <Statistic
-              title={t("configuredHouses")}
+              title={translate("configuredHouses")}
               value={houseInfo.configuredHouses}
             />
           </Card>
         </Col>
         <Col span={8}>
           <Card
-            title={t("orders")}
+            title={translate("orders")}
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
-            <Statistic title={t("totalOrders")} value={orderInfo.totalOrders} />
+            <Statistic title={translate("totalOrders")} value={orderInfo.totalOrders} />
             <Statistic
-              title={t("pendingOrders")}
+              title={translate("pendingOrders")}
               value={orderInfo.pendingOrders}
             />
             <Statistic
-              title={t("invoiceAmount")}
+              title={translate("invoiceAmount")}
               value={orderInfo.invoiceAmount}
               precision={2}
             />
@@ -173,7 +173,7 @@ const BuilderDashboard = () => {
         </Col>
         <Col span={8}>
           <Card
-            title={t("feedback")}
+            title={translate("feedback")}
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >

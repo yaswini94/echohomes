@@ -17,7 +17,7 @@ function VentureManagement() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [messageApi, messageHolder] = message.useMessage();
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   // Function to show add venture modal
   const showModal = () => {
@@ -108,11 +108,11 @@ function VentureManagement() {
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>{t("ventureManagement")}</h3>
+          <h3>{translate("ventureManagement")}</h3>
         </Col>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-            {t("add")}
+            {translate("add")}
           </Button>
         </Col>
       </Row>
@@ -171,11 +171,11 @@ function VentureManagement() {
                   bordered={false}
                 >
                   <p>
-                    <b>{t("description")}: </b>
+                    <b>{translate("description")}: </b>
                     {venture?.description}
                   </p>
                   <p>
-                    <b>{t("properties")}: </b>
+                    <b>{translate("properties")}: </b>
                   </p>
                   {venture?.properties?.map((property) => (
                     <p key={property.key}>

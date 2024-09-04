@@ -80,5 +80,9 @@
   "delivered": "Entregado",
   "totalHouses": "Total de Casas",
   "pendingHouses": "Casas Pendientes",
-  "configuredHouses": "Casas Configuradas"
+  "configuredHouses": "Casas Configuradas",
+  "suggestedExtras": "EXTRAS SUGERIDOS",
+  "suggestedChoices": "OPCIONES SUGERIDAS",
+  "suggestInBudget": "Sugerir en Presupuesto",
+  "proceedWithConfiguration": "Continuar con la Configuración"
 }

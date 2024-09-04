@@ -21,7 +21,7 @@ const SupplierDashboard = () => {
   });
   const [totalFeedbackCount, setTotalFeedbackCount] = useState(0);
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   useEffect(() => {
     // Function to handle fetch feedback to display in dashboard
@@ -104,9 +104,9 @@ const SupplierDashboard = () => {
       <Row gutter={24}>
         <Col span={12}>
           <Card title="Orders" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
-            <Statistic title={t("totalOrders")} value={orderInfo.totalOrders} />
-            <Statistic title={t("pendingOrders")} value={orderInfo.pendingOrders} />
-            <Statistic title={t("invoiceAmount")} value={orderInfo.invoiceAmount} precision={2} />
+            <Statistic title={translate("totalOrders")} value={orderInfo.totalOrders} />
+            <Statistic title={translate("pendingOrders")} value={orderInfo.pendingOrders} />
+            <Statistic title={translate("invoiceAmount")} value={orderInfo.invoiceAmount} precision={2} />
           </Card>
         </Col>
         <Col span={12}>

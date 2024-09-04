@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Row, Col, Button, InputNumber } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
+import { useTranslation } from "react-i18next";
 
 const BudgetBasedSuggestions = () => {
   const { user } = useAuth();
@@ -13,6 +14,7 @@ const BudgetBasedSuggestions = () => {
   const [allFeatures, setAllFeatures] = useState(null);
   const [buyer, setBuyer] = useState(null);
   const [venture, setVenture] = useState(null);
+  const { t: translate } = useTranslation();
 
   useEffect(() => {
     if (!buyer?.buyer_id) return;
@@ -176,19 +178,19 @@ const BudgetBasedSuggestions = () => {
             disabled={!budget}
             onClick={toggleShowRecommendations}
           >
-            Suggest in budget
+            {translate("suggestInBudget")}
           </Button>
         </Col>
         <Col>
           <Button type="primary" disabled style={{ marginLeft: "48px" }}>
-            Proceed with Configuration
+            {translate("proceedWithConfiguration")}
           </Button>
         </Col>
       </Row>
       {showRecommendations && (
         <>
           <h3>
-            <b>SUGGESTED CHOICES</b>
+            <b>{translate("suggestedChoices")}</b>
           </h3>
           <Table
             columns={recommendationsColumns}
@@ -196,7 +198,7 @@ const BudgetBasedSuggestions = () => {
             pagination={false}
           />
           <h3>
-            <b>SUGGESTED EXTRAS</b>
+            <b>{translate("suggestedExtras")}</b>
           </h3>
           {suggestedExtras.length === 0 && <p>No Extras are in budget!</p>}
           {suggestedExtras.length > 0 && (

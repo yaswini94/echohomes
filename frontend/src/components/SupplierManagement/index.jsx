@@ -20,7 +20,7 @@ function SupplierManagement() {
 
   const [ventureId] = useLocalStorage("selectedVenture");
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   // Function to show add supplier modal
   const showModal = () => {
@@ -210,7 +210,7 @@ function SupplierManagement() {
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>{t("supplierManagement")}</h3>
+          <h3>{translate("supplierManagement")}</h3>
         </Col>
         <Col>
           <Button
@@ -219,7 +219,7 @@ function SupplierManagement() {
             onClick={showModal}
             disabled={!ventureId}
           >
-            {t("add")}
+            {translate("add")}
           </Button>
         </Col>
       </Row>

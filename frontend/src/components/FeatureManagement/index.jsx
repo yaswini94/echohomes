@@ -14,7 +14,7 @@ import axiosInstance from "../../helpers/axiosInstance";
 import { useAuth } from "../../auth/useAuth";
 
 const FeatureManagement = () => {
-  const { t } = useTranslation();
+  const { translate } = useTranslation();
 
   const [features, setFeatures] = useState({});
   const [selectedFeature, setSelectedFeature] = useState([]);
@@ -254,7 +254,7 @@ const FeatureManagement = () => {
               <>
                 <Row justify="space-between" align="middle">
                   <Col>
-                    <h3>{t("featureManagement")}</h3>
+                    <h3>{translate("featureManagement")}</h3>
                   </Col>
                   <Col>
                     <Button
@@ -271,7 +271,7 @@ const FeatureManagement = () => {
                           color: "white",
                         }}
                       />{" "}
-                      {t("linkFeatures")}
+                      {translate("linkFeatures")}
                     </Button>
                     <Button
                       type="primary"
@@ -279,7 +279,7 @@ const FeatureManagement = () => {
                       onClick={showModal}
                       disabled={!ventureId}
                     >
-                      {t("add")}
+                      {translate("add")}
                     </Button>
                   </Col>
                 </Row>
@@ -315,7 +315,7 @@ const FeatureManagement = () => {
                 <div>
                   {/* Text to diaplay when no features exist */}
                   {Object.keys(features).length === 0 && (
-                    <p>{t("noFeaturesExist")}</p>
+                    <p>{translate("noFeaturesExist")}</p>
                   )}
                   {/* Feature will be displayed in Table template of ant design */}
                   {Object.keys(features).length > 0 && (
@@ -338,18 +338,18 @@ const FeatureManagement = () => {
                 {linkedFeatures?.map((value, index) => (
                   <div key={index}>
                     <h3 style={{ margin: "12px 0 0 12px" }}>
-                      {t(value?.label?.replace(/\s/g, ""))}
+                      {translate(value?.label?.replace(/\s/g, ""))}
                     </h3>
                     <Table
                       columns={linkedColumns}
                       dataSource={value.choices}
-                      title={() => <b>{t("choices")}</b>}
+                      title={() => <b>{translate("choices")}</b>}
                       pagination={false}
                     />
                     <Table
                       columns={linkedColumns}
                       dataSource={value.extras}
-                      title={() => <b>{t("extras")}</b>}
+                      title={() => <b>{translate("extras")}</b>}
                       pagination={false}
                     />
                   </div>

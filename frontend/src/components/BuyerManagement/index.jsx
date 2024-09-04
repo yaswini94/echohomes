@@ -38,7 +38,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
   const { user } = useAuth();
   const builderId = user?.id;
 
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   // To show add modal
   const showModal = () => {
@@ -340,11 +340,11 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         render: (_, record) => {
           switch (record?.status) {
             case "inprogress":
-              return <Tag color="processing">{t("inprogress")}</Tag>;
+              return <Tag color="processing">{translate("inprogress")}</Tag>;
             case "done":
-              return <Tag color="success">{t("installed")}</Tag>;
+              return <Tag color="success">{translate("installed")}</Tag>;
             default:
-              return <Tag color="default">{t("notStarted")}</Tag>;
+              return <Tag color="default">{translate("notStarted")}</Tag>;
           }
         },
       },
@@ -358,12 +358,12 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
                 <Button
                   onClick={() => changeStatusHandle("inprogress", record)}
                 >
-                  {t("markInprogress")}
+                  {translate("markInprogress")}
                 </Button>
               )}
               {record?.status === "inprogress" && (
                 <Button onClick={() => changeStatusHandle("done", record)}>
-                  {t("markDone")}
+                  {translate("markDone")}
                 </Button>
               )}
             </Tooltip>
@@ -410,7 +410,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
     <div>
       <Row justify="space-between" align="middle">
         <Col>
-          <h3>{t("buyerManagement")}</h3>
+          <h3>{translate("buyerManagement")}</h3>
         </Col>
         <Col>
           <Button
@@ -419,7 +419,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
             onClick={showModal}
             disabled={!ventureId}
           >
-            {t("add")}
+            {translate("add")}
           </Button>
         </Col>
       </Row>

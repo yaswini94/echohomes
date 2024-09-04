@@ -17,7 +17,7 @@ const BuyerDashboard = () => {
   });
 
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
 
   // Function to fetch builder based on id
   const fetchBuilder = async (id) => {
@@ -110,18 +110,18 @@ const BuyerDashboard = () => {
       <Row gutter={24}>
         <Col span={12}>
           <Card
-            title={t("statusOfFittings")}
+            title={translate("statusOfFittings")}
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
-            <Statistic title={t("completed")} value={dashboardData.completed} />
-            <Statistic title={t("inprogress")} value={dashboardData.inprogress} />
-            <Statistic title={t("pending")} value={dashboardData.pending} />
+            <Statistic title={translate("completed")} value={dashboardData.completed} />
+            <Statistic title={translate("inprogress")} value={dashboardData.inprogress} />
+            <Statistic title={translate("pending")} value={dashboardData.pending} />
           </Card>
         </Col>
         <Col span={12}>
           <Card
-            title={t("provideFeedbackToBuilder")}
+            title={translate("provideFeedbackToBuilder")}
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >

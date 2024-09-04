@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import axiosInstance from "../../helpers/axiosInstance";
 
 const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
-  const { t } = useTranslation();
+  const { t: translate } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState(
     venture.properties || [
@@ -140,9 +140,9 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
           >
             <Input.Group compact>
               <Select style={{ width: 120 }} value={property.label} disabled>
-                <Select.Option value="1">{t("1Bed")}</Select.Option>
-                <Select.Option value="2">{t("2Bed")}</Select.Option>
-                <Select.Option value="3">{t("3Bed")}</Select.Option>
+                <Select.Option value="1">{translate("1Bed")}</Select.Option>
+                <Select.Option value="2">{translate("2Bed")}</Select.Option>
+                <Select.Option value="3">{translate("3Bed")}</Select.Option>
               </Select>
               <Form.Item
                 name={`propertyValue${property.key}`}
