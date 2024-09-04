@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Input,
-  Form,
-  Modal,
-} from "antd";
+import { Button, Input, Form, Modal } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
 
 const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
@@ -30,6 +25,8 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
     handleOk();
   };
 
+  const [form] = Form.useForm();
+
   return (
     // Modal template from ant design
     <Modal
@@ -44,17 +41,25 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
         <Button
           key="submit"
           type="primary"
-          disabled={!(name && details && price)}
           loading={loading}
-          onClick={addFeature}
+          onClick={() => form.submit()}
         >
           {loading ? "Adding..." : "Add Feature"}
         </Button>,
       ]}
     >
-      <Form layout="vertical">
+      <Form layout="vertical" form={form} onFinish={addFeature}>
         {/* Form item for the feature name */}
-        <Form.Item label="Name">
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Please input the name of the feature!",
+            },
+          ]}
+        >
           <Input
             placeholder="Name"
             value={name}
@@ -63,7 +68,7 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the details */}
-        <Form.Item label="Details">
+        <Form.Item label="Details" name="details">
           <Input
             placeholder="Details"
             value={details}
@@ -72,7 +77,16 @@ const AddFeatureModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the price */}
-        <Form.Item label="Price">
+        <Form.Item
+          label="Price"
+          name="price"
+          rules={[
+            {
+              required: true,
+              message: "Please input the price of the feature!",
+            },
+          ]}
+        >
           <Input
             placeholder="Price"
             value={price}

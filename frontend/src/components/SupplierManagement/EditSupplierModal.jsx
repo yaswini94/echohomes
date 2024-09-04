@@ -31,6 +31,8 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
     setLoading(false);
   };
 
+  const [form] = Form.useForm();
+
   return (
     // Modal template from ant design for view
     <Modal
@@ -46,15 +48,35 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
           key="submit"
           type="primary"
           loading={loading}
-          onClick={updateSupplier}
+          onClick={() => form.submit()}
         >
           {loading ? "Updating..." : "Edit Supplier"}
         </Button>,
       ]}
     >
-      <Form layout="vertical">
+      <Form
+        layout="vertical"
+        form={form}
+        initialValues={{
+          name: supplier.name,
+          companyName: supplier.company_name,
+          phoneNumber: supplier.phone_number,
+          email: supplier.contact_email,
+          address: supplier.address,
+        }}
+        onFinish={updateSupplier}
+      >
         {/* Form item for the supplier name */}
-        <Form.Item label="Name">
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Please input the supplier's name",
+            },
+          ]}
+        >
           <Input
             placeholder="John T"
             value={name}
@@ -63,7 +85,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the company name */}
-        <Form.Item label="Company Name">
+        <Form.Item label="Company Name" name="companyName">
           <Input
             placeholder="Mulberry Homes"
             value={companyName}
@@ -72,7 +94,16 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the phone number */}
-        <Form.Item label="Phone Number">
+        <Form.Item
+          label="Phone Number"
+          name="phoneNumber"
+          rules={[
+            {
+              required: true,
+              message: "Please input the phone number",
+            },
+          ]}
+        >
           <Input
             placeholder="09999999999"
             type="tel"
@@ -82,7 +113,16 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the contact email */}
-        <Form.Item label="Contact Email">
+        <Form.Item
+          label="Contact Email"
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Please input the email",
+            },
+          ]}
+        >
           <Input
             type="email"
             placeholder="abc@domain.com"
@@ -92,7 +132,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the address */}
-        <Form.Item label="Address">
+        <Form.Item label="Address" name="address">
           <Input
             placeholder="Jarrom st, Leicester"
             value={address}

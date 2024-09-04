@@ -32,7 +32,9 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
   // To update housetype when user updates it
   const onHouseTypeChange = (value) => {
     const selectedItem = items.find((item) => item.key === value.key);
-    setHouseType(selectedItem ? selectedItem.label : null);
+    console.log("selectedItem", value?.key, selectedItem);
+    form.setFieldsValue({ houseType: value.key });
+    setHouseType(selectedItem ? selectedItem.key : null);
   };
 
   const editBuyer = async () => {
@@ -56,6 +58,8 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
     handleOk();
   };
 
+  const [form] = Form.useForm();
+
   return (
     // Modal template from the Ant design components to edit buyer
     <Modal
@@ -70,18 +74,34 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
         <Button
           key="submit"
           type="primary"
-          disabled={!(email && name && phoneNumber && address && houseType)}
           loading={loading}
-          onClick={editBuyer}
+          onClick={() => form.submit()}
         >
           {loading ? "Updating..." : "Edit Buyer"}
         </Button>,
       ]}
     >
       {/* Form template from the Ant design components to update details */}
-      <Form layout="vertical">
+      <Form
+        layout="vertical"
+        form={form}
+        initialValues={{
+          email: buyer.contact_email,
+          name: buyer.name,
+          phoneNumber: buyer.phone_number,
+          address: buyer.address,
+          houseType: buyer.house_type,
+        }}
+        onFinish={editBuyer}
+      >
         {/* Form item for the buyer name */}
-        <Form.Item label="Name">
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            { required: true, message: "Please input the buyer's name!" },
+          ]}
+        >
           <Input
             placeholder="John T"
             value={name}
@@ -90,7 +110,17 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the phone number */}
-        <Form.Item label="Phone Number">
+        <Form.Item
+          label="Phone Number"
+          name="phoneNumber"
+          rules={[
+            {
+              required: true,
+              message: "Please input the buyer's phone number!",
+            },
+            { pattern: /^\d{10,11}$/, message: "0-9(10 to 11 digits)" },
+          ]}
+        >
           <Input
             type="tel"
             placeholder="09999999999"
@@ -100,7 +130,14 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the contact email */}
-        <Form.Item label="Contact Email">
+        <Form.Item
+          label="Contact Email"
+          name="email"
+          rules={[
+            { type: "email", message: "The input is not valid E-mail!" },
+            { required: true, message: "Please input the buyer's email!" },
+          ]}
+        >
           <Input
             type="email"
             placeholder="abc@domain.com"
@@ -110,7 +147,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the address */}
-        <Form.Item label="Address">
+        <Form.Item label="Address" name="address">
           <Input
             placeholder="Jarrom st, Leicester"
             value={address}
@@ -119,7 +156,11 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the house type */}
-        <Form.Item label="House Type">
+        <Form.Item
+          label="House Type"
+          name="houseType"
+          rules={[{ required: true, message: "Please select the house type!" }]}
+        >
           <Dropdown
             menu={{
               items,

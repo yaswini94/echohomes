@@ -27,6 +27,8 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
     handleOk();
   };
 
+  const [form] = Form.useForm();
+
   return (
     // Modal template from the ant design to create edit feature view
     <Modal
@@ -43,15 +45,33 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
           type="primary"
           disabled={!(name && details && price)}
           loading={loading}
-          onClick={updateFeature}
+          onClick={() => form.submit()}
         >
           {loading ? "Updating..." : "Edit Feature"}
         </Button>,
       ]}
     >
-      <Form layout="vertical">
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={updateFeature}
+        initialValues={{
+          name: feature.name,
+          details: feature.details,
+          price: feature.price,
+        }}
+      >
         {/* Form item for the feature name */}
-        <Form.Item label="Name">
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Please input the name of the feature!",
+            },
+          ]}
+        >
           <Input
             placeholder="Name"
             value={name}
@@ -60,7 +80,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the details */}
-        <Form.Item label="Details">
+        <Form.Item label="Details" name="details">
           <Input
             placeholder="Details"
             value={details}
@@ -69,7 +89,16 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the price */}
-        <Form.Item label="Price">
+        <Form.Item
+          label="Price"
+          name="price"
+          rules={[
+            {
+              required: true,
+              message: "Please input the price of the feature!",
+            },
+          ]}
+        >
           <Input
             placeholder="Price"
             value={price}

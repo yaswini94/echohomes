@@ -34,6 +34,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
   // To update housetype when user updates it
   const onHouseTypeChange = (value) => {
     const selectedItem = items.find((item) => item.key === value.key);
+    form.setFieldsValue({ houseType: selectedItem });
     setHouseType(selectedItem ? selectedItem.key : null);
   };
 
@@ -68,6 +69,8 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
     handleOk();
   }
 
+  const [form] = Form.useForm();
+
   return (
     // Modal template from the Ant design components to add new buyer
     <Modal
@@ -82,18 +85,23 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
         <Button
           key="submit"
           type="primary"
-          disabled={!(email && name && phoneNumber && address && houseType)}
           loading={loading}
-          onClick={inviteBuyer}
+          onClick={() => form.submit()}
         >
           {loading ? "Adding..." : "Add Buyer"}
         </Button>,
       ]}
     >
       {/* Form template from the Ant design components to get buyer data */}
-      <Form layout="vertical">
+      <Form layout="vertical" form={form} onFinish={inviteBuyer}>
         {/* Form item for the buyer name */}
-        <Form.Item label="Name">
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            { required: true, message: "Please input the buyer's name!" },
+          ]}
+        >
           <Input
             placeholder="John T"
             value={name}
@@ -104,7 +112,14 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
         {/* Form item for the phone number */}
         <Form.Item
           label="Phone Number"
-          rules={[{ pattern: /^\d{10,11}$/, message: "0-9(10 to 11 digits)" }]}
+          name="phoneNumber"
+          rules={[
+            {
+              required: true,
+              message: "Please input the buyer's phone number!",
+            },
+            { pattern: /^\d{10,11}$/, message: "0-9(10 to 11 digits)" },
+          ]}
         >
           <Input
             type="tel"
@@ -115,7 +130,20 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the contact email */}
-        <Form.Item label="Contact Email">
+        <Form.Item
+          label="Contact Email"
+          name="email"
+          rules={[
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
+            },
+            {
+              required: true,
+              message: "Please input the buyer's email!",
+            },
+          ]}
+        >
           <Input
             type="email"
             placeholder="abc@domain.com"
@@ -125,7 +153,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the address */}
-        <Form.Item label="Address">
+        <Form.Item label="Address" name="address">
           <Input
             placeholder="Jarrom st, Leicester"
             value={address}
@@ -134,7 +162,16 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the house type */}
-        <Form.Item label="House Type">
+        <Form.Item
+          label="House Type"
+          name="houseType"
+          rules={[
+            {
+              required: true,
+              message: "Please select the house type",
+            },
+          ]}
+        >
           <Dropdown
             menu={{
               items,

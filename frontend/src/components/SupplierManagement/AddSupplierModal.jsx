@@ -16,7 +16,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
   const generateRandomPassword = () => {
     return Math.random().toString(36).slice(-8); // Simple random password generator
   };
-  
+
   // Function to add supplier
   const addSupplier = async () => {
     setLoading(true);
@@ -41,6 +41,8 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
     setLoading(false);
   };
 
+  const [form] = Form.useForm();
+
   return (
     // Modal template from ant design to create view
     <Modal
@@ -56,15 +58,24 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
           key="submit"
           type="primary"
           loading={loading}
-          onClick={addSupplier}
+          onClick={() => form.submit()}
         >
           {loading ? "Adding..." : "Add Supplier"}
         </Button>,
       ]}
     >
-      <Form layout="vertical">
+      <Form layout="vertical" form={form} onFinish={addSupplier}>
         {/* Form item for the supplier name */}
-        <Form.Item label="Name">
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Please input the supplier's name",
+            },
+          ]}
+        >
           <Input
             placeholder="John T"
             onChange={(e) => setName(e.target.value)}
@@ -72,7 +83,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the company name */}
-        <Form.Item label="Company Name">
+        <Form.Item label="Company Name" name="companyName">
           <Input
             placeholder="Mulberry Homes"
             onChange={(e) => setCompanyName(e.target.value)}
@@ -80,7 +91,16 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the phone number */}
-        <Form.Item label="Phone Number">
+        <Form.Item
+          label="Phone Number"
+          name="phoneNumber"
+          rules={[
+            {
+              required: true,
+              message: "Please input the phone number",
+            },
+          ]}
+        >
           <Input
             placeholder="09999999999"
             type="tel"
@@ -89,7 +109,16 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the contact email */}
-        <Form.Item label="Contact Email">
+        <Form.Item
+          label="Contact Email"
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Please input the email",
+            },
+          ]}
+        >
           <Input
             type="email"
             placeholder="abc@domain.com"
