@@ -94,9 +94,9 @@ const OrdersManagement = () => {
       const response = await axiosInstance.get(`/supplier-orders/${ventureId}`);
       console.log("responseresponse.data:", response.data);
       const _supplierOrders = response.data.map((order) => {
-        order.supplier = suppliers.find(
-          (supplier) => supplier.supplier_id === order.supplier_id
-        );
+        // order.supplier = suppliers.find(
+        //   (supplier) => supplier.supplier_id === order.supplier_id
+        // );
         order.total = order.orders_list.reduce((accumulator, item) => {
           if (item.quantity > 1) {
             return accumulator + item.price * item.quantity;
