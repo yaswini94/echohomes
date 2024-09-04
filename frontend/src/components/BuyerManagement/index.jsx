@@ -182,6 +182,10 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
 
   // Function to load Buyers from Supabase
   const fetchBuyers = async () => {
+    if (!ventureId) {
+      return;
+    }
+
     try {
       const response = await axiosInstance.get(
         `/buyers?venture_id=${ventureIdParam || ventureId}`
@@ -409,7 +413,12 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
           <h3>{t("buyerManagement")}</h3>
         </Col>
         <Col>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={showModal}
+            disabled={!ventureId}
+          >
             {t("add")}
           </Button>
         </Col>

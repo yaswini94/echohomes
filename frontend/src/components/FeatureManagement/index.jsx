@@ -260,6 +260,7 @@ const FeatureManagement = () => {
                       type="primary"
                       style={{ margin: "6px" }}
                       onClick={showLinkModal}
+                      disabled={!ventureId}
                     >
                       <Avatar
                         src={linkIcon}
@@ -275,6 +276,7 @@ const FeatureManagement = () => {
                       type="primary"
                       icon={<PlusOutlined />}
                       onClick={showModal}
+                      disabled={!ventureId}
                     >
                       {t("add")}
                     </Button>

@@ -29,6 +29,8 @@ const BuilderDashboard = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
+    if (!ventureId) return;
+
     // Function to handle fetch venture based on id
     const fetchVenture = async (id) => {
       try {

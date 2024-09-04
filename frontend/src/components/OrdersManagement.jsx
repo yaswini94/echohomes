@@ -89,6 +89,8 @@ const OrdersManagement = () => {
 
   // Function to handle fetch supplier orders
   const fetchSupplierOrders = async () => {
+    if (!ventureId) return;
+
     try {
       const response = await axiosInstance.get(`/supplier-orders/${ventureId}`);
       const _supplierOrders = response.data.map((order) => {
@@ -111,10 +113,10 @@ const OrdersManagement = () => {
 
   // Function to handle fetch suppliers
   const fetchSuppliers = async () => {
+    const queryParam = ventureId ? `?venture_id=${ventureId}` : "";
+
     try {
-      const response = await axiosInstance.get(
-        `/suppliers?venture_id=${ventureId}`
-      );
+      const response = await axiosInstance.get(`/suppliers${queryParam}`);
       const _suppliers = response.data;
       // Sorting suppliers based on feedback in descending order
       _suppliers.sort((item1, item2) => item2.feedback - item1.feedback);
@@ -311,6 +313,8 @@ const OrdersManagement = () => {
 
   // Function to hanlde fetch orders
   const fetchOrders = async () => {
+    if (!ventureId) return;
+
     try {
       const response = await axiosInstance.get(
         `/orders?venture_id=${ventureId}`

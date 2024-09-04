@@ -18,7 +18,7 @@ function SupplierManagement() {
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [messageApi, messageHolder] = message.useMessage();
 
-  const [selectedVentureId] = useLocalStorage("selectedVenture");
+  const [ventureId] = useLocalStorage("selectedVenture");
 
   const { t } = useTranslation();
 
@@ -163,10 +163,10 @@ function SupplierManagement() {
 
   // Function to load suppliers from Supabase
   const fetchSuppliers = async () => {
+    const queryParam = ventureId ? `?venture_id=${ventureId}` : "";
+
     try {
-      const response = await axiosInstance.get(
-        `/suppliers?venture_id=${selectedVentureId}`
-      );
+      const response = await axiosInstance.get(`/suppliers${queryParam}`);
       setSuppliers(response.data);
     } catch (error) {
       console.log("Error fetching suppliers:", error);
@@ -213,7 +213,12 @@ function SupplierManagement() {
           <h3>{t("supplierManagement")}</h3>
         </Col>
         <Col>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={showModal}
+            disabled={!ventureId}
+          >
             {t("add")}
           </Button>
         </Col>
