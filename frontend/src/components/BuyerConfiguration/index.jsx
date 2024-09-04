@@ -18,6 +18,7 @@ const BuyerConfiguration = () => {
   const [selectedChoices, setSelectedChoices] = useState([]);
   const [selectedExtras, setSelectedExtras] = useState([]);
   const [quantityMap, setQuantityMap] = useState({});
+  const [notesMap, setNotesMap] = useState({});
   const [paymentSession, setPaymentSession] = useState(null);
 
   const { t } = useTranslation();
@@ -106,14 +107,20 @@ const BuyerConfiguration = () => {
       dataIndex: "notes",
       key: "notes",
       render: (_, record) => {
-        // returns the input box for add notes
-        return Boolean(!selectedFeatures) ||
-          selectedChoices.includes(record.key) ? (
+        const isEditable =
+          !selectedFeatures || selectedChoices.includes(record.key);
+        return isEditable ? (
           <Input
             placeholder="Add notes"
-            defaultValue={record?.notes || ""} // Place edited value or etc
+            defaultValue={record?.notes || ""}
+            onChange={(e) => {
+              setNotesMap({
+                ...notesMap,
+                [`choice_${record.key}`]: e.target.value,
+              });
+            }}
             disabled={
-              Boolean(selectedFeatures) || !selectedChoices.includes(record.key)
+              Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
             }
           />
         ) : (
@@ -149,7 +156,6 @@ const BuyerConfiguration = () => {
       dataIndex: "quantity",
       key: "quantity",
       render: (_, record) => {
-        // Returns the input number box for the quantity
         return Boolean(selectedFeatures) ||
           selectedExtras.includes(record.key) ? (
           <InputNumber
@@ -200,7 +206,13 @@ const BuyerConfiguration = () => {
           selectedExtras.includes(record.key) ? (
           <Input
             placeholder="Add notes"
-            defaultValue={record?.notes || ""} // Place edited value or etc
+            defaultValue={record?.notes || ""}
+            onChange={(e) => {
+              setNotesMap({
+                ...notesMap,
+                [`extras_${record.key}`]: e.target.value,
+              });
+            }}
             disabled={
               Boolean(selectedFeatures) || !selectedExtras.includes(record.key)
             }
@@ -225,7 +237,6 @@ const BuyerConfiguration = () => {
   ];
 
   useEffect(() => {
-    // To fetch features
     if (!venture?.builder_id) return;
 
     const fetchFeatures = async () => {
@@ -246,7 +257,6 @@ const BuyerConfiguration = () => {
     fetchFeatures();
   }, [venture]);
 
-  // To fetch buyer based on id
   const fetchBuyer = async () => {
     try {
       const response = await axiosInstance.get(`/buyers/${user.id}`);
@@ -263,7 +273,6 @@ const BuyerConfiguration = () => {
       setSelectedChoices(_selectedChoices);
       setSelectedExtras(_selectedExtras);
 
-      // creating the quantity map for extras
       const _qtyMapExtras = Object.keys(_features?.extras || {}).reduce(
         (acc, extra) => {
           acc[`extras_${extra}`] = _features?.extras[extra].quantity;
@@ -272,7 +281,6 @@ const BuyerConfiguration = () => {
         {}
       );
 
-      // creating the quantity map for choices
       const _qtyMapChoices = Object.keys(_features?.choices || {}).reduce(
         (acc, choice) => {
           acc[`choice_${choice}`] = _features?.choices[choice].quantity;
@@ -281,10 +289,30 @@ const BuyerConfiguration = () => {
         {}
       );
 
-      // Setting quantityMap variable with extars and choices
       setQuantityMap({
         ..._qtyMapExtras,
         ..._qtyMapChoices,
+      });
+
+      const _notesMapExtras = Object.keys(_features?.extras || {}).reduce(
+        (acc, extra) => {
+          acc[`extras_${extra}`] = _features?.extras[extra].notes;
+          return acc;
+        },
+        {}
+      );
+
+      const _notesMapChoices = Object.keys(_features?.choices || {}).reduce(
+        (acc, choice) => {
+          acc[`choice_${choice}`] = _features?.choices[choice].notes;
+          return acc;
+        },
+        {}
+      );
+
+      setNotesMap({
+        ..._notesMapExtras,
+        ..._notesMapChoices,
       });
     } catch (error) {
       console.log("Error fetching ventures:", error);
@@ -300,7 +328,6 @@ const BuyerConfiguration = () => {
   useEffect(() => {
     if (!buyer?.buyer_id) return;
 
-    // To fetch venture based on venture_id
     const fetchVenture = async () => {
       try {
         const response = await axiosInstance.get(
@@ -309,7 +336,6 @@ const BuyerConfiguration = () => {
         const _venture = response.data;
         setVenture(_venture);
 
-        // filtering the properties from ventures based on house_type of buyer
         const _configuration = (_venture?.properties || []).filter(
           (property) => property.key === buyer.house_type
         );
@@ -319,7 +345,6 @@ const BuyerConfiguration = () => {
       }
     };
 
-    // To fetch stripe session of buyer
     const fetchStripeSession = async () => {
       try {
         const response = await axiosInstance.post(`/stripe-session`, {
@@ -336,7 +361,6 @@ const BuyerConfiguration = () => {
     fetchVenture();
   }, [buyer?.buyer_id]);
 
-  // To confirm the configuration order
   const handleConfirmOrder = async () => {
     const selections = {
       choices: {},
@@ -350,7 +374,7 @@ const BuyerConfiguration = () => {
         price: 0,
         quantity: 1,
         status: null,
-        notes: "try",
+        notes: notesMap[`choice_${choice}`] || null,
       };
 
       return acc;
@@ -363,7 +387,7 @@ const BuyerConfiguration = () => {
         price: allFeatures[extra].price,
         quantity: quantityMap[`extras_${extra}`] || 1,
         status: null,
-        notes: "try",
+        notes: notesMap[`extras_${extra}`] || null,
       };
 
       return acc;
@@ -388,7 +412,6 @@ const BuyerConfiguration = () => {
 
       const { id } = await response.json();
 
-      // To update buyer with stripe session id
       await axiosInstance.post("/updateBuyer", {
         features: selections,
         stripe_session_id: id,
@@ -407,7 +430,6 @@ const BuyerConfiguration = () => {
     }
   };
 
-  // To calculate the price of selected items
   const getSelectedPrice = () => {
     if (!allFeatures) return 0;
 

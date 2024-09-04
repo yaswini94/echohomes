@@ -228,9 +228,9 @@ app.post("/create-checkout-session", async (req, res) => {
       payment_method_types: ["card"],
       line_items,
       mode: "payment",
-      // invoice_creation: {
-      //   enabled: true,
-      // },
+      invoice_creation: {
+        enabled: true,
+      },
       client_reference_id: buyer_id,
       metadata: {
         userId: buyer_id,
@@ -347,9 +347,9 @@ app.post(
         payment_method_types: ["card"],
         line_items,
         mode: "payment",
-        // invoice_creation: {
-        //   enabled: true,
-        // },
+        invoice_creation: {
+          enabled: true,
+        },
         client_reference_id: `builder=${builder.id}__supplier=${supplier_id}`,
         metadata: {
           userId: `builder=${builder.id}__supplier=${supplier_id}`,
