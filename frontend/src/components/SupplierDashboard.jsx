@@ -85,7 +85,7 @@ const SupplierDashboard = () => {
         };
         orders.data.forEach((order) => {
           _orderInfo.totalOrders += 1;
-          if (order.status === "pending") {
+          if (!order.status) {
             _orderInfo.pendingOrders += 1;
           }
           _orderInfo.invoiceAmount += order.total;

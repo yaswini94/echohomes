@@ -33,7 +33,7 @@ function VentureDetail() {
 
   return (
     <div>
-      <h2>Venture Page</h2>
+      <h2>Venture Details</h2>
       <div>
         <strong>{venture.name}</strong> - {venture.address} <br />
         <em>{venture.description}</em>
