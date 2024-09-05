@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import HeaderLayout from './HeaderLayout';
 import { useAuth } from '../auth/useAuth'; // Mock useAuth
@@ -47,22 +46,6 @@ vi.mock('react-i18next', () => ({
 describe('HeaderLayout Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  beforeAll(() => {
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: vi.fn().mockImplementation((query) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(), // Deprecated
-        removeListener: vi.fn(), // Deprecated
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      })),
-    });
   });
   
   test('renders ventures for builder role and handles venture selection', async () => {

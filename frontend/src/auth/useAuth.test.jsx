@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { AuthProvider, useAuth } from "./useAuth"; // Adjust path as needed
 import { supabase } from "../supabase"; // Supabase mock

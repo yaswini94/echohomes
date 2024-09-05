@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Col, Row, Statistic, Card, Progress } from "antd";
 import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";

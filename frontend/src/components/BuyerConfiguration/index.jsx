@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Table, Button, InputNumber, Input, Tag } from "antd";
 import axiosInstance from "../../helpers/axiosInstance";
@@ -44,6 +44,7 @@ const BuyerConfiguration = () => {
       disabled:
         Boolean(selectedFeatures) ||
         (selectedChoices.length >= 3 && !selectedChoices.includes(record.key)),
+      role: "checkbox",
     }),
     hideSelectAll: true,
   };
@@ -53,6 +54,7 @@ const BuyerConfiguration = () => {
     onChange: onSelectExtrasChange,
     getCheckboxProps: () => ({
       disabled: Boolean(selectedFeatures),
+      role: "checkbox",
     }),
     hideSelectAll: Boolean(selectedFeatures),
   };
@@ -441,7 +443,7 @@ const BuyerConfiguration = () => {
   };
 
   return (
-    <div>
+    <div data-testid="buyer-configuration">
       <h3>{translate("choicesConfiguration")}</h3>
       <Row justify="space-between" align="middle">
         <Col>
@@ -457,7 +459,8 @@ const BuyerConfiguration = () => {
         {paymentSession?.payment_status === "paid" ? (
           <div>
             <p>
-              {translate("total")}: <b>£ {getSelectedPrice()}</b> - Payment Completed
+              {translate("total")}: <b>£ {getSelectedPrice()}</b> - Payment
+              Completed
             </p>
             {paymentSession?.invoice && (
               <InvoiceComponent invoiceId={paymentSession.invoice} />
@@ -480,6 +483,7 @@ const BuyerConfiguration = () => {
           </Col>
         )}
       </Row>
+      {console.log("allFeatures", { allFeatures })}
 
       {allFeatures && configuration && (
         <>
@@ -493,6 +497,7 @@ const BuyerConfiguration = () => {
                 <p>Selected {selectedChoices.length} choices</p>
               ) : null}
               <Table
+                role="table"
                 rowSelection={rowChoiceSelection}
                 columns={choicesColumns}
                 dataSource={configuration?.choices?.map((choice) => {
@@ -514,6 +519,7 @@ const BuyerConfiguration = () => {
                 <p>Selected {selectedExtras.length} extras</p>
               ) : null}
               <Table
+                role="table"
                 rowSelection={rowExtrasSelection}
                 columns={extrasColumns}
                 dataSource={configuration?.extras?.map((extra) => {
