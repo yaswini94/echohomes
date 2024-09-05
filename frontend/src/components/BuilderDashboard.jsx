@@ -33,6 +33,8 @@ const BuilderDashboard = () => {
 
     // Function to handle fetch venture based on id
     const fetchVenture = async (id) => {
+      if (!id) return;
+
       try {
         const response = await axiosInstance.get(`/ventures/${id}`);
         const _houseInfo = {
@@ -62,6 +64,8 @@ const BuilderDashboard = () => {
 
     // Function to handle fetch feedback
     const fetchFeedback = async (id) => {
+      if (!id) return;
+
       try {
         const buyersFeedback = await supabase
           .from("buyers")
@@ -142,7 +146,10 @@ const BuilderDashboard = () => {
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
-            <Statistic title={translate("totalHouses")} value={houseInfo.totalHouses} />
+            <Statistic
+              title={translate("totalHouses")}
+              value={houseInfo.totalHouses}
+            />
             <Statistic
               title={translate("pendingHouses")}
               value={houseInfo.pendingHouses}
@@ -159,7 +166,10 @@ const BuilderDashboard = () => {
             bordered={false}
             style={{ border: "1px solid grey", minHeight: "306px" }}
           >
-            <Statistic title={translate("totalOrders")} value={orderInfo.totalOrders} />
+            <Statistic
+              title={translate("totalOrders")}
+              value={orderInfo.totalOrders}
+            />
             <Statistic
               title={translate("pendingOrders")}
               value={orderInfo.pendingOrders}

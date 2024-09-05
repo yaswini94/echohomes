@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from "antd";
 import { useTranslation } from "react-i18next";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, MessageOutlined } from "@ant-design/icons";
 import deleteIcon from "../../assets/delete.png";
 import editIcon from "../../assets/edit.png";
 import AddBuyerModal from "./AddBuyerModal";
@@ -140,15 +140,19 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       key: "chat",
       render: (_, record) => (
         <Space size="middle">
-          <Button
+          <MessageOutlined
+            style={{
+              fontSize: "24px",
+              width: "24px",
+              height: "24px",
+              marginRight: "24px",
+            }}
             onClick={() =>
               record.buyer_id
                 ? setSelectedBuyerChat(record)
                 : setSelectedBuyerChat(null)
             }
-          >
-            Chat
-          </Button>
+          />
         </Space>
       ),
     },
@@ -157,27 +161,27 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
 
   // To delete the buyer
   const deleteBuyer = async (id) => {
-    if (id) {
-      const { data, error } = await supabase
-        .from("buyers")
-        .delete()
-        .match({ buyer_id: id });
+    if (!id) return;
+
+    const { data, error } = await supabase
+      .from("buyers")
+      .delete()
+      .match({ buyer_id: id });
+    messageApi.open({
+      type: "success",
+      content: "Buyer Deleted",
+    });
+
+    if (error) {
       messageApi.open({
-        type: "success",
-        content: "Buyer Deleted",
+        type: "error",
+        content: "Error deleting buyer",
       });
-
-      if (error) {
-        messageApi.open({
-          type: "error",
-          content: "Error deleting buyer",
-        });
-        console.error("Error deleting buyer:", error);
-        return { error };
-      }
-
-      fetchBuyers();
+      console.error("Error deleting buyer:", error);
+      return { error };
     }
+
+    fetchBuyers();
   };
 
   // Function to load Buyers from Supabase
@@ -194,7 +198,6 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
         // setFeatures(response.data.features);
         setBuyers(response.data);
       } else {
-        console.log("No Buyers found");
         setBuyers([]);
       }
     } catch (error) {
@@ -250,7 +253,6 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
 
   // To handle the status change of buyer configuration list
   const changeStatusHandle = async (status, record) => {
-    console.log({ status, record });
     const _selectedBuyer = buyers.find(
       (buyer) => buyer.buyer_id === expandedRowId
     );
@@ -283,8 +285,6 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
       choices: _updatedChoices,
       extras: _updatedExtras,
     };
-
-    console.log({ updatedfeatures: _updatedfeatures });
 
     try {
       await axiosInstance.post("/update-buyer-features", {

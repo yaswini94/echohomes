@@ -384,6 +384,50 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
   res.json(data);
 });
 
+// Get API for updating purchase order status
+// update-purchase-order-status
+// {
+//   po_id: order.po_id,
+//   feature_id: record.feature_id,
+//   status,
+// }
+app.post(
+  "/update-purchase-order-status",
+  authenticateToken,
+  async (req, res) => {
+    const { po_id, feature_id, status } = req.body;
+
+    // get purchase order based on po_id and get the orders_list column
+
+    const { data, error } = await supabase
+      .from("purchase_orders")
+      .select("orders_list")
+      .eq("po_id", po_id)
+      .single();
+
+    // update the status of the feature_id in the orders_list
+    let orders_list = data.orders_list;
+    orders_list = orders_list.map((order) => {
+      if (order.feature_id === feature_id) {
+        order.status = status;
+      }
+      return order;
+    });
+
+    // update the orders_list in the purchase_orders table
+    const { updateData, updateError } = await supabase
+      .from("purchase_orders")
+      .update({ orders_list })
+      .eq("po_id", po_id);
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.status(201).json("Update successfull");
+  }
+);
+
 // Post API to update builder
 app.post("/updateBuilder", authenticateToken, async (req, res) => {
   const { settings, feedback, builder_id } = req.body;
@@ -525,8 +569,6 @@ app.post("/updateSupplier", authenticateToken, async (req, res) => {
 // Get API to fetch suppliers
 app.get("/suppliers", authenticateToken, async (req, res) => {
   const { venture_id } = req.query;
-
-  console.log({ venture_id });
 
   const { data, error } = await supabase
     .from("suppliers")

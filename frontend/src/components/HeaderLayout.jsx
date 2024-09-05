@@ -15,7 +15,6 @@ import {
   SettingOutlined,
   BellOutlined,
   DownOutlined,
-  MessageOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";
@@ -148,11 +147,6 @@ const HeaderLayout = () => {
       ),
     },
     {
-      key: "2",
-      label: "Notifications",
-      icon: <BellOutlined />,
-    },
-    {
       key: "3",
       label: (
         <a rel="noopener noreferrer" onClick={() => supabase.auth.signOut()}>
@@ -175,7 +169,7 @@ const HeaderLayout = () => {
     {
       value: "zh",
       label: "中文",
-    }
+    },
   ];
 
   // Function to hanlde the formating of settings object
@@ -334,24 +328,12 @@ const HeaderLayout = () => {
         {/* Language change for the globalisation */}
         <Select
           key="language"
-          style={{ width: "auto", minWidth: "80px", marginRight: "24px" }}
+          style={{ width: "125px", minWidth: "80px", marginRight: "24px" }}
           onClick={(event) => event.preventDefault()}
           onChange={onLanguageChange}
           value={language}
           options={languages}
         />
-        {role !== userRoles.BUILDERS && (
-          <MessageOutlined
-            style={{
-              color: "white",
-              fontSize: "24px",
-              width: "24px",
-              height: "24px",
-              marginRight: "24px",
-            }}
-            onClick={(event) => event.preventDefault()}
-          />
-        )}
         <Dropdown menu={{ items: user_items }}>
           <a
             style={{ color: "white" }}
@@ -367,6 +349,7 @@ const HeaderLayout = () => {
                   }}
                   icon={<UserOutlined />}
                 />
+                {user?.email}
                 <DownOutlined />
               </Space>
             </span>

@@ -64,9 +64,7 @@ function VentureManagement() {
 
   // Function to handle delete venture
   const deleteVenture = async (id) => {
-    if (!id) {
-      return;
-    }
+    if (!id) return;
 
     const { data, error } = await supabase
       .from("ventures")

@@ -139,26 +139,27 @@ function SupplierManagement() {
 
   // Function to delete the supplier
   const deleteSupplier = async (id) => {
-    if (id) {
-      const { data, error } = await supabase
-        .from("suppliers")
-        .delete()
-        .match({ supplier_id: id });
-      messageApi.open({
-        type: "success",
-        content: "Supplier Deleted",
-      });
-      if (error) {
-        messageApi.open({
-          type: "error",
-          content: "Error deleting supplier",
-        });
-        console.error("Error deleting supplier:", error);
-        return { error };
-      }
+    if (!id) return;
 
-      fetchSuppliers();
+    const { data, error } = await supabase
+      .from("suppliers")
+      .delete()
+      .match({ supplier_id: id });
+    messageApi.open({
+      type: "success",
+      content: "Supplier Deleted",
+    });
+
+    if (error) {
+      messageApi.open({
+        type: "error",
+        content: "Error deleting supplier",
+      });
+      console.error("Error deleting supplier:", error);
+      return { error };
     }
+
+    fetchSuppliers();
   };
 
   // Function to load suppliers from Supabase
@@ -175,16 +176,17 @@ function SupplierManagement() {
 
   // Function to add feedback to the supplier
   const addFeedback = async (id, feedback) => {
-    if (!feedback) return;
+    if (!feedback || !id) return;
+
     try {
       const dbFeedback = await supabase
         .from("suppliers")
         .select("feedback")
         .eq("supplier_id", id)
         .single();
+
       if (dbFeedback.data.feedback?.length) {
         const updatedFeedback = [...dbFeedback.data.feedback, feedback];
-        console.log(updatedFeedback);
         await axiosInstance.post("/updateSupplier", {
           feedback: updatedFeedback,
           supplier_id: id,

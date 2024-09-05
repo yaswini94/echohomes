@@ -129,19 +129,19 @@ const FeatureManagement = () => {
 
   // Function to delete feature from linked items list
   const deleteFeature = async (id) => {
-    if (id) {
-      const { data, error } = await supabase
-        .from("features")
-        .delete()
-        .match({ feature_id: id });
+    if (!id) return;
 
-      if (error) {
-        console.error("Error deleting feature:", error);
-        return { error };
-      }
+    const { data, error } = await supabase
+      .from("features")
+      .delete()
+      .match({ feature_id: id });
 
-      fetchFeatures();
+    if (error) {
+      console.error("Error deleting feature:", error);
+      return { error };
     }
+
+    fetchFeatures();
   };
 
   // Function to handle fetch features

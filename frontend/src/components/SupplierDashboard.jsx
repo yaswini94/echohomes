@@ -24,10 +24,14 @@ const SupplierDashboard = () => {
   const { t: translate } = useTranslation();
 
   useEffect(() => {
+    if (!user?.id) return;
     // Function to handle fetch feedback to display in dashboard
     const fetchFeedback = async () => {
       try {
-        const supplierFeedback = await supabase.from("suppliers").select("feedback").eq("supplier_id", user?.id);
+        const supplierFeedback = await supabase
+          .from("suppliers")
+          .select("feedback")
+          .eq("supplier_id", user?.id);
         const _feedback = {
           fiveStar: 2,
           fourStar: 1,
@@ -71,13 +75,19 @@ const SupplierDashboard = () => {
     };
     // fetchOrders(ventureId);
     fetchFeedback();
-  }, [ventureId]);
+  }, [user?.id]);
 
   useEffect(() => {
     // Function to handle fetch orders to display in dashboard
     const fetchOrders = async (ventureId) => {
+      if (!ventureId) return;
+
       try {
-        const orders = await supabase.from("purchase_orders").select("*").eq("venture_id", ventureId).eq("supplier_id", user?.id);
+        const orders = await supabase
+          .from("purchase_orders")
+          .select("*")
+          .eq("venture_id", ventureId)
+          .eq("supplier_id", user?.id);
         let _orderInfo = {
           totalOrders: 0,
           pendingOrders: 0,
@@ -103,20 +113,45 @@ const SupplierDashboard = () => {
     <div>
       <Row gutter={24}>
         <Col span={12}>
-          <Card title="Orders" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
-            <Statistic title={translate("totalOrders")} value={orderInfo.totalOrders} />
-            <Statistic title={translate("pendingOrders")} value={orderInfo.pendingOrders} />
-            <Statistic title={translate("invoiceAmount")} value={orderInfo.invoiceAmount} precision={2} />
+          <Card
+            title="Orders"
+            bordered={false}
+            style={{ border: "1px solid grey", minHeight: "306px" }}
+          >
+            <Statistic
+              title={translate("totalOrders")}
+              value={orderInfo.totalOrders}
+            />
+            <Statistic
+              title={translate("pendingOrders")}
+              value={orderInfo.pendingOrders}
+            />
+            <Statistic
+              title={translate("invoiceAmount")}
+              value={orderInfo.invoiceAmount}
+              precision={2}
+            />
           </Card>
         </Col>
         <Col span={12}>
-          <Card title="Feedback" bordered={false} style={{border: "1px solid grey", minHeight: "306px"}}>
-          <Row justify="space-between" align="middle">
+          <Card
+            title="Feedback"
+            bordered={false}
+            style={{ border: "1px solid grey", minHeight: "306px" }}
+          >
+            <Row justify="space-between" align="middle">
               <Col>
                 <p>5 star</p>
               </Col>
               <Col>
-                <Progress size={[500, 20]} percentPosition={{ align: 'end', type: 'inner' }} percent={parseInt((feedback.fiveStar/totalFeedbackCount)*100)} style={{ padding: "10px 0", color: "#ffffff"}} />
+                <Progress
+                  size={[500, 20]}
+                  percentPosition={{ align: "end", type: "inner" }}
+                  percent={parseInt(
+                    (feedback.fiveStar / totalFeedbackCount) * 100
+                  )}
+                  style={{ padding: "10px 0", color: "#ffffff" }}
+                />
               </Col>
             </Row>
             <Row justify="space-between" align="middle">
@@ -124,7 +159,14 @@ const SupplierDashboard = () => {
                 <p>4 star</p>
               </Col>
               <Col>
-                <Progress size={[500, 20]} percentPosition={{ align: 'end', type: 'inner' }} percent={parseInt((feedback.fourStar/totalFeedbackCount)*100)} style={{ padding: "10px 0", color: "#ffffff"}} />
+                <Progress
+                  size={[500, 20]}
+                  percentPosition={{ align: "end", type: "inner" }}
+                  percent={parseInt(
+                    (feedback.fourStar / totalFeedbackCount) * 100
+                  )}
+                  style={{ padding: "10px 0", color: "#ffffff" }}
+                />
               </Col>
             </Row>
             <Row justify="space-between" align="middle">
@@ -132,7 +174,14 @@ const SupplierDashboard = () => {
                 <p>3 star</p>
               </Col>
               <Col>
-                <Progress size={[500, 20]} percentPosition={{ align: 'end', type: 'inner' }} percent={parseInt((feedback.threeStar/totalFeedbackCount)*100)} style={{ padding: "10px 0", color: "#ffffff"}} />
+                <Progress
+                  size={[500, 20]}
+                  percentPosition={{ align: "end", type: "inner" }}
+                  percent={parseInt(
+                    (feedback.threeStar / totalFeedbackCount) * 100
+                  )}
+                  style={{ padding: "10px 0", color: "#ffffff" }}
+                />
               </Col>
             </Row>
             <Row justify="space-between" align="middle">
@@ -140,7 +189,14 @@ const SupplierDashboard = () => {
                 <p>2 star</p>
               </Col>
               <Col>
-                <Progress size={[500, 20]} percentPosition={{ align: 'end', type: 'inner' }} percent={parseInt((feedback.twoStar/totalFeedbackCount)*100)} style={{ padding: "10px 0", color: "#ffffff"}} />
+                <Progress
+                  size={[500, 20]}
+                  percentPosition={{ align: "end", type: "inner" }}
+                  percent={parseInt(
+                    (feedback.twoStar / totalFeedbackCount) * 100
+                  )}
+                  style={{ padding: "10px 0", color: "#ffffff" }}
+                />
               </Col>
             </Row>
             <Row justify="space-between" align="middle">
@@ -148,7 +204,15 @@ const SupplierDashboard = () => {
                 <p>1 star</p>
               </Col>
               <Col>
-                <Progress size={[500, 20]} percentPosition={{ align: 'end', type: 'inner' }} percent={parseInt((feedback.oneStar/totalFeedbackCount)*100)} style={{ padding: "10px 0", color: "#ffffff"}} status="exception" />
+                <Progress
+                  size={[500, 20]}
+                  percentPosition={{ align: "end", type: "inner" }}
+                  percent={parseInt(
+                    (feedback.oneStar / totalFeedbackCount) * 100
+                  )}
+                  style={{ padding: "10px 0", color: "#ffffff" }}
+                  status="exception"
+                />
               </Col>
             </Row>
           </Card>

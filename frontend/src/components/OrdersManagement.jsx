@@ -92,11 +92,7 @@ const OrdersManagement = () => {
 
     try {
       const response = await axiosInstance.get(`/supplier-orders/${ventureId}`);
-      console.log("responseresponse.data:", response.data);
       const _supplierOrders = response.data.map((order) => {
-        // order.supplier = suppliers.find(
-        //   (supplier) => supplier.supplier_id === order.supplier_id
-        // );
         order.total = order.orders_list.reduce((accumulator, item) => {
           if (item.quantity > 1) {
             return accumulator + item.price * item.quantity;
@@ -158,21 +154,30 @@ const OrdersManagement = () => {
       key: "quantity",
     },
     {
+      title: translate("stockQuantity"),
+      dataIndex: "",
+      key: "stockQuantity",
+      render: (_, record) => {
+        return features[record.id]?.quantity;
+      },
+    },
+    {
       title: translate("stockStatus"),
       key: "stock status",
       render: (_, record) => {
         const _featureId = record.id;
         const _quantity = record.quantity;
         const _availableQuantity = features[_featureId]?.quantity;
+
         if (_quantity > _availableQuantity) {
           return (
             <Space direction="vertical">
-              <p>{translate("createPurchaseOrder")}</p>
+              <Tag color="warning">{translate("createPurchaseOrder")}</Tag>
             </Space>
           );
         }
 
-        if (_quantity <= 5) {
+        if (_availableQuantity <= 5) {
           return (
             <Space direction="vertical">
               <Tag color="error">{translate("lowStock")}</Tag>
@@ -180,7 +185,11 @@ const OrdersManagement = () => {
           );
         }
 
-        return <Space direction="vertical">{translate("inStock")}</Space>;
+        return (
+          <Space direction="vertical">
+            <Tag color="success">{translate("inStock")}</Tag>
+          </Space>
+        );
       },
     },
     {
@@ -202,7 +211,6 @@ const OrdersManagement = () => {
       title: translate("supplierName"),
       key: "supplier name",
       render: (_, record) => {
-        console.log("record:", record);
         return record?.supplier?.name;
       },
     },
@@ -346,7 +354,6 @@ const OrdersManagement = () => {
 
   const fetchStripeSession = async (orders) => {
     // for each order make an api call to /get-stripe-session and add the session to the order and return the orders
-    console.log("orders:", { orders });
     const _orders = await Promise.all(
       orders.map(async (order) => {
         try {

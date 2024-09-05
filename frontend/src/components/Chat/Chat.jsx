@@ -20,6 +20,8 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
   const { user } = useAuth();
 
   useEffect(() => {
+    if (!builderId || !buyerId) return;
+
     // Function to fetch or create new conversation
     async function fetchOrCreateConversation() {
       try {
@@ -81,47 +83,47 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
   }, [builderId, buyerId]);
 
   useEffect(() => {
-    if (conversationId) {
-      // Function to fetch messages
-      async function fetchMessages() {
-        try {
-          const { data: msgs, error: fetchMessagesError } = await supabase
-            .from("messages")
-            .select("*")
-            .eq("conversation_id", conversationId)
-            .order("sent_at", { ascending: true });
+    if (!conversationId) return;
 
-          if (fetchMessagesError) {
-            console.error("Error fetching messages:", fetchMessagesError);
-            return;
-          }
-          setMessages(msgs);
-        } catch (error) {
-          console.error("Unexpected error:", error);
+    // Function to fetch messages
+    async function fetchMessages() {
+      try {
+        const { data: msgs, error: fetchMessagesError } = await supabase
+          .from("messages")
+          .select("*")
+          .eq("conversation_id", conversationId)
+          .order("sent_at", { ascending: true });
+
+        if (fetchMessagesError) {
+          console.error("Error fetching messages:", fetchMessagesError);
+          return;
         }
+        setMessages(msgs);
+      } catch (error) {
+        console.error("Unexpected error:", error);
       }
-
-      fetchMessages();
-
-      const subscription = supabase
-        .channel("private-chat")
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "messages" },
-          (payload) => {
-            if (payload.new.conversation_id === conversationId) {
-              setMessages((prevMessages) => [...prevMessages, payload.new]);
-            }
-          }
-        )
-        .subscribe();
-
-      return () => {
-        if (subscription) {
-          subscription.unsubscribe(); // Correctly unsubscribe from the channel
-        }
-      };
     }
+
+    fetchMessages();
+
+    const subscription = supabase
+      .channel("private-chat")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          if (payload.new.conversation_id === conversationId) {
+            setMessages((prevMessages) => [...prevMessages, payload.new]);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe(); // Correctly unsubscribe from the channel
+      }
+    };
   }, [conversationId]);
 
   // Function to handle the send message

@@ -32,7 +32,6 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
   // To update housetype when user updates it
   const onHouseTypeChange = (value) => {
     const selectedItem = items.find((item) => item.key === value.key);
-    console.log("selectedItem", value?.key, selectedItem);
     form.setFieldsValue({ houseType: value.key });
     setHouseType(selectedItem ? selectedItem.key : null);
   };
