@@ -101,7 +101,6 @@ const OrdersManagement = () => {
         }, 0);
         return order;
       });
-      console.log("supplier orders:", _supplierOrders);
       fetchStripeSession(_supplierOrders);
     } catch (error) {
       console.error("Error fetching supplier orders:", error);

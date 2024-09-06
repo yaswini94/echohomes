@@ -189,7 +189,7 @@ const BuilderDashboard = () => {
           >
             <Row justify="space-between" align="middle">
               <Col>
-                <p>5 star</p>
+                <p>5 {translate("star")}</p>
               </Col>
               <Col>
                 <Progress
@@ -204,7 +204,7 @@ const BuilderDashboard = () => {
             </Row>
             <Row justify="space-between" align="middle">
               <Col>
-                <p>4 star</p>
+                <p>4 {translate("star")}</p>
               </Col>
               <Col>
                 <Progress
@@ -219,7 +219,7 @@ const BuilderDashboard = () => {
             </Row>
             <Row justify="space-between" align="middle">
               <Col>
-                <p>3 star</p>
+                <p>3 {translate("star")}</p>
               </Col>
               <Col>
                 <Progress
@@ -234,7 +234,7 @@ const BuilderDashboard = () => {
             </Row>
             <Row justify="space-between" align="middle">
               <Col>
-                <p>2 star</p>
+                <p>2 {translate("star")}</p>
               </Col>
               <Col>
                 <Progress
@@ -249,7 +249,7 @@ const BuilderDashboard = () => {
             </Row>
             <Row justify="space-between" align="middle">
               <Col>
-                <p>1 star</p>
+                <p>1 {translate("star")}</p>
               </Col>
               <Col>
                 <Progress
