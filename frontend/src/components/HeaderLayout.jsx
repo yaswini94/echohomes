@@ -13,7 +13,6 @@ import {
 import {
   UserOutlined,
   SettingOutlined,
-  BellOutlined,
   DownOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";

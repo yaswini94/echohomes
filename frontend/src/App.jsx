@@ -11,7 +11,7 @@ import Registration from "./components/Registration";
 import DashboardLayout from "./components/DashboardLayout";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
-import { AuthProvider, useAuth } from "./auth/useAuth";
+import { AuthProvider } from "./auth/useAuth";
 import VentureDetail from "./components/VentureDetail";
 // import ResetPassword from "./components/ResetPassword";
 import { ConfigProvider, Layout, theme } from "antd";
