@@ -1,4 +1,6 @@
-// Initially created: 2021-07-31
+// jest.config.js
+require("dotenv").config({ path: "./.env.test" });
+
 module.exports = {
   testEnvironment: "node",
   collectCoverage: true,

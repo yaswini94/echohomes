@@ -364,7 +364,8 @@ app.post(
 
       res.json({ id: session.id });
     } catch (error) {
-      console.error("Error creating Checkout session:", error);
+      // Modify the catch block to log the error
+      console.error("Error creating Checkout session:", error); // Log the error
       res.status(500).json({ error: error.message });
     }
   }
