@@ -59,6 +59,7 @@ const AddSupplierModal = ({ isOpened, handleOk, handleCancel }) => {
           type="primary"
           loading={loading}
           onClick={() => form.submit()}
+          data-testid="add-supplier-button"
         >
           {loading ? "Adding..." : "Add Supplier"}
         </Button>,

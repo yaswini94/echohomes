@@ -151,11 +151,13 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
 
   // Function to handle scroll to bottom
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length > 0) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   // Function to handle toggle minimize
@@ -180,6 +182,7 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
                 e.stopPropagation();
                 onClose();
               }}
+              data-testid="close-chat"
             />
           )}
         </div>
@@ -208,7 +211,9 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
                 if (e.key === "Enter") handleSendMessage();
               }}
             />
-            <button onClick={handleSendMessage}>Send</button>
+            <button onClick={handleSendMessage} data-testid="send-message">
+              Send
+            </button>
           </div>
         </>
       )}

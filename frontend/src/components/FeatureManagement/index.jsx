@@ -222,6 +222,7 @@ const FeatureManagement = () => {
               onClick={() => {
                 showEditModal(record);
               }}
+              alt="edit"
             />
           </a>
           <a>
@@ -229,6 +230,7 @@ const FeatureManagement = () => {
               src={deleteIcon}
               style={{ height: "18px", width: "18px" }}
               onClick={() => deleteFeature(record?.feature_id)}
+              alt="delete"
             />
           </a>
         </Space>

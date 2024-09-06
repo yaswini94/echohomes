@@ -112,6 +112,7 @@ function SupplierManagement() {
                 onClick={() => {
                   showEditModal(record);
                 }}
+                alt="edit"
               />
             </a>
             <a>
@@ -119,6 +120,7 @@ function SupplierManagement() {
                 src={deleteIcon}
                 style={{ height: "18px", width: "18px" }}
                 onClick={() => deleteSupplier(record?.supplier_id)}
+                alt="delete"
               />
             </a>
           </Space>
@@ -207,6 +209,7 @@ function SupplierManagement() {
             icon={<PlusOutlined />}
             onClick={showModal}
             disabled={!ventureId}
+            data-testid="addSupplierButton"
           >
             {translate("add")}
           </Button>

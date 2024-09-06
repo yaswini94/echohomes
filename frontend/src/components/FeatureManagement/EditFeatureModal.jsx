@@ -46,6 +46,8 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
           disabled={!(name && details && price)}
           loading={loading}
           onClick={() => form.submit()}
+          role="button"
+          data-testid="edit-feature-button"
         >
           {loading ? "Updating..." : "Edit Feature"}
         </Button>,

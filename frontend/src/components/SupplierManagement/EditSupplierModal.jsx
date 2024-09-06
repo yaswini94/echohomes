@@ -41,7 +41,11 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
       onOk={handleOk}
       onCancel={handleCancel}
       footer={[
-        <Button key="back" onClick={handleCancel}>
+        <Button
+          key="back"
+          onClick={handleCancel}
+          data-testid="cancelEditSupplierButton"
+        >
           Cancel
         </Button>,
         <Button
@@ -49,6 +53,7 @@ const EditSupplierModal = ({ isOpened, supplier, handleOk, handleCancel }) => {
           type="primary"
           loading={loading}
           onClick={() => form.submit()}
+          data-testid="editSupplierButton"
         >
           {loading ? "Updating..." : "Edit Supplier"}
         </Button>,
