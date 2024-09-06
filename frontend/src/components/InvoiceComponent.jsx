@@ -69,14 +69,24 @@ const InvoiceComponent = ({ invoiceId }) => {
 
   return (
     <div>
-      <Button type="primary" onClick={handleDownload} disabled={!pdfUrl}>
+      <Button
+        type="primary"
+        onClick={handleDownload}
+        disabled={Boolean(!pdfUrl)}
+        aria-disabled={Boolean(!pdfUrl)}
+        htmlType="button"
+        role="button"
+      >
         {translate("downloadInvoice")}
       </Button>
       <Button
         type="primary"
         onClick={handleReceiptDownload}
-        disabled={!receiptPdfUrl}
+        disabled={Boolean(!receiptPdfUrl)}
+        aria-disabled={Boolean(!receiptPdfUrl)}
         style={{ marginLeft: 10 }}
+        htmlType="button"
+        role="button"
       >
         {translate("downloadReceipt")}
       </Button>
