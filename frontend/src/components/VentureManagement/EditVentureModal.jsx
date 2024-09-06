@@ -66,7 +66,11 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
       onOk={handleOk}
       onCancel={handleCancel}
       footer={[
-        <Button key="back" onClick={handleCancel}>
+        <Button
+          key="back"
+          onClick={handleCancel}
+          data-testid="cancelEditVentureButton"
+        >
           Cancel
         </Button>,
         <Button
@@ -74,6 +78,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
           type="primary"
           loading={loading}
           onClick={() => form.submit()}
+          data-testid="editVentureButton"
         >
           {loading ? "Updating..." : "Edit Venture"}
         </Button>,
@@ -122,10 +127,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
           />
         </Form.Item>
         {/* Form item for the desctiption of the venture */}
-        <Form.Item
-          label="Description"
-          name="description"
-        >
+        <Form.Item label="Description" name="description">
           <Input.TextArea
             value={description}
             placeholder="Description"

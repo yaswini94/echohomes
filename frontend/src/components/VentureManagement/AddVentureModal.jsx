@@ -55,7 +55,11 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
       onOk={handleOk}
       onCancel={handleCancel}
       footer={[
-        <Button key="back" onClick={handleCancel}>
+        <Button
+          key="back"
+          onClick={handleCancel}
+          data-testid="cancelAddVentureButton"
+        >
           Cancel
         </Button>,
         <Button
@@ -64,6 +68,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
           loading={loading}
           htmlType="submit"
           onClick={() => form.submit()}
+          data-testid="addVentureButton"
         >
           {loading ? "Adding..." : "Add Venture"}
         </Button>,
@@ -116,11 +121,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
             label={property.label}
           >
             <Input.Group compact>
-              <Select
-                style={{ width: 120 }}
-                value={property.label}
-                disabled
-              >
+              <Select style={{ width: 120 }} value={property.label} disabled>
                 <Option value="1">{translate("1Bed")}</Option>
                 <Option value="2">{translate("2Bed")}</Option>
                 <Option value="3">{translate("3Bed")}</Option>

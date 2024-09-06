@@ -109,7 +109,12 @@ function VentureManagement() {
           <h3>{translate("ventureManagement")}</h3>
         </Col>
         <Col>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={showModal}
+            data-testid="addVentureButton"
+          >
             {translate("add")}
           </Button>
         </Col>
