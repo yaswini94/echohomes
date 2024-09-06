@@ -249,7 +249,7 @@ const ComparisionTool = () => {
     };
 
     fetchFeatures();
-  }, []);
+  }, [venture?.builder_id]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -324,7 +324,7 @@ const ComparisionTool = () => {
         <b>House Type: </b>
         {buyer?.house_type} Bed
       </p>
-      <Row justify="space-evenly" align="middle">
+      <Row justify="space-around" align="middle">
         <Col>
           <Row justify="space-between" align="middle">
             <h3>

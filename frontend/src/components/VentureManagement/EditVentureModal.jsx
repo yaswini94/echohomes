@@ -122,7 +122,6 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
         <Form.Item
           label="Description"
           name="description"
-          rules={[{ required: true, message: "Please input the description!" }]}
         >
           <Input.TextArea
             value={description}

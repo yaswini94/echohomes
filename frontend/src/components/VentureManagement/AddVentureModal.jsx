@@ -25,7 +25,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
 
   // Function to handle add venture
   const handleAddVenture = async () => {
-    if (!name || !address || !description) {
+    if (!name || !address) {
       return;
     }
 

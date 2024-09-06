@@ -68,7 +68,7 @@ const FeatureManagement = () => {
     if (!Object.keys(features)?.length || !defaultValues?.length) return;
 
     // Creating linkedfeatures data by using map to link choices and extras
-    const _linkedFeatures = defaultValues.map((property) => {
+    const _linkedFeatures = defaultValues?.map((property) => {
       return {
         ...property,
         choices: property.choices.map((choice) => features[choice]),

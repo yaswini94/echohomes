@@ -191,7 +191,7 @@ function Chat({ builderId, buyerId, name, onClose, defaultIsMinimized }) {
               <div
                 key={msg.id}
                 className={`message ${
-                  msg.sender_id === builderId ? "sent" : "received"
+                  msg.sender_id === user.id ? "sent" : "received"
                 }`}
               >
                 <div className="message-text">{msg.message_text}</div>

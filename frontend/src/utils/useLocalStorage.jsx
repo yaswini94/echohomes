@@ -5,7 +5,10 @@ function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      // Check if item is not null and not the string "undefined"
+      return item !== null && item !== "undefined"
+        ? JSON.parse(item)
+        : initialValue;
     } catch (error) {
       console.error(error);
       return initialValue;
@@ -15,7 +18,8 @@ function useLocalStorage(key, initialValue) {
   useEffect(() => {
     const handleStorage = () => {
       const lsValue = localStorage.getItem(key);
-      if (lsValue) {
+      // Check if lsValue is not null and not the string "undefined" before parsing
+      if (lsValue !== null && lsValue !== "undefined") {
         setStoredValue(JSON.parse(lsValue));
       }
     };
