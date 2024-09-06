@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import axiosInstance from "../helpers/axiosInstance";
 import useLocalStorage from "../utils/useLocalStorage";

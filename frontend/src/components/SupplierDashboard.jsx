@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Col, Row, Statistic, Card, Progress } from "antd";
 import { supabase } from "../supabase";
 import { useTranslation } from "react-i18next";
-import useLocalStorage from "../utils/useLocalStorage";
 import { useAuth } from "../auth/useAuth";
 
 const SupplierDashboard = () => {
-  const [ventureId] = useLocalStorage("selectedVenture", null);
   const [feedback, setFeedback] = useState({
     fiveStar: 0,
     fourStar: 0,
@@ -73,26 +71,25 @@ const SupplierDashboard = () => {
         console.log("Error fetching feedback:", error);
       }
     };
-    // fetchOrders(ventureId);
+
     fetchFeedback();
   }, [user?.id]);
 
   useEffect(() => {
     // Function to handle fetch orders to display in dashboard
-    const fetchOrders = async (ventureId) => {
-      if (!ventureId) return;
-
+    const fetchOrders = async () => {
       try {
         const orders = await supabase
           .from("purchase_orders")
           .select("*")
-          .eq("venture_id", ventureId)
           .eq("supplier_id", user?.id);
+
         let _orderInfo = {
           totalOrders: 0,
           pendingOrders: 0,
           invoiceAmount: 0,
         };
+
         orders.data.forEach((order) => {
           _orderInfo.totalOrders += 1;
           if (!order.status) {
@@ -100,13 +97,15 @@ const SupplierDashboard = () => {
           }
           _orderInfo.invoiceAmount += order.total;
         });
+
         setOrderInfo(_orderInfo);
       } catch (error) {
         console.log("Error fetching orders:", error);
       }
     };
-    fetchOrders(ventureId);
-  }, [ventureId]);
+
+    fetchOrders();
+  }, []);
 
   return (
     // Supplier dashboard view to render using ant design templates for view

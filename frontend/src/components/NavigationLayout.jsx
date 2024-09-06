@@ -1,4 +1,3 @@
-import React from "react";
 import { Layout, Menu, theme } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";

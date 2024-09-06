@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Space, Table, Row, Col, Button, Avatar, Tabs } from "antd";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../../supabase";

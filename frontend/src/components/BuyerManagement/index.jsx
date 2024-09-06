@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axiosInstance from "../../helpers/axiosInstance";
 import { supabase } from "../../supabase";
 import {
