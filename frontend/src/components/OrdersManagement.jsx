@@ -391,6 +391,7 @@ const OrdersManagement = () => {
 
     const _allFeatureOrders = {};
 
+    // Combine all the orders and group them by feature id
     orders.forEach((order) => {
       const _features = order.features;
       const _choices = _features.choices;
@@ -416,6 +417,7 @@ const OrdersManagement = () => {
     setOrdersTableData(Object.values(_allFeatureOrders));
     const _quantityMap = {};
 
+    // Filter out the orders that are less than 5 or greater than the stock quantity for suggest orders
     const _suggestions = Object.values(_allFeatureOrders)
       .filter(
         (order) =>
