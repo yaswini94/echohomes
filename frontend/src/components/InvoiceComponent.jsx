@@ -11,6 +11,7 @@ const InvoiceComponent = ({ invoiceId }) => {
   const { t: translate } = useTranslation();
 
   useEffect(() => {
+    // Function to fetch receipt pdf url
     const fetchReceiptPdfUrl = async (chargeId) => {
       try {
         const response = await axiosInstance.get(`/get-receipt/${chargeId}`);
@@ -20,6 +21,7 @@ const InvoiceComponent = ({ invoiceId }) => {
       }
     };
 
+    // Function to fetch invoice pdf url
     const fetchInvoicePdfUrl = async () => {
       try {
         const response = await axiosInstance.get(`/get-invoice/${invoiceId}`);
@@ -33,6 +35,7 @@ const InvoiceComponent = ({ invoiceId }) => {
     fetchInvoicePdfUrl();
   }, [invoiceId]);
 
+  // Function to handle download of invoice
   const handleDownload = () => {
     if (pdfUrl) {
       // Create a link element
@@ -45,6 +48,7 @@ const InvoiceComponent = ({ invoiceId }) => {
     }
   };
 
+  // Function to handle download of receipt
   const handleReceiptDownload = () => {
     if (receiptPdfUrl) {
       // Create a link element
@@ -72,6 +76,7 @@ const InvoiceComponent = ({ invoiceId }) => {
         type="primary"
         onClick={handleReceiptDownload}
         disabled={!receiptPdfUrl}
+        style={{ marginLeft: 10 }}
       >
         {translate("downloadReceipt")}
       </Button>

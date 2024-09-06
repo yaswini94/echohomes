@@ -22,6 +22,7 @@ const SupplierOrderManagement = () => {
     fetchOrders();
   }, []);
 
+  // Function to handle change status
   const changeStatusHandle = async (status, record, order) => {
     try {
       await axiosInstance.post("/update-purchase-order-status", {

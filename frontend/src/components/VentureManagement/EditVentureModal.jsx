@@ -93,6 +93,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
           }, {}),
         }}
       >
+        {/* Form item for the venture name with validation */}
         <Form.Item
           label="Name"
           name="name"
@@ -107,6 +108,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the address of venture with validation */}
         <Form.Item
           label="Address"
           name="address"
@@ -119,6 +121,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
+        {/* Form item for the desctiption of the venture */}
         <Form.Item
           label="Description"
           name="description"
@@ -132,6 +135,7 @@ const EditVentureModal = ({ isOpened, venture, handleOk, handleCancel }) => {
         </Form.Item>
         <p>Select Properties</p>
         {properties?.map((property, index) => (
+          // Dynamic form item for the properties to change count
           <Form.Item
             name={`property${property.key}`}
             key={property.key}

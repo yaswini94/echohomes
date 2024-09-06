@@ -75,7 +75,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
         form={form}
         onFinish={handleAddVenture}
       >
-        {/* Form item for the venture name */}
+        {/* Form item for the venture name with validation */}
         <Form.Item
           label="Name"
           name="name"
@@ -87,7 +87,7 @@ const AddVentureModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
-        {/* Form item for the address of venture */}
+        {/* Form item for the address of venture with validation */}
         <Form.Item
           label="Address"
           name="address"

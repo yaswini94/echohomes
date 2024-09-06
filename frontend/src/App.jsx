@@ -35,13 +35,12 @@ const AppLayout = ({ children }) => {
   const isPublicPages =
     location.pathname === "/login" || location.pathname === "/register";
 
-  const { user, role } = useAuth();
-
   const {
     token: { fontFamily, fontSize, borderRadiusLG },
   } = theme.useToken();
 
   useEffect(() => {
+    // Function to handle storage
     const handleStorage = () => {
       const _settings = localStorage.getItem("settings");
       if (_settings) {

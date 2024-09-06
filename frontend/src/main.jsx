@@ -7,6 +7,7 @@ import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    {/* Wrap the App component with I18nextProvider */}
     <I18nextProvider i18n={i18n}>
       <App />
     </I18nextProvider>

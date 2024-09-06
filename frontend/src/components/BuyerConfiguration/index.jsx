@@ -23,10 +23,12 @@ const BuyerConfiguration = () => {
 
   const { t: translate } = useTranslation();
 
+  // Function to handle choice selection
   const onSelectChoiceChange = (newSelectedRowKeys) => {
     setSelectedChoices(newSelectedRowKeys);
   };
 
+  // Function to handle extras selection
   const onSelectExtrasChange = (newSelectedRowKeys) => {
     setSelectedExtras(newSelectedRowKeys);
     const _newQty = {};
@@ -36,6 +38,7 @@ const BuyerConfiguration = () => {
     setQuantityMap(_newQty);
   };
 
+  // Row selection configuration for choices
   const rowChoiceSelection = {
     selectedRowKeys: selectedChoices,
     onChange: onSelectChoiceChange,
@@ -48,6 +51,7 @@ const BuyerConfiguration = () => {
     hideSelectAll: true,
   };
 
+  // Row selection configuration for extras
   const rowExtrasSelection = {
     selectedRowKeys: selectedExtras,
     onChange: onSelectExtrasChange,
@@ -57,6 +61,7 @@ const BuyerConfiguration = () => {
     hideSelectAll: Boolean(selectedFeatures),
   };
 
+  // Columns for choices table
   const choicesColumns = [
     {
       title: "Name",
@@ -130,6 +135,7 @@ const BuyerConfiguration = () => {
     },
   ];
 
+  // Columns for extras table
   const extrasColumns = [
     {
       title: "Name",
@@ -239,6 +245,7 @@ const BuyerConfiguration = () => {
   useEffect(() => {
     if (!venture?.builder_id) return;
 
+    // Fetch features based on builder id
     const fetchFeatures = async () => {
       try {
         const response = await axiosInstance.get(
@@ -257,6 +264,7 @@ const BuyerConfiguration = () => {
     fetchFeatures();
   }, [venture]);
 
+  // Function to fetch buyer details
   const fetchBuyer = async () => {
     try {
       const response = await axiosInstance.get(`/buyers/${user.id}`);
@@ -327,7 +335,7 @@ const BuyerConfiguration = () => {
 
   useEffect(() => {
     if (!buyer?.buyer_id) return;
-
+    // Function to fetch venture details
     const fetchVenture = async () => {
       try {
         const response = await axiosInstance.get(
@@ -345,6 +353,7 @@ const BuyerConfiguration = () => {
       }
     };
 
+    // Function to fetch stripe session
     const fetchStripeSession = async () => {
       try {
         const response = await axiosInstance.post(`/stripe-session`, {
@@ -361,6 +370,7 @@ const BuyerConfiguration = () => {
     fetchVenture();
   }, [buyer?.buyer_id]);
 
+  // Function to handle order confirmation
   const handleConfirmOrder = async () => {
     const selections = {
       choices: {},
@@ -412,6 +422,7 @@ const BuyerConfiguration = () => {
 
       const { id } = await response.json();
 
+      // Update buyer with selected features
       await axiosInstance.post("/updateBuyer", {
         features: selections,
         stripe_session_id: id,
@@ -430,6 +441,7 @@ const BuyerConfiguration = () => {
     }
   };
 
+  // Function to get selected price
   const getSelectedPrice = () => {
     if (!allFeatures) return 0;
 

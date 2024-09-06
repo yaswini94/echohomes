@@ -49,6 +49,7 @@ const HeaderLayout = () => {
   };
 
   useEffect(() => {
+    // Function to handle language change for globalisation
     i18n.changeLanguage(language);
   }, [language]);
 
@@ -136,6 +137,7 @@ const HeaderLayout = () => {
     setSettings({ ...settings, [key]: value });
   };
 
+  // User items for the dropdown
   const user_items = [
     {
       key: "1",

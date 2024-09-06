@@ -94,7 +94,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
     >
       {/* Form template from the Ant design components to get buyer data */}
       <Form layout="vertical" form={form} onFinish={inviteBuyer}>
-        {/* Form item for the buyer name */}
+        {/* Form item for the buyer name with validation */}
         <Form.Item
           label="Name"
           name="name"
@@ -109,7 +109,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
-        {/* Form item for the phone number */}
+        {/* Form item for the phone number with validation */}
         <Form.Item
           label="Phone Number"
           name="phoneNumber"
@@ -129,7 +129,7 @@ const AddBuyerModal = ({ isOpened, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
-        {/* Form item for the contact email */}
+        {/* Form item for the contact email with validation */}
         <Form.Item
           label="Contact Email"
           name="email"

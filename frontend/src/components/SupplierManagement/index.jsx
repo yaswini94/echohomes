@@ -63,6 +63,7 @@ function SupplierManagement() {
     setIsEditModalVisible(false);
   };
 
+  // Columns for the table
   const columns = [
     {
       title: translate("name"),

@@ -93,7 +93,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
         }}
         onFinish={editBuyer}
       >
-        {/* Form item for the buyer name */}
+        {/* Form item for the buyer name with validation */}
         <Form.Item
           label="Name"
           name="name"
@@ -108,7 +108,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
-        {/* Form item for the phone number */}
+        {/* Form item for the phone number with validation */}
         <Form.Item
           label="Phone Number"
           name="phoneNumber"
@@ -128,7 +128,7 @@ const EditBuyerModal = ({ isOpened, buyer, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
-        {/* Form item for the contact email */}
+        {/* Form item for the contact email with validation */}
         <Form.Item
           label="Contact Email"
           name="email"

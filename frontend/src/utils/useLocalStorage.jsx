@@ -16,6 +16,7 @@ function useLocalStorage(key, initialValue) {
   });
 
   useEffect(() => {
+    // Handle changes to localStorage
     const handleStorage = () => {
       const lsValue = localStorage.getItem(key);
       // Check if lsValue is not null and not the string "undefined" before parsing

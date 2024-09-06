@@ -61,7 +61,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
           price: feature.price,
         }}
       >
-        {/* Form item for the feature name */}
+        {/* Form item for the feature name with validation */}
         <Form.Item
           label="Name"
           name="name"
@@ -88,7 +88,7 @@ const EditFeatureModal = ({ isOpened, feature, handleOk, handleCancel }) => {
             required
           />
         </Form.Item>
-        {/* Form item for the price */}
+        {/* Form item for the price  with validation */}
         <Form.Item
           label="Price"
           name="price"

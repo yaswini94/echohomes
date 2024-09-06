@@ -352,6 +352,7 @@ const OrdersManagement = () => {
     }
   };
 
+  // Function to handle fetch stripe session
   const fetchStripeSession = async (orders) => {
     // for each order make an api call to /get-stripe-session and add the session to the order and return the orders
     const _orders = await Promise.all(
