@@ -63,7 +63,6 @@ const NavigationLayout = () => {
         label: <Link to="/supplier-orders">{translate("orders")}</Link>,
         key: "/supplierOrdersManagement",
       },
-      // { label: "Invoices", key: "invoices" },
     ],
   };
 
