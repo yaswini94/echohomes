@@ -246,6 +246,7 @@ app.post("/create-checkout-session", async (req, res) => {
   }
 });
 
+// Get API to fetch invoice based on invoiceId
 app.get("/get-invoice/:invoiceId", async (req, res) => {
   const { invoiceId } = req.params;
 
@@ -258,6 +259,7 @@ app.get("/get-invoice/:invoiceId", async (req, res) => {
   }
 });
 
+// Get API to fetch receipt based on chargeId
 app.get("/get-receipt/:chargeId", async (req, res) => {
   const { chargeId } = req.params;
 
@@ -270,6 +272,7 @@ app.get("/get-receipt/:chargeId", async (req, res) => {
   }
 });
 
+// Get API to fetch payment intent based on id
 app.get("/get-payment-intent/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -385,12 +388,6 @@ app.get("/builders/:id", authenticateToken, async (req, res) => {
 });
 
 // Get API for updating purchase order status
-// update-purchase-order-status
-// {
-//   po_id: order.po_id,
-//   feature_id: record.feature_id,
-//   status,
-// }
 app.post(
   "/update-purchase-order-status",
   authenticateToken,
@@ -398,7 +395,6 @@ app.post(
     const { po_id, feature_id, status } = req.body;
 
     // get purchase order based on po_id and get the orders_list column
-
     const { data, error } = await supabase
       .from("purchase_orders")
       .select("orders_list")
@@ -443,6 +439,7 @@ app.post("/updateBuilder", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+// Get API to fetch settings based on role
 app.get("/settings/:role", authenticateToken, async (req, res) => {
   const { role } = req.params;
   const user = req.user;
@@ -926,6 +923,7 @@ app.post("/updateBuyer", authenticateToken, async (req, res) => {
   res.status(201).json("Update successfull");
 });
 
+// Post API to update buyer features
 app.post("/update-buyer-features", authenticateToken, async (req, res) => {
   const { features, buyer_id } = req.body;
 
