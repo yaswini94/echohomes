@@ -994,8 +994,5 @@ app.get("/features", authenticateToken, async (req, res) => {
 app.get("/", (req, res) => {
   res.send("Welcome to Echo homes!");
 });
-const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = app;
