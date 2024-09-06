@@ -122,6 +122,7 @@ const BuyerManagement = ({ ventureId: ventureIdParam }) => {
               onClick={() => {
                 showEditModal(record);
               }}
+              alt="edit"
             />
           </a>
           <a>
